@@ -11,21 +11,21 @@ import WebKit
 
 public class SwiftR: NSObject, WKScriptMessageHandler {
 
-    var webView = WKWebView()
+    var webView: WKWebView!
     var url: String!
     
-    var ready = false
-    var connected = false
+    var readyHandler: ((SwiftR) -> ())!
+    var hubs = [String: Hub]()
     
-    var readyBuffer = [String]()
-    var connectedBuffer = [String]()
+    public class func connect(url: String, readyHandler: (SwiftR) -> ()) -> SwiftR {
+        return SwiftR(url: url, readyHandler: readyHandler)
+    }
     
-    var handlers: Dictionary<Hub, AnyObject? -> ()> = [:]
-    
-    public convenience init(url: String) {
-        self.init()
+    private init(url: String, readyHandler: (SwiftR) -> ()) {
+        super.init()
         
         self.url = url
+        self.readyHandler = readyHandler
         
         let config = WKWebViewConfiguration()
         config.userContentController.addScriptMessageHandler(self, name: "interOp")
@@ -59,7 +59,6 @@ public class SwiftR: NSObject, WKScriptMessageHandler {
         let jqueryInclude = "<script src='\(jqueryURL.absoluteString!)'></script>"
         let signalRInclude = "<script src='\(signalRURL.absoluteString!)'></script>"
         let jsInclude = "<script src='\(jsURL.absoluteString!)'></script>"
-        let hubsInclude = "<script src='\(url)/hubs'></script>"
 #else
         var jqueryString = NSString(contentsOfURL: jqueryURL, encoding: NSUTF8StringEncoding, error: nil)!
         var signalRString = NSString(contentsOfURL: signalRURL, encoding: NSUTF8StringEncoding, error: nil)!
@@ -72,17 +71,64 @@ public class SwiftR: NSObject, WKScriptMessageHandler {
         let jqueryInclude = "<script>\(jqueryString)</script>"
         let signalRInclude = "<script>\(signalRString)</script>"
         let jsInclude = "<script>\(jsString)</script>"
-        let hubsInclude = "<script src='\(url)/hubs'></script>"
 #endif
         
         let html = "<!doctype html><html><head></head><body>"
-            + "\(jqueryInclude)\(signalRInclude)\(jsInclude)\(hubsInclude)"
+            + "\(jqueryInclude)\(signalRInclude)\(jsInclude))"
             + "</body></html>"
         
         webView.loadHTMLString(html, baseURL: NSBundle.mainBundle().bundleURL)
     }
     
-    public func invoke(hub: String, method: String, parameters: [AnyObject]?) {
+    public func createHubProxy(name: String) -> Hub {
+        let hub = Hub(name: name, swiftR: self)
+        hubs[name.lowercaseString] = hub
+        return hub
+    }
+    
+    // MARK: - WKScriptMessageHandler functions
+    
+    public func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
+        if let m = message.body as? String {
+            switch m {
+            case "ready":
+                webView.evaluateJavaScript("initialize('\(url)')", completionHandler: nil)
+                readyHandler(self)
+                webView.evaluateJavaScript("start()", completionHandler: nil)
+            default:
+                break
+            }
+        } else if let m = message.body as? [String: AnyObject] {
+            let hubName = m["hub"] as! String
+            let event = m["method"] as! String
+            let args: AnyObject? = m["args"]
+            let hub = hubs[hubName]
+            hub?.handlers[event]?(args)
+        }
+    }
+}
+
+// MARK: - Hub
+
+public class Hub {
+    let name: String
+    
+    var handlers: [String: AnyObject? -> ()] = [:]
+    
+    internal let swiftR: SwiftR!
+    
+    init(name: String, swiftR: SwiftR) {
+        self.name = name
+        self.swiftR = swiftR
+    }
+    
+    public func on(method: String, handler: (AnyObject? -> ())?) {
+        handlers[method] = handler
+        let js = "if (typeof \(name) == 'undefined') { \(name) = connection.createHubProxy('\(name)'); } addHandler(\(name), '\(method)');"
+        swiftR.webView.evaluateJavaScript(js, completionHandler: nil)
+    }
+    
+    public func invoke(method: String, parameters: [AnyObject]?) {
         var jsonParams = [String]()
         
         if let params = parameters {
@@ -95,90 +141,18 @@ public class SwiftR: NSObject, WKScriptMessageHandler {
             }
         }
         
-        let args = ",".join(jsonParams)
-        let js = "$.connection.\(hub).server.\(method)(\(args))"
-        
-        if connected {
-            flushBuffer(&connectedBuffer)
-            webView.evaluateJavaScript(js, completionHandler: nil)
-        } else {
-            connectedBuffer.append(js)
-        }
-    }
-    
-    public func addHandler(hub: String, event: String, handler: AnyObject? -> ()) {
-        let js = "$.connection.\(hub).client.\(event) = function() { processResponse('\(hub)', '\(event)', arguments); }"
-        
-        let h = Hub(name: hub, event: event)
-        handlers[h] = handler
-        
-        if ready {
-            flushBuffer(&readyBuffer)
-            webView.evaluateJavaScript(js, completionHandler: nil)
-        } else {
-            readyBuffer.append(js)
-        }
-    }
-    
-    public func start() {
-        let js = "connect('\(url)')"
-        
-        if ready {
-            flushBuffer(&readyBuffer)
-            webView.evaluateJavaScript(js, completionHandler: nil)
-        } else {
-            readyBuffer.append(js)
-        }
-    }
-    
-    // MARK: - Private
-    
-    func flushBuffer(inout buffer: [String]) {
-        if buffer.count > 0 {
-            for js in buffer {
-                webView.evaluateJavaScript(js, completionHandler: nil)
-            }
-            buffer.removeAll(keepCapacity: false)
-        }
-    }
-    
-    // MARK: - WKScriptMessageHandler functions
-    
-    public func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
-        if let m = message.body as? String {
-            if m == "ready" {
-                ready = true
-                flushBuffer(&readyBuffer)
-            } else if m == "connected" {
-                connected = true
-                flushBuffer(&connectedBuffer)
-            }
-        } else if let m = message.body as? [String: AnyObject] {
-            let hub = m["hub"] as! String
-            let event = m["func"] as! String
-            let h = Hub(name: hub, event: event)
-            handlers[h]?(m["args"])
-        }
+        let params = ",".join(jsonParams)
+        let js = "\(name).invoke('\(method)', \(params))"
+        swiftR.webView.evaluateJavaScript(js, completionHandler: nil)
     }
 }
-
-// Mark: - Hub
-
-struct Hub: Hashable {
-    let name: String
-    let event: String
-}
-
-// MARK: Hashable
 
 extension Hub: Hashable {
-    var hashValue: Int {
-        return name.hashValue ^ event.hashValue
+    public var hashValue: Int {
+        return name.hashValue
     }
 }
 
-// MARK: Equatable
-
-func ==(lhs: Hub, rhs: Hub) -> Bool {
-    return lhs.name == rhs.name && rhs.event == rhs.event
+public func==(lhs: Hub, rhs: Hub) -> Bool {
+    return lhs.name == rhs.name
 }

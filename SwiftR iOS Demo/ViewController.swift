@@ -11,26 +11,38 @@ import SwiftR
 
 class ViewController: UIViewController {
     
-    var signalR: SwiftR!
+    var simpleHub: Hub!
+    var complexHub: Hub!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        signalR = SwiftR(url: "http://localhost:8080/signalr")
-        
-        signalR.addHandler("simpleHub", event: "notifySimple") { (response)  in
-            let message = response!["0"] as! String
-            let detail = response!["1"] as! String
-            println("Message: \(message)\nDetail: \(detail)\n")
+        SwiftR.connect("http://localhost:8080") { (connection) in
+            self.simpleHub = connection.createHubProxy("simpleHub")
+            self.complexHub = connection.createHubProxy("complexHub")
+            
+            self.simpleHub.on("notifySimple") { (response) in
+                let message = response!["0"] as! String
+                let detail = response!["1"] as! String
+                println("Message: \(message)\nDetail: \(detail)\n")
+            }
+            
+            self.complexHub.on("notifyComplex") { (response) in
+                let m: AnyObject = response!["0"] as AnyObject!
+                println(m)
+            }
         }
         
-        signalR.addHandler("complexHub", event: "notifyComplex") { (response) in
-            let m: AnyObject = response!["0"] as AnyObject!
-            println(m)
-        }
+        // Most basic example...
         
-        signalR.start()
+//        SwiftR.connect("http://localhost:8080") { (connection) in
+//            let hub = connection.createHubProxy("myHub")
+//            hub.on("addMessage") { (response) in
+//                println(response!["0"])
+//            }
+//        }
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -39,7 +51,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func sendSimpleMessage(sender: AnyObject?) {
-        signalR.invoke("simpleHub", method: "sendSimple", parameters: ["Simple Test", "This is a simple message"])
+        simpleHub.invoke("sendSimple", parameters: ["Simple Test", "This is a simple message"])
     }
     
     @IBAction func sendComplexMessage(sender: AnyObject?) {
@@ -50,7 +62,7 @@ class ViewController: UIViewController {
             "items": ["foo", "bar", "baz"]
         ]
         
-        signalR.invoke("complexHub", method: "sendComplex", parameters: [message])
+        complexHub.invoke("sendComplex", parameters: [message])
     }
     
 }

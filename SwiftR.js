@@ -2,18 +2,27 @@ $(function() {
     postMessage("ready");
 });
 
-function connect(url) {
-    $.connection.hub.url = url;
-    $.connection.hub.start().done(function() {
-        postMessage("connected");
+function initialize(url) {
+    connection = $.hubConnection(url);
+    connection.logging = true;
+
+    connection.disconnected(function () {
+        connection.hub.log('Dropped the connection from the server. Restarting in 5 seconds.');
+        setTimeout(function() { initialize(url); }, 5000);
     });
 }
 
-function processResponse(hub, func, args) {
-    postMessage({
-        hub: hub,
-        func: func,
-        args: JSON.parse(JSON.stringify(args))
+function start() {
+    connection.start();
+}
+
+function addHandler(hub, method) {
+    hub.on(method, function() {
+        postMessage({
+            hub: hub.hubName,
+            method: method,
+            args: JSON.parse(JSON.stringify(arguments))
+        })
     });
 }
 
