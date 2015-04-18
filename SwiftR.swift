@@ -21,7 +21,7 @@ public class SwiftR: NSObject, WKScriptMessageHandler {
         return SwiftR(url: url, readyHandler: readyHandler)
     }
     
-    private init(url: String, readyHandler: (SwiftR) -> ()) {
+    init(url: String, readyHandler: (SwiftR) -> ()) {
         super.init()
         
         self.url = url
@@ -115,7 +115,7 @@ public class Hub {
     
     var handlers: [String: AnyObject? -> ()] = [:]
     
-    internal let swiftR: SwiftR!
+    let swiftR: SwiftR!
     
     init(name: String, swiftR: SwiftR) {
         self.name = name
@@ -123,12 +123,13 @@ public class Hub {
     }
     
     public func on(method: String, handler: (AnyObject? -> ())?) {
+        ensureHub()
         handlers[method] = handler
-        let js = "if (typeof \(name) == 'undefined') { \(name) = connection.createHubProxy('\(name)'); } addHandler(\(name), '\(method)');"
-        swiftR.webView.evaluateJavaScript(js, completionHandler: nil)
+        swiftR.webView.evaluateJavaScript("addHandler(\(name), '\(method)')", completionHandler: nil)
     }
     
     public func invoke(method: String, parameters: [AnyObject]?) {
+        ensureHub()
         var jsonParams = [String]()
         
         if let params = parameters {
@@ -143,6 +144,11 @@ public class Hub {
         
         let params = ",".join(jsonParams)
         let js = "\(name).invoke('\(method)', \(params))"
+        swiftR.webView.evaluateJavaScript(js, completionHandler: nil)
+    }
+    
+    func ensureHub() {
+        let js = "if (typeof \(name) == 'undefined') \(name) = connection.createHubProxy('\(name)')"
         swiftR.webView.evaluateJavaScript(js, completionHandler: nil)
     }
 }
