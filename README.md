@@ -19,7 +19,7 @@ SwiftR.connect("http://localhost:8080") { (connection) in
     let simpleHub = connection.createHubProxy("simpleHub")
   
     // Event handler
-    myHub.on("notifySimple") { (response) in
+    simpleHub.on("notifySimple") { (response) in
         let message = response!["0"] as! String
         let detail = response!["1"] as! String
         println("Message: \(message)\nDetail: \(detail)")
