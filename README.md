@@ -49,6 +49,7 @@ public class ComplexHub : Hub
 ```
 
 ```swift
+// Client
 var complexHub: Hub!
 
 SwiftR.connect("http://localhost:8080") { (connection) in
