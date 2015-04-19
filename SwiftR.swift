@@ -9,19 +9,21 @@
 import Foundation
 import WebKit
 
-public class SwiftR: NSObject, WKScriptMessageHandler {
+public class SwiftR {
+    public class func connect(url: String, readyHandler: (SignalR) -> ()) -> SignalR {
+        return SignalR(url: url, readyHandler: readyHandler)
+    }
+}
+
+public class SignalR: NSObject, WKScriptMessageHandler {
 
     var webView: WKWebView!
     var url: String!
     
-    var readyHandler: ((SwiftR) -> ())!
+    var readyHandler: ((SignalR) -> ())!
     var hubs = [String: Hub]()
     
-    public class func connect(url: String, readyHandler: (SwiftR) -> ()) -> SwiftR {
-        return SwiftR(url: url, readyHandler: readyHandler)
-    }
-    
-    init(url: String, readyHandler: (SwiftR) -> ()) {
+    init(url: String, readyHandler: (SignalR) -> ()) {
         super.init()
         
         self.url = url
@@ -81,7 +83,7 @@ public class SwiftR: NSObject, WKScriptMessageHandler {
     }
     
     public func createHubProxy(name: String) -> Hub {
-        let hub = Hub(name: name, swiftR: self)
+        let hub = Hub(name: name, signalR: self)
         hubs[name.lowercaseString] = hub
         return hub
     }
@@ -115,17 +117,17 @@ public class Hub {
     
     var handlers: [String: AnyObject? -> ()] = [:]
     
-    let swiftR: SwiftR!
+    let signalR: SignalR!
     
-    init(name: String, swiftR: SwiftR) {
+    init(name: String, signalR: SignalR) {
         self.name = name
-        self.swiftR = swiftR
+        self.signalR = signalR
     }
     
     public func on(method: String, handler: (AnyObject? -> ())?) {
         ensureHub()
         handlers[method] = handler
-        swiftR.webView.evaluateJavaScript("addHandler(\(name), '\(method)')", completionHandler: nil)
+        signalR.webView.evaluateJavaScript("addHandler(\(name), '\(method)')", completionHandler: nil)
     }
     
     public func invoke(method: String, parameters: [AnyObject]?) {
@@ -144,12 +146,12 @@ public class Hub {
         
         let params = ",".join(jsonParams)
         let js = "\(name).invoke('\(method)', \(params))"
-        swiftR.webView.evaluateJavaScript(js, completionHandler: nil)
+        signalR.webView.evaluateJavaScript(js, completionHandler: nil)
     }
     
     func ensureHub() {
         let js = "if (typeof \(name) == 'undefined') \(name) = connection.createHubProxy('\(name)')"
-        swiftR.webView.evaluateJavaScript(js, completionHandler: nil)
+        signalR.webView.evaluateJavaScript(js, completionHandler: nil)
     }
 }
 
