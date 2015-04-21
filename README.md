@@ -13,7 +13,7 @@ public class SimpleHub : Hub
 }
 ```
 
-Default paramter names in callback response:
+Default parameter names in callback response:
 ```swift
 // Client
 SwiftR.connect("http://localhost:8080") { (connection) in
