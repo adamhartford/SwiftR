@@ -19,10 +19,10 @@ public class SignalR: NSObject, WKScriptMessageHandler {
     var webView: WKWebView!
     var url: String!
     
-    var readyHandler: ((SignalR) -> ())!
+    var readyHandler: (SignalR -> ())!
     var hubs = [String: Hub]()
     
-    init(url: String, readyHandler: (SignalR) -> ()) {
+    init(url: String, readyHandler: SignalR -> ()) {
         super.init()
         
         self.url = url
