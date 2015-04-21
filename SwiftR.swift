@@ -16,7 +16,6 @@ public class SwiftR {
 }
 
 public class SignalR: NSObject, WKScriptMessageHandler {
-
     var webView: WKWebView!
     var url: String!
     
@@ -103,9 +102,9 @@ public class SignalR: NSObject, WKScriptMessageHandler {
         } else if let m = message.body as? [String: AnyObject] {
             let hubName = m["hub"] as! String
             let event = m["method"] as! String
-            let args: AnyObject? = m["args"]
+            let arguments: AnyObject? = m["arguments"]
             let hub = hubs[hubName]
-            hub?.handlers[event]?(args)
+            hub?.handlers[event]?(arguments)
         }
     }
 }
@@ -124,28 +123,34 @@ public class Hub {
         self.signalR = signalR
     }
     
-    public func on(method: String, handler: (AnyObject? -> ())?) {
+    public func on(method: String, parameters: [String]? = nil, callback: (AnyObject? -> ())?) {
         ensureHub()
-        handlers[method] = handler
-        signalR.webView.evaluateJavaScript("addHandler(\(name), '\(method)')", completionHandler: nil)
+        handlers[method] = callback
+        
+        var p = "null"
+        if let params = parameters {
+            p = "['" + "','".join(params) + "']"
+        }
+        
+        signalR.webView.evaluateJavaScript("addHandler(\(name), '\(method)', \(p))", completionHandler: nil)
     }
     
-    public func invoke(method: String, parameters: [AnyObject]?) {
+    public func invoke(method: String, arguments: [AnyObject]?) {
         ensureHub()
-        var jsonParams = [String]()
+        var jsonArguments = [String]()
         
-        if let params = parameters {
-            for param in params {
-                if param is String {
-                    jsonParams.append("'\(param)'")
-                } else if let data = NSJSONSerialization.dataWithJSONObject(param, options: NSJSONWritingOptions.allZeros, error: nil) {
-                    jsonParams.append(NSString(data: data, encoding: NSUTF8StringEncoding) as String!)
+        if let args = arguments {
+            for arg in args {
+                if arg is String {
+                    jsonArguments.append("'\(arg)'")
+                } else if let data = NSJSONSerialization.dataWithJSONObject(arg, options: NSJSONWritingOptions.allZeros, error: nil) {
+                    jsonArguments.append(NSString(data: data, encoding: NSUTF8StringEncoding) as String!)
                 }
             }
         }
         
-        let params = ",".join(jsonParams)
-        let js = "\(name).invoke('\(method)', \(params))"
+        let args = ",".join(jsonArguments)
+        let js = "\(name).invoke('\(method)', \(args))"
         signalR.webView.evaluateJavaScript(js, completionHandler: nil)
     }
     

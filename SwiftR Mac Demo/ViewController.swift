@@ -19,17 +19,17 @@ class ViewController: NSViewController {
         
         // Do any additional setup after loading the view, typically from a nib.
         
-        SwiftR.connect("http://localhost:8080") { (connection) in
-            self.simpleHub = connection.createHubProxy("simpleHub")
-            self.complexHub = connection.createHubProxy("complexHub")
+        SwiftR.connect("http://localhost:8080") { [weak self] (connection) in
+            self?.simpleHub = connection.createHubProxy("simpleHub")
+            self?.complexHub = connection.createHubProxy("complexHub")
             
-            self.simpleHub.on("notifySimple") { (response) in
-                let message = response!["0"] as! String
-                let detail = response!["1"] as! String
+            self?.simpleHub.on("notifySimple", parameters: ["message", "details"]) { (response) in
+                let message = response!["message"] as! String
+                let detail = response!["details"] as! String
                 println("Message: \(message)\nDetail: \(detail)\n")
             }
             
-            self.complexHub.on("notifyComplex") { (response) in
+            self?.complexHub.on("notifyComplex") { (response) in
                 let m: AnyObject = response!["0"] as AnyObject!
                 println(m)
             }
@@ -53,7 +53,7 @@ class ViewController: NSViewController {
     }
     
     @IBAction func sendSimpleMessage(sender: AnyObject?) {
-        simpleHub.invoke("sendSimple", parameters: ["Simple Test", "This is a simple message"])
+        simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
     }
     
     @IBAction func sendComplexMessage(sender: AnyObject?) {
@@ -64,7 +64,7 @@ class ViewController: NSViewController {
             "items": ["foo", "bar", "baz"]
         ]
         
-        complexHub.invoke("sendComplex", parameters: [message])
+        complexHub.invoke("sendComplex", arguments: [message])
     }
 
 }

@@ -16,13 +16,24 @@ function start() {
     connection.start();
 }
 
-function addHandler(hub, method) {
+function addHandler(hub, method, parameters) {
     hub.on(method, function() {
+        var args = arguments;
+        var o = {};
+
+        if (parameters) {
+            for (var i in parameters) {
+                o[parameters[i]] = args[i];
+            }
+        } else {
+            o = JSON.parse(JSON.stringify(args));
+        }
+
         postMessage({
             hub: hub.hubName,
             method: method,
-            args: JSON.parse(JSON.stringify(arguments))
-        })
+            arguments: o
+        });
     });
 }
 
