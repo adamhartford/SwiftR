@@ -10,7 +10,7 @@ import Foundation
 import WebKit
 
 public class SwiftR {
-    public class func connect(url: String, readyHandler: (SignalR) -> ()) -> SignalR {
+    public class func connect(url: String, readyHandler: SignalR -> ()) -> SignalR {
         return SignalR(url: url, readyHandler: readyHandler)
     }
 }
@@ -123,7 +123,7 @@ public class Hub {
         self.signalR = signalR
     }
     
-    public func on(method: String, parameters: [String]? = nil, callback: (AnyObject? -> ())?) {
+    public func on(method: String, parameters: [String]? = nil, callback: AnyObject? -> ()) {
         ensureHub()
         handlers[method] = callback
         
