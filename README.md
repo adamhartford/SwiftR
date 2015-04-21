@@ -13,6 +13,7 @@ public class SimpleHub : Hub
 }
 ```
 
+Default paramter names in callback response:
 ```swift
 // Client
 SwiftR.connect("http://localhost:8080") { (connection) in
@@ -22,6 +23,20 @@ SwiftR.connect("http://localhost:8080") { (connection) in
     simpleHub.on("notifySimple") { (response) in
         let message = response!["0"] as! String
         let detail = response!["1"] as! String
+        println("Message: \(message)\nDetail: \(detail)")
+    }
+}
+```
+Custom parameter names in callback response:
+```swift
+// Client
+SwiftR.connect("http://localhost:8080", parameters: ["message", "detail"]) { (connection) in
+    let simpleHub = connection.createHubProxy("simpleHub")
+  
+    // Event handler
+    simpleHub.on("notifySimple") { (response) in
+        let message = response!["message"] as! String
+        let detail = response!["detail"] as! String
         println("Message: \(message)\nDetail: \(detail)")
     }
 }
@@ -52,10 +67,10 @@ public class ComplexHub : Hub
 // Client
 var complexHub: Hub!
 
-SwiftR.connect("http://localhost:8080") { (connection) in
-    self.complexHub = connection.createHubProxy("complexHub")
+SwiftR.connect("http://localhost:8080") { [weak self] (connection) in
+    self?.complexHub = connection.createHubProxy("complexHub")
     
-    self.complexHub.on("notifyComplex") { (response) in
+    self?.complexHub.on("notifyComplex") { (response) in
         let m: AnyObject = response!["0"] as AnyObject!
         println(m)
     }
