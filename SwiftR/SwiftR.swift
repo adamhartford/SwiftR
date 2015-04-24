@@ -33,8 +33,11 @@ public class SignalR: NSObject, WKScriptMessageHandler {
         //config.preferences.setValue(true, forKey: "developerExtrasEnabled")
         
         webView = WKWebView(frame: CGRectZero, configuration: config)
-        
+#if COCOAPODS
+        let bundle = NSBundle(identifier: "org.cocoapods.SwiftR")!
+#else
         let bundle = NSBundle(identifier: "com.adamhartford.SwiftR")!
+#endif
         let jqueryURL = bundle.URLForResource("jquery-2.1.3.min", withExtension: "js")!
         let signalRURL = bundle.URLForResource("jquery.signalR-2.2.0.min", withExtension: "js")!
         let jsURL = bundle.URLForResource("SwiftR", withExtension: "js")!
