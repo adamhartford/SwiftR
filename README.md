@@ -1,5 +1,22 @@
 # SwiftR
-Swift client for SignalR. A work in progress.
+A Swift client for SignalR.
+
+### Installation
+
+[CocoaPods](https://cocoapods.org):
+``` ruby
+use_frameworks!
+pod 'SwiftR'
+```
+
+[Carthage](https://github.com/Carthage/Carthage):
+```
+github 'adamhartford/SwiftR'
+```
+
+### Server Example
+
+See https://github.com/adamhartford/SignalRDemo for a sample self-hosted SignalR application.
 
 ### Simple Example
 ```c#
@@ -85,3 +102,7 @@ let message = [
 
 // Invoke server method
 complexHub.invoke("sendComplex", parameters: [message])
+```
+
+### License
+SwiftR is released under the MIT license. See LICENSE for details.
