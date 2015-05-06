@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="7531" systemVersion="14D131" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7531"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7702"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -673,34 +673,42 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="hef-jQ-txi">
-                                <rect key="frame" x="123" y="83" width="234" height="104"/>
-                                <subviews>
-                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Asp-q8-4tf">
-                                        <rect key="frame" x="14" y="13" width="206" height="32"/>
-                                        <buttonCell key="cell" type="push" title="Invoke Complex" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zb6-6q-Izd">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="sendComplexMessage:" target="XfG-lQ-9wD" id="XJc-Xm-Pbs"/>
-                                        </connections>
-                                    </button>
-                                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bZN-bm-axK">
-                                        <rect key="frame" x="14" y="56" width="206" height="32"/>
-                                        <buttonCell key="cell" type="push" title="Invoke SImple" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fS6-oa-pvf">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="sendSimpleMessage:" target="XfG-lQ-9wD" id="MKg-Px-a4E"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
+                                <rect key="frame" x="90" y="60" width="300" height="150"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="234" id="5JI-0x-U58"/>
-                                    <constraint firstAttribute="height" constant="104" id="sci-gx-KYp"/>
+                                    <constraint firstAttribute="width" constant="300" id="5JI-0x-U58"/>
+                                    <constraint firstAttribute="height" constant="150" id="sci-gx-KYp"/>
                                 </constraints>
                             </customView>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Asp-q8-4tf">
+                                <rect key="frame" x="104" y="117" width="272" height="32"/>
+                                <buttonCell key="cell" type="push" title="Invoke Complex (Hub)" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zb6-6q-Izd">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="sendComplexMessage:" target="XfG-lQ-9wD" id="XJc-Xm-Pbs"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LdH-IE-Mwg">
+                                <rect key="frame" x="104" y="76" width="272" height="32"/>
+                                <buttonCell key="cell" type="push" title="Send Data (Persistent Connection)" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gnm-lT-1vj">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="sendData:" target="XfG-lQ-9wD" id="1Cs-6x-FHS"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bZN-bm-axK">
+                                <rect key="frame" x="104" y="160" width="272" height="32"/>
+                                <buttonCell key="cell" type="push" title="Invoke SImple (Hub)" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fS6-oa-pvf">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="sendSimpleMessage:" target="XfG-lQ-9wD" id="MKg-Px-a4E"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="centerX" secondItem="hef-jQ-txi" secondAttribute="centerX" id="7UQ-4O-Noi"/>

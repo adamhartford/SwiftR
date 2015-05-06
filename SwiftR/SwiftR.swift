@@ -9,24 +9,32 @@
 import Foundation
 import WebKit
 
-public class SwiftR {
-    public class func connect(url: String, readyHandler: SignalR -> ()) -> SignalR {
-        return SignalR(url: url, readyHandler: readyHandler)
+public enum ConnectionType {
+    case Hub
+    case Persistent
+}
+
+public final class SwiftR {
+    public class func connect(url: String, connectionType: ConnectionType = .Hub, readyHandler: SignalR -> ()) -> SignalR {
+        return SignalR(url: url, connectionType: connectionType, readyHandler: readyHandler)
     }
 }
 
 public class SignalR: NSObject, WKScriptMessageHandler {
     var webView: WKWebView!
-    var url: String!
+    var url: String
+    var connectionType: ConnectionType
     
-    var readyHandler: (SignalR -> ())!
+    var readyHandler: SignalR -> ()
     var hubs = [String: Hub]()
     
-    init(url: String, readyHandler: SignalR -> ()) {
-        super.init()
-        
+    public var received: (AnyObject? -> ())?
+    
+    init(url: String, connectionType: ConnectionType = .Hub, readyHandler: SignalR -> ()) {
         self.url = url
         self.readyHandler = readyHandler
+        self.connectionType = connectionType
+        super.init()
         
         let config = WKWebViewConfiguration()
         config.userContentController.addScriptMessageHandler(self, name: "interOp")
@@ -90,24 +98,43 @@ public class SignalR: NSObject, WKScriptMessageHandler {
         return hub
     }
     
+    public func send(data: AnyObject?) {
+        var json = "null"
+        if let d: AnyObject = data {
+            if d is String {
+                json = "'\(d)'"
+            } else if let jsonData = NSJSONSerialization.dataWithJSONObject(d, options: NSJSONWritingOptions.allZeros, error: nil) {
+                json = NSString(data: jsonData, encoding: NSUTF8StringEncoding) as! String
+            }
+        }
+        webView.evaluateJavaScript("connection.send(\(json))", completionHandler: nil)
+    }
+    
     // MARK: - WKScriptMessageHandler functions
     
     public func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
         if let m = message.body as? String {
             switch m {
             case "ready":
-                webView.evaluateJavaScript("initialize('\(url)')", completionHandler: nil)
+                let isHub = connectionType == .Hub ? "true" : "false"
+                webView.evaluateJavaScript("initialize('\(url)',\(isHub))", completionHandler: nil)
                 readyHandler(self)
                 webView.evaluateJavaScript("start()", completionHandler: nil)
+            case "disconnected":
+                // TODO
+                break
             default:
                 break
             }
         } else if let m = message.body as? [String: AnyObject] {
-            let hubName = m["hub"] as! String
-            let event = m["method"] as! String
-            let arguments: AnyObject? = m["arguments"]
-            let hub = hubs[hubName]
-            hub?.handlers[event]?(arguments)
+            if let data: AnyObject = m["data"] {
+                received?(data)
+            } else if let hubName = m["hub"] as? String {
+                let method = m["method"] as! String
+                let arguments: AnyObject? = m["arguments"]
+                let hub = hubs[hubName]
+                hub?.handlers[method]?(arguments)
+            }
         }
     }
 }
@@ -147,7 +174,7 @@ public class Hub {
                 if arg is String {
                     jsonArguments.append("'\(arg)'")
                 } else if let data = NSJSONSerialization.dataWithJSONObject(arg, options: NSJSONWritingOptions.allZeros, error: nil) {
-                    jsonArguments.append(NSString(data: data, encoding: NSUTF8StringEncoding) as String!)
+                    jsonArguments.append(NSString(data: data, encoding: NSUTF8StringEncoding) as! String)
                 }
             }
         }

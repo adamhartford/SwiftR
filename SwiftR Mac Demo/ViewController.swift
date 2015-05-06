@@ -14,11 +14,14 @@ class ViewController: NSViewController {
     var simpleHub: Hub!
     var complexHub: Hub!
     
+    var persistentConnection: SignalR!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view, typically from a nib.
         
+        // Hubs...
         SwiftR.connect("http://localhost:8080") { [weak self] (connection) in
             self?.simpleHub = connection.createHubProxy("simpleHub")
             self?.complexHub = connection.createHubProxy("complexHub")
@@ -35,14 +38,12 @@ class ViewController: NSViewController {
             }
         }
         
-        // Most basic example...
-        
-//        SwiftR.connect("http://localhost:8080") { (connection) in
-//            let hub = connection.createHubProxy("myHub")
-//            hub.on("addMessage") { (response) in
-//                println(response!["0"])
-//            }
-//        }
+        // Persistent connection...
+        persistentConnection = SwiftR.connect("http://localhost:8080/echo", connectionType: .Persistent) { (connection) in
+            connection.received = { (data) in
+                println(data!)
+            }
+        }
         
     }
     
@@ -67,5 +68,9 @@ class ViewController: NSViewController {
         complexHub.invoke("sendComplex", arguments: [message])
     }
 
+    @IBAction func sendData(sender: AnyObject?) {
+        persistentConnection.send("Persistent Connection Test")
+    }
+    
 }
 

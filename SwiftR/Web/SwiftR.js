@@ -1,14 +1,20 @@
 $(function() {
-    postMessage("ready");
+    postMessage('ready');
 });
 
-function initialize(url) {
-    connection = $.hubConnection(url);
+function initialize(url, isHub) {
+    connection = isHub ? $.hubConnection(url) : $.connection(url);
     connection.logging = true;
 
+    if (!isHub) {
+        connection.received(function(data) {
+            postMessage({data: data});
+        });
+    }
+
     connection.disconnected(function () {
-        connection.hub.log('Dropped the connection from the server. Restarting in 5 seconds.');
-        setTimeout(function() { initialize(url); }, 5000);
+          postMessage('disconnected');
+          setTimeout(function() { initialize(url, isHub); }, 5000);
     });
 }
 
