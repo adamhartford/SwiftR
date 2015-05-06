@@ -106,6 +106,7 @@ complexHub.invoke("sendComplex", parameters: [message])
 
 ### Persistent Connections
 ```c#
+// Server
 app.MapSignalR<MyConnection> ("/echo");
 
 ...
@@ -120,6 +121,7 @@ public class MyConnection : PersistentConnection
 ```
 
 ```swift
+// Client
 var persistentConnection: SignalR!
 
 persistentConnection = SwiftR.connect("http://localhost:8080/echo", connectionType: .Persistent) { (connection) in
