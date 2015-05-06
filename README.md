@@ -1,5 +1,5 @@
 # SwiftR
-A Swift client for SignalR.
+A Swift client for SignalR. Supports hubs and persistent connections.
 
 ### Installation
 
@@ -18,7 +18,7 @@ github 'adamhartford/SwiftR'
 
 See https://github.com/adamhartford/SignalRDemo for a sample self-hosted SignalR application.
 
-### Simple Example
+### Simple Example (Hub)
 ```c#
 // Server
 public class SimpleHub : Hub 
@@ -59,7 +59,7 @@ SwiftR.connect("http://localhost:8080", parameters: ["message", "detail"]) { (co
 }
 ```
 
-### Complex Example
+### Complex Example (Hub)
 ```c#
 // Server
 public class ComplexMessage
@@ -104,5 +104,32 @@ let message = [
 complexHub.invoke("sendComplex", parameters: [message])
 ```
 
+### Persistent Connections
+```c#
+app.MapSignalR<MyConnection> ("/echo");
+
+...
+
+public class MyConnection : PersistentConnection 
+{
+    protected override Task OnReceived(IRequest request, string connectionId, string data) 
+    {
+        return Connection.Broadcast(data);
+    }
+}
+```
+
+```swift
+var persistentConnection: SignalR!
+
+persistentConnection = SwiftR.connect("http://localhost:8080/echo", connectionType: .Persistent) { (connection) in
+    connection.received = { (data) in
+        println(data!)
+    }
+}
+
+// Send data
+persistentConnection.send("Persistent Connection Test")
+```
 ### License
 SwiftR is released under the MIT license. See LICENSE for details.
