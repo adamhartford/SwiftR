@@ -47,11 +47,11 @@ SwiftR.connect("http://localhost:8080") { (connection) in
 Custom parameter names in callback response:
 ```swift
 // Client
-SwiftR.connect("http://localhost:8080", parameters: ["message", "detail"]) { (connection) in
+SwiftR.connect("http://localhost:8080", parameters: ["message", "detail"]) { connection in
     let simpleHub = connection.createHubProxy("simpleHub")
   
     // Event handler
-    simpleHub.on("notifySimple") { (response) in
+    simpleHub.on("notifySimple") { response in
         let message = response!["message"] as! String
         let detail = response!["detail"] as! String
         println("Message: \(message)\nDetail: \(detail)")
@@ -73,10 +73,10 @@ public class ComplexMessage
 // Server
 public class ComplexHub : Hub
 {
-	  public void SendComplex(ComplexMessage message) 
-	  {
-		    Clients.All.notifyComplex (message);
-	  }
+    public void SendComplex(ComplexMessage message) 
+    {
+        Clients.All.notifyComplex (message);
+    }
 }
 ```
 
@@ -84,10 +84,10 @@ public class ComplexHub : Hub
 // Client
 var complexHub: Hub!
 
-SwiftR.connect("http://localhost:8080") { [weak self] (connection) in
+SwiftR.connect("http://localhost:8080") { [weak self] connection in
     self?.complexHub = connection.createHubProxy("complexHub")
     
-    self?.complexHub.on("notifyComplex") { (response) in
+    self?.complexHub.on("notifyComplex") { response in
         let m: AnyObject = response!["0"] as AnyObject!
         println(m)
     }
@@ -124,8 +124,8 @@ public class MyConnection : PersistentConnection
 // Client
 var persistentConnection: SignalR!
 
-persistentConnection = SwiftR.connect("http://localhost:8080/echo", connectionType: .Persistent) { (connection) in
-    connection.received = { (data) in
+persistentConnection = SwiftR.connect("http://localhost:8080/echo", connectionType: .Persistent) { connection in
+    connection.received = { data in
         println(data!)
     }
 }
@@ -133,5 +133,16 @@ persistentConnection = SwiftR.connect("http://localhost:8080/echo", connectionTy
 // Send data
 persistentConnection.send("Persistent Connection Test")
 ```
+
+### Query String
+Currently, the only supported way to send information to SignalR when connecting is via the query string (as opposed to customer headers or cookies). You should use HTTPS if you're sending sensitive information this way.
+
+```swift
+SwiftR.connect("http://myserver.com:8080") { connection in
+    connection.queryString = ["foo": "bar"]
+    ...
+}
+```
+
 ### License
 SwiftR is released under the MIT license. See LICENSE for details.
