@@ -18,28 +18,32 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        // Make sure myserver is mapped to 127.0.0.1 in /etc/hosts
+        // Or change myserver to localhost below
         
         // Hubs...
-        SwiftR.connect("http://localhost:8080") { [weak self] (connection) in
+        SwiftR.connect("http://myserver.com:8080") { [weak self] connection in
+            connection.queryString = ["foo": "bar"]
+            
             self?.simpleHub = connection.createHubProxy("simpleHub")
             self?.complexHub = connection.createHubProxy("complexHub")
             
-            self?.simpleHub.on("notifySimple", parameters: ["message", "details"]) { (response) in
-                let message = response!["message"] as! String
-                let detail = response!["details"] as! String
+            self?.simpleHub.on("notifySimple", parameters: ["message", "details"]) { args in
+                let message = args!["message"] as! String
+                let detail = args!["details"] as! String
                 println("Message: \(message)\nDetail: \(detail)\n")
             }
             
-            self?.complexHub.on("notifyComplex") { (response) in
-                let m: AnyObject = response!["0"] as AnyObject!
+            self?.complexHub.on("notifyComplex") { args in
+                let m: AnyObject = args!["0"] as AnyObject!
                 println(m)
             }
         }
         
         // Persistent connection...
-        persistentConnection = SwiftR.connect("http://localhost:8080/echo", connectionType: .Persistent) { (connection) in
-            connection.received = { (data) in
+        persistentConnection = SwiftR.connect("http://myserver:8080/echo", connectionType: .Persistent) { connection in
+            connection.received = { data in
                 println(data!)
             }
         }

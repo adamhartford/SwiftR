@@ -30,6 +30,17 @@ public class SignalR: NSObject, WKScriptMessageHandler {
     
     public var received: (AnyObject? -> ())?
     
+    public var queryString: AnyObject? {
+        didSet {
+            if let qs: AnyObject = queryString {
+                if let jsonData = NSJSONSerialization.dataWithJSONObject(qs, options: NSJSONWritingOptions.allZeros, error: nil) {
+                    let json = NSString(data: jsonData, encoding: NSUTF8StringEncoding) as! String
+                    webView.evaluateJavaScript("connection.qs = \(json)", completionHandler: nil)
+                }
+            }
+        }
+    }
+    
     init(url: String, connectionType: ConnectionType = .Hub, readyHandler: SignalR -> ()) {
         self.url = url
         self.readyHandler = readyHandler
