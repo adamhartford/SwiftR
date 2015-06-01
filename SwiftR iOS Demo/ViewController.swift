@@ -19,8 +19,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Make sure myserver is mapped to 127.0.0.1 in /etc/hosts
-        // Or change myserver to localhost below
+        // Make sure myserver.com is mapped to 127.0.0.1 in /etc/hosts
+        // Or change myserver.com to localhost below
         
         // Hubs...
         SwiftR.connect("http://myserver.com:8080") { [weak self] connection in
