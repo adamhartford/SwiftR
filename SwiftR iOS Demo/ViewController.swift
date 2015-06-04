@@ -42,7 +42,7 @@ class ViewController: UIViewController {
         }
         
         // Persistent connection...
-        persistentConnection = SwiftR.connect("http://myserver:8080/echo", connectionType: .Persistent) { connection in
+        persistentConnection = SwiftR.connect("http://myserver.com:8080/echo", connectionType: .Persistent) { connection in
             connection.received = { data in
                 println(data!)
             }

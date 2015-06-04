@@ -24,8 +24,9 @@ public final class SwiftR {
     }
 }
 
-public class SignalR: NSObject, UIWebViewDelegate {
-    var webView: UIWebView!
+public class SignalR: NSObject, SwiftRProtocol {
+    var webView: SwiftRWebView!
+
     var url: String
     var connectionType: ConnectionType
     
@@ -51,13 +52,19 @@ public class SignalR: NSObject, UIWebViewDelegate {
         self.connectionType = connectionType
         super.init()
         
-        webView = UIWebView()
+        webView = SwiftRWebView()
+#if os(iOS)
         webView.delegate = self
+#else
+        webView.policyDelegate = self
+#endif
         
 #if COCOAPODS
         let bundle = NSBundle(identifier: "org.cocoapods.SwiftR")!
-#else
+#elseif SWIFTR_FRAMEWORK
         let bundle = NSBundle(identifier: "com.adamhartford.SwiftR")!
+#else
+        let bundle = NSBundle.mainBundle()
 #endif
         let jqueryURL = bundle.URLForResource("jquery-2.1.3.min", withExtension: "js")!
         let signalRURL = bundle.URLForResource("jquery.signalR-2.2.0.min", withExtension: "js")!
@@ -71,7 +78,11 @@ public class SignalR: NSObject, UIWebViewDelegate {
             + "\(jqueryInclude)\(signalRInclude)\(jsInclude))"
             + "</body></html>"
         
+#if os(iOS)
         webView.loadHTMLString(html, baseURL: NSBundle.mainBundle().bundleURL)
+#else
+        webView.mainFrame.loadHTMLString(html, baseURL: NSBundle.mainBundle().bundleURL)
+#endif
     }
     
     public func createHubProxy(name: String) -> Hub {
@@ -92,9 +103,7 @@ public class SignalR: NSObject, UIWebViewDelegate {
         webView.stringByEvaluatingJavaScriptFromString("connection.send(\(json))")
     }
     
-    // MARK: - UIWebViewDelegate methods
-    
-    public func webView(webView: UIWebView, shouldStartLoadWithRequest request: NSURLRequest, navigationType: UIWebViewNavigationType) -> Bool {
+    func shouldHandleRequest(request: NSURLRequest) -> Bool {
         if request.URL!.absoluteString!.hasPrefix("swiftR://") {
             var s = (request.URL!.absoluteString! as NSString).substringFromIndex(9)
             s = webView.stringByEvaluatingJavaScriptFromString("decodeURIComponent('\(s)')")!
@@ -130,17 +139,24 @@ public class SignalR: NSObject, UIWebViewDelegate {
         return true
     }
     
-    public func webViewDidStartLoad(webView: UIWebView) {
-        //println("start")
-    }
+    // MARK: - Web delegate methods
     
-    public func webViewDidFinishLoad(webView: UIWebView) {
-        //println("end")
+#if os(iOS)
+    public func webView(webView: UIWebView, shouldStartLoadWithRequest request: NSURLRequest, navigationType: UIWebViewNavigationType) -> Bool {
+        return shouldHandleRequest(request)
     }
-    
-    public func webView(webView: UIWebView, didFailLoadWithError error: NSError) {
-        //println(error)
+#else
+    public override func webView(webView: WebView!,
+        decidePolicyForNavigationAction actionInformation: [NSObject : AnyObject]!,
+        request: NSURLRequest!,
+        frame: WebFrame!,
+        decisionListener listener: WebPolicyDecisionListener!) {
+            
+            if shouldHandleRequest(request) {
+                listener.use()
+            }
     }
+#endif
 }
 
 // MARK: - Hub
@@ -203,3 +219,11 @@ extension Hub: Hashable {
 public func==(lhs: Hub, rhs: Hub) -> Bool {
     return lhs.name == rhs.name
 }
+
+#if os(iOS)
+    typealias SwiftRWebView = UIWebView
+    public protocol SwiftRProtocol: UIWebViewDelegate {}
+#else
+    typealias SwiftRWebView = WebView
+    public protocol SwiftRProtocol {}
+#endif

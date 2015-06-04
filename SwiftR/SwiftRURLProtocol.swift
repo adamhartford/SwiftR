@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Adam Hartford. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
 class SwiftRURLProtocol: NSURLProtocol {
    

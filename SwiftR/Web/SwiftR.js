@@ -1,5 +1,5 @@
 $(function() {
-  postMessage({message: 'ready'});
+  postMessage({ message: 'ready' });
 });
 
 function initialize(url, isHub) {
@@ -8,19 +8,19 @@ function initialize(url, isHub) {
 
   if (!isHub) {
     connection.received(function(data) {
-      postMessage({data: data});
+      postMessage({ data: data });
     });
   }
 
   connection.disconnected(function () {
-    postMessage({message: 'disconnected'});
+    postMessage({ message: 'disconnected' });
     setTimeout(function() { initialize(url, isHub); }, 5000);
   });
 }
 
 function start() {
   connection.start().done(function() {
-    postMessage({message: 'connected'});
+    postMessage({ message: 'connected' });
   });
 }
 
@@ -46,7 +46,7 @@ function addHandler(hub, method, parameters) {
 }
 
 function postMessage(msg) {
-  var frame = $('<iframe>', { src: 'swiftR://' + JSON.stringify(msg) });
+  var frame = $('<iframe/>', { src: 'swiftR://' + JSON.stringify(msg) });
   $('body').append(frame);
   frame.remove();
 }
