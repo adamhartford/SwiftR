@@ -138,7 +138,7 @@ persistentConnection.send("Persistent Connection Test")
 Currently, the only supported way to send information to SignalR when connecting is via the query string (as opposed to customer headers or cookies). You should use HTTPS if you're sending sensitive information this way.
 
 ```swift
-SwiftR.connect("http://myserver.com:8080") { connection in
+SwiftR.connect("http://localhost:8080") { connection in
     connection.queryString = ["foo": "bar"]
     ...
 }
