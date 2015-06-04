@@ -70,9 +70,9 @@ public class SignalR: NSObject, SwiftRProtocol {
         let signalRURL = bundle.URLForResource("jquery.signalR-2.2.0.min", withExtension: "js")!
         let jsURL = bundle.URLForResource("SwiftR", withExtension: "js")!
         
-        let jqueryInclude = "<script src='jquery-2.1.3.min.js'></script>"
-        let signalRInclude = "<script src='jquery.signalR-2.2.0.min.js'></script>"
-        let jsInclude = "<script src='SwiftR.js'></script>"
+        let jqueryInclude = "<script src='\(jqueryURL.absoluteString!)'></script>"
+        let signalRInclude = "<script src='\(signalRURL.absoluteString!)'></script>"
+        let jsInclude = "<script src='\(jsURL.absoluteString!)'></script>"
         
         let html = "<!doctype html><html><head></head><body>"
             + "\(jqueryInclude)\(signalRInclude)\(jsInclude))"
