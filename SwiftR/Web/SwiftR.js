@@ -2,8 +2,8 @@ $(function() {
   postMessage({ message: 'ready' });
 });
 
-function initialize(url, isHub) {
-  connection = isHub ? $.hubConnection(url) : $.connection(url);
+function initialize(baseUrl, isHub) {
+  connection = isHub ? $.hubConnection(baseUrl) : $.connection(baseUrl);
   connection.logging = true;
 
   if (!isHub) {
@@ -14,7 +14,7 @@ function initialize(url, isHub) {
 
   connection.disconnected(function () {
     postMessage({ message: 'disconnected' });
-    setTimeout(function() { initialize(url, isHub); }, 5000);
+    setTimeout(function() { initialize(baseUrl, isHub); }, 5000);
   });
 }
 

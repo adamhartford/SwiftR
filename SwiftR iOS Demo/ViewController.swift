@@ -25,6 +25,8 @@ class ViewController: UIViewController {
         // Hubs...
         SwiftR.connect("http://myserver.com:8080") { [weak self] connection in
             connection.queryString = ["foo": "bar"]
+            connection.setValue("Value1", forHTTPHeaderField: "X-MyHeader1")
+            connection.setValue("Value2", forHTTPHeaderField: "X-MyHeader2")
             
             self?.simpleHub = connection.createHubProxy("simpleHub")
             self?.complexHub = connection.createHubProxy("complexHub")

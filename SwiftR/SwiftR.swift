@@ -9,16 +9,26 @@
 import Foundation
 import WebKit
 
+struct Constants {
+    static let kSwiftR = "_SwiftR"
+}
+
 public enum ConnectionType {
     case Hub
     case Persistent
 }
 
-public final class SwiftR {
+public final class SwiftR: NSObject {
     static var connections = [SignalR]()
     
+    static var once = dispatch_once_t()
+    
     public class func connect(url: String, connectionType: ConnectionType = .Hub, readyHandler: SignalR -> ()) -> SignalR? {
-        let signalR = SignalR(url: url, connectionType: connectionType, readyHandler: readyHandler)
+        dispatch_once(&once) {
+            NSURLProtocol.registerClass(SwiftRURLProtocol)
+        }
+        
+        let signalR = SignalR(baseUrl: url, connectionType: connectionType, readyHandler: readyHandler)
         connections.append(signalR)
         return signalR
     }
@@ -27,7 +37,7 @@ public final class SwiftR {
 public class SignalR: NSObject, SwiftRProtocol {
     var webView: SwiftRWebView!
 
-    var url: String
+    var baseUrl: String
     var connectionType: ConnectionType
     
     var readyHandler: SignalR -> ()
@@ -37,7 +47,8 @@ public class SignalR: NSObject, SwiftRProtocol {
     
     public var queryString: AnyObject? {
         didSet {
-            if let qs: AnyObject = queryString {
+            if var qs = queryString as? [String: AnyObject] {
+                qs[Constants.kSwiftR] = 1
                 if let jsonData = NSJSONSerialization.dataWithJSONObject(qs, options: NSJSONWritingOptions.allZeros, error: nil) {
                     let json = NSString(data: jsonData, encoding: NSUTF8StringEncoding) as! String
                     webView.stringByEvaluatingJavaScriptFromString("connection.qs = \(json)")
@@ -46,8 +57,10 @@ public class SignalR: NSObject, SwiftRProtocol {
         }
     }
     
-    init(url: String, connectionType: ConnectionType = .Hub, readyHandler: SignalR -> ()) {
-        self.url = url
+    var headers: [String: String] = [:]
+    
+    init(baseUrl: String, connectionType: ConnectionType = .Hub, readyHandler: SignalR -> ()) {
+        self.baseUrl = baseUrl
         self.readyHandler = readyHandler
         self.connectionType = connectionType
         super.init()
@@ -85,6 +98,10 @@ public class SignalR: NSObject, SwiftRProtocol {
 #endif
     }
     
+    public func setValue(value: String, forHTTPHeaderField: String) {
+        headers[forHTTPHeaderField] = value
+    }
+    
     public func createHubProxy(name: String) -> Hub {
         let hub = Hub(name: name, signalR: self)
         hubs[name.lowercaseString] = hub
@@ -114,7 +131,8 @@ public class SignalR: NSObject, SwiftRProtocol {
                 switch message {
                 case "ready":
                     let isHub = connectionType == .Hub ? "true" : "false"
-                    webView.stringByEvaluatingJavaScriptFromString("initialize('\(url)',\(isHub))")
+                    webView.stringByEvaluatingJavaScriptFromString("initialize('\(baseUrl)',\(isHub))")
+                    webView.stringByEvaluatingJavaScriptFromString("connection.qs = { \(Constants.kSwiftR): 1 }")
                     readyHandler(self)
                     webView.stringByEvaluatingJavaScriptFromString("start()")
                 case "connected":
@@ -134,6 +152,11 @@ public class SignalR: NSObject, SwiftRProtocol {
             }
             
             return false
+        } else if NSURLProtocol.propertyForKey(Constants.kSwiftR, inRequest: request) == nil {
+//            var mutableRequest = request.mutableCopy() as! NSMutableURLRequest
+//            NSURLProtocol.setProperty(self, forKey: Constants.kSwiftR, inRequest: mutableRequest)
+//            webView.loadRequest(mutableRequest)
+//            return false
         }
         
         return true
@@ -219,6 +242,63 @@ extension Hub: Hashable {
 public func==(lhs: Hub, rhs: Hub) -> Bool {
     return lhs.name == rhs.name
 }
+
+class SwiftRURLProtocol: NSURLProtocol, NSURLConnectionDataDelegate {
+    
+    var connection: NSURLConnection!
+    
+    override class func canonicalRequestForRequest(request: NSURLRequest) -> NSURLRequest {
+        var mutableRequest = request.mutableCopy() as! NSMutableURLRequest
+        NSURLProtocol.setProperty(Constants.kSwiftR, forKey: Constants.kSwiftR, inRequest: mutableRequest)
+        if let signalR = request.signalR {
+            for (h,v) in signalR.headers {
+                mutableRequest.setValue(v, forHTTPHeaderField: h)
+            }
+        }
+        return mutableRequest
+    }
+    
+    override class func canInitWithRequest(request: NSURLRequest) -> Bool {
+        if NSURLProtocol.propertyForKey(Constants.kSwiftR, inRequest: request) != nil {
+            return false
+        }
+        return request.signalR != nil
+    }
+    
+    override func startLoading() {
+        connection = NSURLConnection(request: request, delegate: self)
+        connection.start()
+    }
+    
+    override func stopLoading() {
+        connection.cancel()
+    }
+    
+    func connection(connection: NSURLConnection, didReceiveResponse response: NSURLResponse) {
+        client?.URLProtocol(self, didReceiveResponse: response, cacheStoragePolicy: .Allowed)
+    }
+    
+    func connection(connection: NSURLConnection, didReceiveData data: NSData) {
+        client?.URLProtocol(self, didLoadData: data)
+    }
+    
+    func connectionDidFinishLoading(connection: NSURLConnection) {
+        client?.URLProtocolDidFinishLoading(self)
+    }
+}
+
+extension NSURLRequest {
+    var signalR: SignalR? {
+        let url = URL!.absoluteString!
+        for connection in SwiftR.connections {
+            if url.hasPrefix(connection.baseUrl) && url.rangeOfString(Constants.kSwiftR) != nil {
+                return connection
+            }
+        }
+        return nil
+    }
+}
+
 
 #if os(iOS)
     typealias SwiftRWebView = UIWebView
