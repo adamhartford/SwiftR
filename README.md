@@ -33,7 +33,7 @@ public class SimpleHub : Hub
 Default parameter names in callback response:
 ```swift
 // Client
-SwiftR.connect("http://localhost:8080") { (connection) in
+SwiftR.connect("http://localhost:8080") { connection in
     let simpleHub = connection.createHubProxy("simpleHub")
   
     // Event handler
@@ -134,14 +134,40 @@ persistentConnection = SwiftR.connect("http://localhost:8080/echo", connectionTy
 persistentConnection.send("Persistent Connection Test")
 ```
 
-### Query String
-Currently, the only supported way to send information to SignalR when connecting is via the query string (as opposed to customer headers or cookies). You should use HTTPS if you're sending sensitive information this way.
+### Sending information to SignalR
+
+#### Query String
 
 ```swift
 SwiftR.connect("http://localhost:8080") { connection in
     connection.queryString = ["foo": "bar"]
     ...
 }
+```
+
+#### Custom Headers
+
+```swift
+SwiftR.connect("http://localhost:8080") { connection in
+    connection.setValue("Value1" forHTTPHeader:"X-MyHeader1")
+    connection.setValue("Value2" forHTTPHeader:"X-MyHeader2")
+    ...
+}
+```
+
+#### Cookies
+
+SwiftR will send any cookies in your app's NSHTTPCookieStorage to SignalR. You can also add cookies manually:
+
+```swift
+let cookieProperties = [
+    NSHTTPCookieName: "Foo",
+    NSHTTPCookieValue: "Bar",
+    NSHTTPCookieDomain: "myserver.com",
+    NSHTTPCookiePath: "/",
+]
+let cookie = NSHTTPCookie(properties: cookieProperties)
+NSHTTPCookieStorage.sharedHTTPCookieStorage().setCookie(cookie!)
 ```
 
 ### License
