@@ -152,11 +152,6 @@ public class SignalR: NSObject, SwiftRProtocol {
             }
             
             return false
-        } else if NSURLProtocol.propertyForKey(Constants.kSwiftR, inRequest: request) == nil {
-//            var mutableRequest = request.mutableCopy() as! NSMutableURLRequest
-//            NSURLProtocol.setProperty(self, forKey: Constants.kSwiftR, inRequest: mutableRequest)
-//            webView.loadRequest(mutableRequest)
-//            return false
         }
         
         return true
