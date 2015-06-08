@@ -239,7 +239,6 @@ public func==(lhs: Hub, rhs: Hub) -> Bool {
 }
 
 class SwiftRURLProtocol: NSURLProtocol, NSURLConnectionDataDelegate {
-    
     var connection: NSURLConnection!
     
     override class func canonicalRequestForRequest(request: NSURLRequest) -> NSURLRequest {
@@ -293,7 +292,6 @@ extension NSURLRequest {
         return nil
     }
 }
-
 
 #if os(iOS)
     typealias SwiftRWebView = UIWebView
