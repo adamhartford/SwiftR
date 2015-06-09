@@ -157,7 +157,7 @@ SwiftR.connect("http://localhost:8080") { connection in
 
 #### Cookies
 
-SwiftR will send any cookies in your app's NSHTTPCookieStorage to SignalR. You can also add cookies manually:
+SwiftR will send any cookies in your app's NSHTTPCookieStorage to SignalR. You can also set cookies manually:
 
 ```swift
 let cookieProperties = [
