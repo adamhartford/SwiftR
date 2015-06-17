@@ -51,7 +51,7 @@ public class SignalR: NSObject, SwiftRProtocol {
                 qs[Constants.kSwiftR] = 1
                 if let jsonData = NSJSONSerialization.dataWithJSONObject(qs, options: NSJSONWritingOptions.allZeros, error: nil) {
                     let json = NSString(data: jsonData, encoding: NSUTF8StringEncoding) as! String
-                    webView.stringByEvaluatingJavaScriptFromString("connection.qs = \(json)")
+                    webView.stringByEvaluatingJavaScriptFromString("swiftR.connection.qs = \(json)")
                 }
             }
         }
@@ -117,28 +117,44 @@ public class SignalR: NSObject, SwiftRProtocol {
                 json = NSString(data: jsonData, encoding: NSUTF8StringEncoding) as! String
             }
         }
-        webView.stringByEvaluatingJavaScriptFromString("connection.send(\(json))")
+        webView.stringByEvaluatingJavaScriptFromString("swiftR.connection.send(\(json))")
     }
     
     func shouldHandleRequest(request: NSURLRequest) -> Bool {
         if request.URL!.absoluteString!.hasPrefix("swiftR://") {
             var s = (request.URL!.absoluteString! as NSString).substringFromIndex(9)
-            s = webView.stringByEvaluatingJavaScriptFromString("decodeURIComponent('\(s)')")!
+            s = webView.stringByEvaluatingJavaScriptFromString("decodeURIComponent(\"\(s)\")")!
             let data = s.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             let json: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: .allZeros, error: nil)!
             
+            // TODO callbacks
             if let message = json["message"] as? String {
                 switch message {
                 case "ready":
                     let isHub = connectionType == .Hub ? "true" : "false"
                     webView.stringByEvaluatingJavaScriptFromString("initialize('\(baseUrl)',\(isHub))")
-                    webView.stringByEvaluatingJavaScriptFromString("connection.qs = { \(Constants.kSwiftR): 1 }")
+                    webView.stringByEvaluatingJavaScriptFromString("swiftR.connection.qs = { \(Constants.kSwiftR): 1 }")
                     readyHandler(self)
                     webView.stringByEvaluatingJavaScriptFromString("start()")
                 case "connected":
                     println(message)
                 case "disconnected":
                     println(message)
+                case "connectionSlow":
+                    println("connectionSlow")
+                case "connectionFailed":
+                    println("connectionFailed")
+                case "error":
+                    if let error: AnyObject = json["error"] {
+                        if let errorData = NSJSONSerialization.dataWithJSONObject(error, options: NSJSONWritingOptions.allZeros, error: nil) {
+                            let err = NSString(data: errorData, encoding: NSUTF8StringEncoding) as! String
+                            println("error: \(err)")
+                        } else {
+                            println("error")
+                        }
+                    } else {
+                        println("error")
+                    }
                 default:
                     break
                 }
@@ -192,7 +208,6 @@ public class Hub {
     }
     
     public func on(method: String, parameters: [String]? = nil, callback: AnyObject? -> ()) {
-        ensureHub()
         handlers[method] = callback
         
         var p = "null"
@@ -200,11 +215,10 @@ public class Hub {
             p = "['" + "','".join(params) + "']"
         }
         
-        signalR.webView.stringByEvaluatingJavaScriptFromString("addHandler(\(name), '\(method)', \(p))")
+        signalR.webView.stringByEvaluatingJavaScriptFromString("addHandler('\(name)', '\(method)', \(p))")
     }
     
     public func invoke(method: String, arguments: [AnyObject]?) {
-        ensureHub()
         var jsonArguments = [String]()
         
         if let args = arguments {
@@ -218,14 +232,11 @@ public class Hub {
         }
         
         let args = ",".join(jsonArguments)
-        let js = "\(name).invoke('\(method)', \(args))"
+        let js = "swiftR.hubs.\(name).invoke('\(method)', \(args))"
+        
         signalR.webView.stringByEvaluatingJavaScriptFromString(js)
     }
     
-    func ensureHub() {
-        let js = "if (typeof \(name) == 'undefined') \(name) = connection.createHubProxy('\(name)')"
-        signalR.webView.stringByEvaluatingJavaScriptFromString(js)
-    }
 }
 
 extension Hub: Hashable {

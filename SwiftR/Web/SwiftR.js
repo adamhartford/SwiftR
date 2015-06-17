@@ -1,9 +1,16 @@
+window.swiftR = {
+  connection: null,
+  hubs: {}
+};
+
 $(function() {
   postMessage({ message: 'ready' });
 });
 
 function initialize(baseUrl, isHub) {
-  connection = isHub ? $.hubConnection(baseUrl) : $.connection(baseUrl);
+  swiftR.connection = isHub ? $.hubConnection(baseUrl) : $.connection(baseUrl);
+  var connection = swiftR.connection;
+
   connection.logging = true;
 
   if (!isHub) {
@@ -14,17 +21,35 @@ function initialize(baseUrl, isHub) {
 
   connection.disconnected(function () {
     postMessage({ message: 'disconnected' });
-    setTimeout(function() { initialize(baseUrl, isHub); }, 5000);
+    setTimeout(function() { start(); }, 5000);
+  });
+
+  connection.connectionSlow(function() {
+    postMessage({ message: 'connectionSlow' });
+  });
+
+  connection.error(function(error) {
+    postMessage({ message: 'error', error: error });
   });
 }
 
 function start() {
-  connection.start().done(function() {
+  postMessage({message:'starting'});
+  swiftR.connection.start().done(function() {
     postMessage({ message: 'connected' });
+  }).fail(function() {
+    postMessage({ message: 'connectionFailed' });
   });
 }
 
-function addHandler(hub, method, parameters) {
+function addHandler(hubName, method, parameters) {
+  var hub = swiftR.hubs[hubName];
+
+  if (!hub) {
+    hub = swiftR.connection.createHubProxy(hubName);
+    swiftR.hubs[hubName] = hub;
+  }
+
   hub.on(method, function() {
     var args = arguments;
     var o = {};
