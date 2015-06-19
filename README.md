@@ -149,8 +149,8 @@ SwiftR.connect("http://localhost:8080") { connection in
 
 ```swift
 SwiftR.connect("http://localhost:8080") { connection in
-    connection.setValue("Value1" forHTTPHeader:"X-MyHeader1")
-    connection.setValue("Value2" forHTTPHeader:"X-MyHeader2")
+    connection.setValue("Value1" forHTTPHeaderField:"X-MyHeader1")
+    connection.setValue("Value2" forHTTPHeaderField:"X-MyHeader2")
     ...
 }
 ```
