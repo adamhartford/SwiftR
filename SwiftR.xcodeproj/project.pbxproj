@@ -22,7 +22,6 @@
 		5B2F47FD1ADFFE9200416A1A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2F47FC1ADFFE9200416A1A /* ViewController.swift */; };
 		5B2F47FF1ADFFE9200416A1A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B2F47FE1ADFFE9200416A1A /* Images.xcassets */; };
 		5B2F48021ADFFE9300416A1A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B2F48001ADFFE9300416A1A /* Main.storyboard */; };
-		5BA74B3F1B1F879B00EEA37F /* SwiftR.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B2F47951ADFFE6800416A1A /* SwiftR.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5BC817791AE7DACF00C284AD /* SwiftR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC817781AE7DACF00C284AD /* SwiftR.swift */; };
 		5BC8177A1AE7DACF00C284AD /* SwiftR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC817781AE7DACF00C284AD /* SwiftR.swift */; };
 		5BC8177E1AE7DAE100C284AD /* jquery-2.1.3.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 5BC8177B1AE7DAE100C284AD /* jquery-2.1.3.min.js */; };
@@ -31,6 +30,8 @@
 		5BC817811AE7DAE100C284AD /* jquery.signalR-2.2.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 5BC8177C1AE7DAE100C284AD /* jquery.signalR-2.2.0.min.js */; };
 		5BC817821AE7DAE100C284AD /* SwiftR.js in Resources */ = {isa = PBXBuildFile; fileRef = 5BC8177D1AE7DAE100C284AD /* SwiftR.js */; };
 		5BC817831AE7DAE100C284AD /* SwiftR.js in Resources */ = {isa = PBXBuildFile; fileRef = 5BC8177D1AE7DAE100C284AD /* SwiftR.js */; };
+		5BD4607D1B31E8850045256C /* SwiftR.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B2F47951ADFFE6800416A1A /* SwiftR.framework */; };
+		5BD4607E1B31E8850045256C /* SwiftR.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5B2F47951ADFFE6800416A1A /* SwiftR.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,13 +49,6 @@
 			remoteGlobalIDString = 5B2F47B21ADFFE7300416A1A;
 			remoteInfo = "SwiftR Mac";
 		};
-		5B7854341AE01D96006F57A8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B2F47631ADFFE4C00416A1A /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B2F47941ADFFE6800416A1A;
-			remoteInfo = "SwiftR iOS";
-		};
 		5B7854361AE01D9B006F57A8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B2F47631ADFFE4C00416A1A /* Project object */;
@@ -62,17 +56,25 @@
 			remoteGlobalIDString = 5B2F47B21ADFFE7300416A1A;
 			remoteInfo = "SwiftR Mac";
 		};
+		5BD4607F1B31E8850045256C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B2F47631ADFFE4C00416A1A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B2F47941ADFFE6800416A1A;
+			remoteInfo = "SwiftR iOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		5BA74B3C1B1F870900EEA37F /* CopyFiles */ = {
+		5BD460811B31E8850045256C /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5BA74B3F1B1F879B00EEA37F /* SwiftR.framework in CopyFiles */,
+				5BD4607E1B31E8850045256C /* SwiftR.framework in Embed Frameworks */,
 			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -144,6 +146,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BD4607D1B31E8850045256C /* SwiftR.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -431,12 +434,12 @@
 				5B2F47CC1ADFFE8400416A1A /* Sources */,
 				5B2F47CD1ADFFE8400416A1A /* Frameworks */,
 				5B2F47CE1ADFFE8400416A1A /* Resources */,
-				5BA74B3C1B1F870900EEA37F /* CopyFiles */,
+				5BD460811B31E8850045256C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				5B7854351AE01D96006F57A8 /* PBXTargetDependency */,
+				5BD460801B31E8850045256C /* PBXTargetDependency */,
 			);
 			name = "SwiftR iOS Demo";
 			productName = "SwiftR iOS Demo";
@@ -479,6 +482,7 @@
 					};
 					5B2F47B21ADFFE7300416A1A = {
 						CreatedOnToolsVersion = 6.3;
+						DevelopmentTeam = 9QAVRMMZHB;
 					};
 					5B2F47BC1ADFFE7300416A1A = {
 						CreatedOnToolsVersion = 6.3;
@@ -641,15 +645,15 @@
 			target = 5B2F47B21ADFFE7300416A1A /* SwiftR Mac */;
 			targetProxy = 5B2F47BF1ADFFE7300416A1A /* PBXContainerItemProxy */;
 		};
-		5B7854351AE01D96006F57A8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B2F47941ADFFE6800416A1A /* SwiftR iOS */;
-			targetProxy = 5B7854341AE01D96006F57A8 /* PBXContainerItemProxy */;
-		};
 		5B7854371AE01D9B006F57A8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5B2F47B21ADFFE7300416A1A /* SwiftR Mac */;
 			targetProxy = 5B7854361AE01D9B006F57A8 /* PBXContainerItemProxy */;
+		};
+		5BD460801B31E8850045256C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B2F47941ADFFE6800416A1A /* SwiftR iOS */;
+			targetProxy = 5BD4607F1B31E8850045256C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -846,6 +850,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -876,6 +881,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;

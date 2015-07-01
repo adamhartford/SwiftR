@@ -71,7 +71,15 @@ function addHandler(hubName, method, parameters) {
 }
 
 function postMessage(msg) {
-  var frame = $('<iframe/>', { src: 'swiftR://' + JSON.stringify(msg) });
+  var id = Math.random();
+  swiftR[id] = JSON.stringify(msg);
+  var frame = $('<iframe/>', { src: 'swiftr://' + id });
   $('body').append(frame);
   frame.remove();
+}
+
+function readMessage(id) {
+  var msg = swiftR[id];
+  delete swiftR[id];
+  return msg;
 }

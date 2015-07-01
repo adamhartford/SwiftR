@@ -121,10 +121,10 @@ public class SignalR: NSObject, SwiftRProtocol {
     }
     
     func shouldHandleRequest(request: NSURLRequest) -> Bool {
-        if request.URL!.absoluteString!.hasPrefix("swiftR://") {
-            var s = (request.URL!.absoluteString! as NSString).substringFromIndex(9)
-            s = webView.stringByEvaluatingJavaScriptFromString("decodeURIComponent(\"\(s)\")")!
-            let data = s.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        if request.URL!.absoluteString!.hasPrefix("swiftr://") {
+            let id = (request.URL!.absoluteString! as NSString).substringFromIndex(9)
+            let msg = webView.stringByEvaluatingJavaScriptFromString("readMessage(\(id))")!
+            let data = msg.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             let json: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: .allZeros, error: nil)!
             
             // TODO callbacks
