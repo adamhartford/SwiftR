@@ -19,14 +19,19 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Make sure myserver.com is mapped to 127.0.0.1 /etc/hosts
-        // Or change myserver.com to localhost below
+        // Make sure myserver.com is mapped to 127.0.0.1 in /etc/hosts
+        // Or change myserver.com to localhost or IP below
+        
+        // Default is false
+        SwiftR.useWKWebView = true
+        
+        // Default is .Auto
+        SwiftR.transport = .ServerSentEvents
         
         // Hubs...
         SwiftR.connect("http://myserver.com:8080") { [weak self] connection in
             connection.queryString = ["foo": "bar"]
-            connection.setValue("Value1", forHTTPHeaderField: "X-MyHeader1")
-            connection.setValue("Value2", forHTTPHeaderField: "X-MyHeader2")
+            connection.headers = ["X-MyHeader1": "Value1", "X-MyHeader2": "Value2"]
             
             self?.simpleHub = connection.createHubProxy("simpleHub")
             self?.complexHub = connection.createHubProxy("complexHub")

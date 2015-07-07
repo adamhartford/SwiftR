@@ -1,9 +1,18 @@
 window.swiftR = {
   connection: null,
-  hubs: {}
+  hubs: {},
+  transport: 'auto',
+  headers: {}
 };
 
 $(function() {
+  $.ajaxSetup({
+    beforeSend: function (jqxhr) {
+      for (var h in swiftR.headers) {
+        jqxhr.setRequestHeader(h, swiftR.headers[h]);
+      }
+    }
+  });
   postMessage({ message: 'ready' });
 });
 
@@ -34,8 +43,7 @@ function initialize(baseUrl, isHub) {
 }
 
 function start() {
-  postMessage({message:'starting'});
-  swiftR.connection.start().done(function() {
+  swiftR.connection.start({ transport: swiftR.transport }).done(function() {
     postMessage({ message: 'connected' });
   }).fail(function() {
     postMessage({ message: 'connectionFailed' });
@@ -73,9 +81,14 @@ function addHandler(hubName, method, parameters) {
 function postMessage(msg) {
   var id = Math.random();
   swiftR[id] = JSON.stringify(msg);
-  var frame = $('<iframe/>', { src: 'swiftr://' + id });
-  $('body').append(frame);
-  frame.remove();
+
+  if (window.webkit) {
+    webkit.messageHandlers.interOp.postMessage(id.toString());
+  } else {
+    var frame = $('<iframe/>', { src: 'swiftr://' + id });
+    $('body').append(frame);
+    frame.remove();
+  }
 }
 
 function readMessage(id) {

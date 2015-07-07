@@ -9,13 +9,32 @@
 import Foundation
 import WebKit
 
-struct Constants {
-    static let kSwiftR = "_SwiftR"
-}
-
 public enum ConnectionType {
     case Hub
     case Persistent
+}
+
+public enum Transport {
+    case Auto
+    case WebSockets
+    case ForeverFrame
+    case ServerSentEvents
+    case LongPolling
+    
+    var stringValue: String {
+        switch self {
+        case .WebSockets:
+            return "webSockets"
+        case .ForeverFrame:
+            return "foreverFrame"
+        case .ServerSentEvents:
+            return "serverSentEvents"
+        case .LongPolling:
+            return "longPolling"
+        default:
+            return "auto"
+        }
+    }
 }
 
 public final class SwiftR: NSObject {
@@ -23,19 +42,21 @@ public final class SwiftR: NSObject {
     
     static var once = dispatch_once_t()
     
+    public static var useWKWebView = false
+    public static var initURL: String?
+    
+    public static var transport: Transport = .Auto
+    
     public class func connect(url: String, connectionType: ConnectionType = .Hub, readyHandler: SignalR -> ()) -> SignalR? {
-        dispatch_once(&once) {
-            NSURLProtocol.registerClass(SwiftRURLProtocol)
-        }
-        
         let signalR = SignalR(baseUrl: url, connectionType: connectionType, readyHandler: readyHandler)
         connections.append(signalR)
         return signalR
     }
 }
 
-public class SignalR: NSObject, SwiftRProtocol {
+public class SignalR: NSObject, SwiftRWebDelegate {
     var webView: SwiftRWebView!
+    public var wkWebView: WKWebView!
 
     var baseUrl: String
     var connectionType: ConnectionType
@@ -47,17 +68,29 @@ public class SignalR: NSObject, SwiftRProtocol {
     
     public var queryString: AnyObject? {
         didSet {
-            if var qs = queryString as? [String: AnyObject] {
-                qs[Constants.kSwiftR] = 1
+            if let qs: AnyObject = queryString {
                 if let jsonData = NSJSONSerialization.dataWithJSONObject(qs, options: NSJSONWritingOptions.allZeros, error: nil) {
                     let json = NSString(data: jsonData, encoding: NSUTF8StringEncoding) as! String
-                    webView.stringByEvaluatingJavaScriptFromString("swiftR.connection.qs = \(json)")
+                    runJavaScript("swiftR.connection.qs = \(json)")
                 }
+            } else {
+                runJavaScript("swiftR.connection.qs = {}")
             }
         }
     }
     
-    var headers: [String: String] = [:]
+    public var headers: [String: String]? {
+        didSet {
+            if let h = headers {
+                if let jsonData = NSJSONSerialization.dataWithJSONObject(h, options: NSJSONWritingOptions.allZeros, error: nil) {
+                    let json = NSString(data: jsonData, encoding: NSUTF8StringEncoding) as! String
+                    runJavaScript("swiftR.headers = \(json)")
+                }
+            } else {
+                runJavaScript("swiftR.headers = {}")
+            }
+        }
+    }
     
     init(baseUrl: String, connectionType: ConnectionType = .Hub, readyHandler: SignalR -> ()) {
         self.baseUrl = baseUrl
@@ -65,41 +98,87 @@ public class SignalR: NSObject, SwiftRProtocol {
         self.connectionType = connectionType
         super.init()
         
-        webView = SwiftRWebView()
-#if os(iOS)
-        webView.delegate = self
-#else
-        webView.policyDelegate = self
-#endif
+        #if COCOAPODS
+            let bundle = NSBundle(identifier: "org.cocoapods.SwiftR")!
+        #elseif SWIFTR_FRAMEWORK
+            let bundle = NSBundle(identifier: "com.adamhartford.SwiftR")!
+        #else
+            let bundle = NSBundle.mainBundle()
+        #endif
         
-#if COCOAPODS
-        let bundle = NSBundle(identifier: "org.cocoapods.SwiftR")!
-#elseif SWIFTR_FRAMEWORK
-        let bundle = NSBundle(identifier: "com.adamhartford.SwiftR")!
-#else
-        let bundle = NSBundle.mainBundle()
-#endif
         let jqueryURL = bundle.URLForResource("jquery-2.1.3.min", withExtension: "js")!
         let signalRURL = bundle.URLForResource("jquery.signalR-2.2.0.min", withExtension: "js")!
         let jsURL = bundle.URLForResource("SwiftR", withExtension: "js")!
         
-        let jqueryInclude = "<script src='\(jqueryURL.absoluteString!)'></script>"
-        let signalRInclude = "<script src='\(signalRURL.absoluteString!)'></script>"
-        let jsInclude = "<script src='\(jsURL.absoluteString!)'></script>"
-        
-        let html = "<!doctype html><html><head></head><body>"
-            + "\(jqueryInclude)\(signalRInclude)\(jsInclude))"
-            + "</body></html>"
-        
-#if os(iOS)
-        webView.loadHTMLString(html, baseURL: bundle.bundleURL)
-#else
-        webView.mainFrame.loadHTMLString(html, baseURL: bundle.bundleURL)
-#endif
+        if SwiftR.useWKWebView {
+            // Loading file:// URLs from NSTemporaryDirectory() works on iOS, not OS X.
+            // Workaround on OS X is to include the script directly.
+            #if os(iOS)
+                let temp = NSURL(fileURLWithPath: NSTemporaryDirectory())!
+                let jqueryTempURL = temp.URLByAppendingPathComponent("jquery-2.1.3.min.js")
+                let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalR-2.2.0.min")
+                let jsTempURL = temp.URLByAppendingPathComponent("SwiftR.js")
+                
+                let fileManager = NSFileManager.defaultManager()
+                fileManager.removeItemAtURL(jqueryTempURL, error: nil)
+                fileManager.removeItemAtURL(signalRTempURL, error: nil)
+                fileManager.removeItemAtURL(jsTempURL, error: nil)
+                
+                fileManager.copyItemAtURL(jqueryURL, toURL: jqueryTempURL, error: nil)
+                fileManager.copyItemAtURL(signalRURL, toURL: signalRTempURL, error: nil)
+                fileManager.copyItemAtURL(jsURL, toURL: jsTempURL, error: nil)
+                
+                let jqueryInclude = "<script src='\(jqueryTempURL.absoluteString!)'></script>"
+                let signalRInclude = "<script src='\(signalRTempURL.absoluteString!)'></script>"
+                let jsInclude = "<script src='\(jsTempURL.absoluteString!)'></script>"
+            #else
+                let jqueryString = NSString(contentsOfURL: jqueryURL, encoding: NSUTF8StringEncoding, error: nil)!
+                let signalRString = NSString(contentsOfURL: signalRURL, encoding: NSUTF8StringEncoding, error: nil)!
+                let jsString = NSString(contentsOfURL: jsURL, encoding: NSUTF8StringEncoding, error: nil)!
+                
+                let jqueryInclude = "<script>\(jqueryString)</script>"
+                let signalRInclude = "<script>\(signalRString)</script>"
+                let jsInclude = "<script>\(jsString)</script>"
+            #endif
+            
+            let config = WKWebViewConfiguration()
+            config.userContentController.addScriptMessageHandler(self, name: "interOp")
+            #if !os(iOS)
+                config.preferences.setValue(true, forKey: "developerExtrasEnabled")
+            #endif
+            wkWebView = WKWebView(frame: CGRectZero, configuration: config)
+            wkWebView.navigationDelegate = self
+            
+            let html = "<!doctype html><html><head></head><body><h1>SwiftR</h1>"
+                + "\(jqueryInclude)\(signalRInclude)\(jsInclude))"
+                + "</body></html>"
+            
+            wkWebView.loadHTMLString(html, baseURL: bundle.bundleURL)
+            return
+        } else {
+            let jqueryInclude = "<script src='\(jqueryURL.absoluteString!)'></script>"
+            let signalRInclude = "<script src='\(signalRURL.absoluteString!)'></script>"
+            let jsInclude = "<script src='\(jsURL.absoluteString!)'></script>"
+            
+            let html = "<!doctype html><html><head></head><body>"
+                + "\(jqueryInclude)\(signalRInclude)\(jsInclude))"
+                + "</body></html>"
+            
+            webView = SwiftRWebView()
+            #if os(iOS)
+                webView.delegate = self
+                webView.loadHTMLString(html, baseURL: bundle.bundleURL)
+            #else
+                webView.policyDelegate = self
+                webView.mainFrame.loadHTMLString(html, baseURL: bundle.bundleURL)
+            #endif
+        }
     }
     
-    public func setValue(value: String, forHTTPHeaderField: String) {
-        headers[forHTTPHeaderField] = value
+    deinit {
+        if let view = wkWebView {
+            view.removeFromSuperview()
+        }
     }
     
     public func createHubProxy(name: String) -> Hub {
@@ -117,7 +196,7 @@ public class SignalR: NSObject, SwiftRProtocol {
                 json = NSString(data: jsonData, encoding: NSUTF8StringEncoding) as! String
             }
         }
-        webView.stringByEvaluatingJavaScriptFromString("swiftR.connection.send(\(json))")
+        runJavaScript("swiftR.connection.send(\(json))")
     }
     
     func shouldHandleRequest(request: NSURLRequest) -> Bool {
@@ -127,50 +206,86 @@ public class SignalR: NSObject, SwiftRProtocol {
             let data = msg.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             let json: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: .allZeros, error: nil)!
             
-            // TODO callbacks
-            if let message = json["message"] as? String {
-                switch message {
-                case "ready":
-                    let isHub = connectionType == .Hub ? "true" : "false"
-                    webView.stringByEvaluatingJavaScriptFromString("initialize('\(baseUrl)',\(isHub))")
-                    webView.stringByEvaluatingJavaScriptFromString("swiftR.connection.qs = { \(Constants.kSwiftR): 1 }")
-                    readyHandler(self)
-                    webView.stringByEvaluatingJavaScriptFromString("start()")
-                case "connected":
-                    println(message)
-                case "disconnected":
-                    println(message)
-                case "connectionSlow":
-                    println("connectionSlow")
-                case "connectionFailed":
-                    println("connectionFailed")
-                case "error":
-                    if let error: AnyObject = json["error"] {
-                        if let errorData = NSJSONSerialization.dataWithJSONObject(error, options: NSJSONWritingOptions.allZeros, error: nil) {
-                            let err = NSString(data: errorData, encoding: NSUTF8StringEncoding) as! String
-                            println("error: \(err)")
-                        } else {
-                            println("error")
-                        }
-                    } else {
-                        println("error")
-                    }
-                default:
-                    break
-                }
-            } else if let data: AnyObject = json["data"] {
-                received?(data)
-            } else if let hubName = json["hub"] as? String {
-                let method = json["method"] as! String
-                let arguments: AnyObject? = json["arguments"]
-                let hub = hubs[hubName]
-                hub?.handlers[method]?(arguments)
-            }
-            
+            processMessage(json)
+
             return false
         }
         
         return true
+    }
+    
+    func processMessage(json: AnyObject) {
+        // TODO callbacks
+        if let message = json["message"] as? String {
+            switch message {
+            case "ready":
+                let isHub = connectionType == .Hub ? "true" : "false"
+                runJavaScript("swiftR.transport = '\(SwiftR.transport.stringValue)'")
+                runJavaScript("initialize('\(baseUrl)', \(isHub))")
+                readyHandler(self)
+                runJavaScript("start()")
+            case "connected":
+                println(message)
+            case "disconnected":
+                println(message)
+            case "connectionSlow":
+                println(message)
+            case "connectionFailed":
+                println(message)
+            case "error":
+                if let error: AnyObject = json["error"] {
+                    if let errorData = NSJSONSerialization.dataWithJSONObject(error, options: NSJSONWritingOptions.allZeros, error: nil) {
+                        let err = NSString(data: errorData, encoding: NSUTF8StringEncoding) as! String
+                        println("error: \(err)")
+                    } else {
+                        println("error")
+                    }
+                } else {
+                    println("error")
+                }
+            default:
+                break
+            }
+        } else if let data: AnyObject = json["data"] {
+            received?(data)
+        } else if let hubName = json["hub"] as? String {
+            let method = json["method"] as! String
+            let arguments: AnyObject? = json["arguments"]
+            let hub = hubs[hubName]
+            hub?.handlers[method]?(arguments)
+        }
+    }
+    
+    func runJavaScript(script: String, callback: (AnyObject! -> ())? = nil) {
+        if SwiftR.useWKWebView {
+            wkWebView.evaluateJavaScript(script, completionHandler: { (result, _)  in
+                callback?(result)
+            })
+        } else {
+            let result = webView.stringByEvaluatingJavaScriptFromString(script)
+            callback?(result)
+        }
+    }
+    
+    // MARK: - WKNavigationDelegate
+    
+    // http://stackoverflow.com/questions/26514090/wkwebview-does-not-run-javascriptxml-http-request-with-out-adding-a-parent-vie#answer-26575892
+    // Adding as subview earlier did not have any effect.
+    public func webView(webView: WKWebView, didFinishNavigation navigation: WKNavigation!) {
+        #if os(iOS)
+            UIApplication.sharedApplication().keyWindow?.addSubview(wkWebView)
+        #endif
+    }
+    
+    // MARK: - WKScriptMessageHandler
+    
+    public func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
+        let id = message.body as! String
+        wkWebView.evaluateJavaScript("readMessage(\(id))", completionHandler: { [weak self] (msg, _) in
+            let data = msg.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+            let json: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: .allZeros, error: nil)!
+            self?.processMessage(json)
+        })
     }
     
     // MARK: - Web delegate methods
@@ -215,7 +330,7 @@ public class Hub {
             p = "['" + "','".join(params) + "']"
         }
         
-        signalR.webView.stringByEvaluatingJavaScriptFromString("addHandler('\(name)', '\(method)', \(p))")
+        signalR.runJavaScript("addHandler('\(name)', '\(method)', \(p))")
     }
     
     public func invoke(method: String, arguments: [AnyObject]?) {
@@ -234,80 +349,15 @@ public class Hub {
         let args = ",".join(jsonArguments)
         let js = "swiftR.hubs.\(name).invoke('\(method)', \(args))"
         
-        signalR.webView.stringByEvaluatingJavaScriptFromString(js)
+        signalR.runJavaScript(js)
     }
     
-}
-
-extension Hub: Hashable {
-    public var hashValue: Int {
-        return name.hashValue
-    }
-}
-
-public func==(lhs: Hub, rhs: Hub) -> Bool {
-    return lhs.name == rhs.name
-}
-
-class SwiftRURLProtocol: NSURLProtocol, NSURLConnectionDataDelegate {
-    var connection: NSURLConnection!
-    
-    override class func canonicalRequestForRequest(request: NSURLRequest) -> NSURLRequest {
-        var mutableRequest = request.mutableCopy() as! NSMutableURLRequest
-        NSURLProtocol.setProperty(Constants.kSwiftR, forKey: Constants.kSwiftR, inRequest: mutableRequest)
-        if let signalR = request.signalR {
-            for (h,v) in signalR.headers {
-                mutableRequest.setValue(v, forHTTPHeaderField: h)
-            }
-        }
-        return mutableRequest
-    }
-    
-    override class func canInitWithRequest(request: NSURLRequest) -> Bool {
-        if NSURLProtocol.propertyForKey(Constants.kSwiftR, inRequest: request) != nil {
-            return false
-        }
-        return request.signalR != nil
-    }
-    
-    override func startLoading() {
-        connection = NSURLConnection(request: request, delegate: self)
-        connection.start()
-    }
-    
-    override func stopLoading() {
-        connection.cancel()
-    }
-    
-    func connection(connection: NSURLConnection, didReceiveResponse response: NSURLResponse) {
-        client?.URLProtocol(self, didReceiveResponse: response, cacheStoragePolicy: .Allowed)
-    }
-    
-    func connection(connection: NSURLConnection, didReceiveData data: NSData) {
-        client?.URLProtocol(self, didLoadData: data)
-    }
-    
-    func connectionDidFinishLoading(connection: NSURLConnection) {
-        client?.URLProtocolDidFinishLoading(self)
-    }
-}
-
-extension NSURLRequest {
-    var signalR: SignalR? {
-        let url = URL!.absoluteString!
-        for connection in SwiftR.connections {
-            if url.hasPrefix(connection.baseUrl) && url.rangeOfString(Constants.kSwiftR) != nil {
-                return connection
-            }
-        }
-        return nil
-    }
 }
 
 #if os(iOS)
     typealias SwiftRWebView = UIWebView
-    public protocol SwiftRProtocol: UIWebViewDelegate {}
+    public protocol SwiftRWebDelegate: WKNavigationDelegate, WKScriptMessageHandler, UIWebViewDelegate {}
 #else
     typealias SwiftRWebView = WebView
-    public protocol SwiftRProtocol {}
+    public protocol SwiftRWebDelegate: WKNavigationDelegate, WKScriptMessageHandler {}
 #endif

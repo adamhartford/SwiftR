@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>644D2CDA-7C74-4117-A362-E2748A2B54D1</string>
 	<key>IDESourceControlProjectName</key>
-	<string>SwiftR</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>A3D7FC44B613A4732A3AC725784DB1F679CE16F4</key>
 		<string>https://github.com/adamhartford/SwiftR.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>SwiftR.xcodeproj</string>
+	<string>SwiftR.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>A3D7FC44B613A4732A3AC725784DB1F679CE16F4</key>
