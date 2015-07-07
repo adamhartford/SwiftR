@@ -56,7 +56,7 @@ public final class SwiftR: NSObject {
 
 public class SignalR: NSObject, SwiftRWebDelegate {
     var webView: SwiftRWebView!
-    public var wkWebView: WKWebView!
+    var wkWebView: WKWebView!
 
     var baseUrl: String
     var connectionType: ConnectionType
@@ -312,9 +312,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
 
 public class Hub {
     let name: String
-    
     var handlers: [String: AnyObject? -> ()] = [:]
-    
     let signalR: SignalR!
     
     init(name: String, signalR: SignalR) {
