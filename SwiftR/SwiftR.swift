@@ -39,11 +39,10 @@ public enum Transport {
 
 public final class SwiftR: NSObject {
     static var connections = [SignalR]()
-    
+
     static var once = dispatch_once_t()
     
     public static var useWKWebView = false
-    public static var initURL: String?
     
     public static var transport: Transport = .Auto
     
