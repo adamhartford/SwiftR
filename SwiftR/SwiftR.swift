@@ -39,8 +39,6 @@ public enum Transport {
 
 public final class SwiftR: NSObject {
     static var connections = [SignalR]()
-
-    static var once = dispatch_once_t()
     
     public static var useWKWebView = false
     
@@ -143,7 +141,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
             let config = WKWebViewConfiguration()
             config.userContentController.addScriptMessageHandler(self, name: "interOp")
             #if !os(iOS)
-                config.preferences.setValue(true, forKey: "developerExtrasEnabled")
+                //config.preferences.setValue(true, forKey: "developerExtrasEnabled")
             #endif
             wkWebView = WKWebView(frame: CGRectZero, configuration: config)
             wkWebView.navigationDelegate = self
