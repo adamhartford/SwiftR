@@ -1,6 +1,18 @@
 # SwiftR
 A Swift client for SignalR. Supports hubs and persistent connections.
 
+### How does it work?
+
+It's a wrapper around the SignalR JavaScript client running in a hidden web view. As such, it's subject to the same limitations of that client -- namely, no support for custom headers when using WebSockets. This is because the browser's WebSocket client does not support custom headers.
+
+### UIWebView or WKWebView?
+
+Either, your choice. Note that since WKWebView runs in a separate process, it does not have access to cookies in NSHTTPCookieStorage. If you need cookies, use UIWebView. SwiftR uses UIWebView by default, but you can choose WKWebView instead:
+
+```swift
+SwiftR.useWKWebView = true
+```
+
 ### Installation
 
 [CocoaPods](https://cocoapods.org):
@@ -134,6 +146,18 @@ persistentConnection = SwiftR.connect("http://localhost:8080/echo", connectionTy
 persistentConnection.send("Persistent Connection Test")
 ```
 
+### Transport Method
+
+By default, SignalR will choose the best transport available to you. You can also specify the transport method:
+
+```swift
+SwiftR.transport = .Auto // This is the default
+SwiftR.transport = .WebSockets
+SwiftR.transport = .ServerSentEvents
+SwiftR.transport = .ForeverFrame
+SwiftR.transport = .LongPolling
+```
+
 ### Sending information to SignalR
 
 #### Query String
@@ -145,17 +169,16 @@ SwiftR.connect("http://localhost:8080") { connection in
 }
 ```
 
-#### Custom Headers
+#### Custom Headers (Non-WebSocket Only)
 
 ```swift
 SwiftR.connect("http://localhost:8080") { connection in
-    connection.setValue("Value1" forHTTPHeaderField:"X-MyHeader1")
-    connection.setValue("Value2" forHTTPHeaderField:"X-MyHeader2")
+    connection.headers = ["X-MyHeader1": "Value1", "X-MyHeader2", "Value2"]
     ...
 }
 ```
 
-#### Cookies
+#### Cookies (UIWebView Only)
 
 SwiftR will send any cookies in your app's NSHTTPCookieStorage to SignalR. You can also set cookies manually:
 
