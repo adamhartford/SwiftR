@@ -146,7 +146,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
             wkWebView = WKWebView(frame: CGRectZero, configuration: config)
             wkWebView.navigationDelegate = self
             
-            let html = "<!doctype html><html><head></head><body><h1>SwiftR</h1>"
+            let html = "<!doctype html><html><head></head><body>"
                 + "\(jqueryInclude)\(signalRInclude)\(jsInclude))"
                 + "</body></html>"
             
