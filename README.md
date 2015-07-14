@@ -158,6 +158,24 @@ SwiftR.transport = .ForeverFrame
 SwiftR.transport = .LongPolling
 ```
 
+### Connection Lifetime Events
+
+SwiftR exposes the following SignalR events:
+
+```swift
+SwiftR.connect("http://localhost:8080") { connection in
+    ...
+    
+    connection.connected = { println("connected") }
+    connection.connectionSlow = { println("connectionSlow") }
+    connection.reconnecting = { println("reconnecting") }
+    connection.reconnected = { println("reconnected") }
+    connection.disconnected = { println("disconnected") }
+}
+```
+
+Upon a `disconnected` event, SwiftR automatically tries to reconnect after five seconds.
+
 ### Sending information to SignalR
 
 #### Query String
@@ -191,6 +209,24 @@ let cookieProperties = [
 ]
 let cookie = NSHTTPCookie(properties: cookieProperties)
 NSHTTPCookieStorage.sharedHTTPCookieStorage().setCookie(cookie!)
+```
+
+### Error Handling
+
+```swift
+SwiftR.connect("http://localhost:8080") { connection in
+    ...
+
+    connection.error = { error in println(error!) }
+    
+    /*
+    {
+        readyState = 0;
+        status = 0;
+        statusText = error;
+    }
+    */
+}
 ```
 
 ### License
