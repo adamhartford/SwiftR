@@ -22,21 +22,27 @@ function initialize(baseUrl, isHub) {
 
   connection.logging = true;
 
-  if (!isHub) {
-    connection.received(function(data) {
-      postMessage({ data: data });
-    });
-  }
-
-  connection.disconnected(function () {
-    postMessage({ message: 'disconnected' });
-    setTimeout(function() { start(); }, 5000);
+  connection.received(function(data) {
+    postMessage({ data: data });
   });
 
   connection.connectionSlow(function() {
     postMessage({ message: 'connectionSlow' });
   });
 
+  connection.reconnecting(function() {
+    postMessage({ message: 'reconnecting' });
+  });
+
+  connection.reconnected(function() {
+    postMessage({ message: 'reconnected' });
+  });
+
+  connection.disconnected(function () {
+    postMessage({ message: 'disconnected' });
+    setTimeout(function() { start(); }, 5000);
+  });
+  
   connection.error(function(error) {
     postMessage({ message: 'error', error: error });
   });

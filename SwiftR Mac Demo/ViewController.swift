@@ -46,6 +46,14 @@ class ViewController: NSViewController {
                 let m: AnyObject = response!["0"] as AnyObject!
                 println(m)
             }
+            
+            // SignalR events
+            connection.connected = { println("connected") }
+            connection.connectionSlow = { println("connectionSlow") }
+            connection.reconnecting = { println("reconnecting") }
+            connection.reconnected = { println("reconnected") }
+            connection.disconnected = { println("disconnected") }
+            connection.error = { error in println(error!) }
         }
         
         // Persistent connection...

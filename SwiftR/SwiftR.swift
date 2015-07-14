@@ -62,6 +62,13 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     var hubs = [String: Hub]()
     
     public var received: (AnyObject? -> ())?
+    public var connected: (() -> ())?
+    public var disconnected: (() -> ())?
+    public var connectionSlow: (() -> ())?
+    public var connectionFailed: (() -> ())?
+    public var reconnecting: (() -> ())?
+    public var reconnected: (() -> ())?
+    public var error: (AnyObject? -> ())?
     
     public var queryString: AnyObject? {
         didSet {
@@ -212,7 +219,6 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     }
     
     func processMessage(json: AnyObject) {
-        // TODO callbacks
         if let message = json["message"] as? String {
             switch message {
             case "ready":
@@ -222,23 +228,22 @@ public class SignalR: NSObject, SwiftRWebDelegate {
                 readyHandler(self)
                 runJavaScript("start()")
             case "connected":
-                println(message)
+                connected?()
             case "disconnected":
-                println(message)
+                disconnected?()
             case "connectionSlow":
-                println(message)
+                connectionSlow?()
             case "connectionFailed":
-                println(message)
+                connectionFailed?()
+            case "reconnecting":
+                reconnecting?()
+            case "reconnected":
+                reconnected?()
             case "error":
-                if let error: AnyObject = json["error"] {
-                    if let errorData = NSJSONSerialization.dataWithJSONObject(error, options: NSJSONWritingOptions.allZeros, error: nil) {
-                        let err = NSString(data: errorData, encoding: NSUTF8StringEncoding) as! String
-                        println("error: \(err)")
-                    } else {
-                        println("error")
-                    }
+                if let err: AnyObject = json["error"] {
+                    error?(err["context"])
                 } else {
-                    println("error")
+                    error?(nil)
                 }
             default:
                 break
@@ -267,7 +272,6 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     // MARK: - WKNavigationDelegate
     
     // http://stackoverflow.com/questions/26514090/wkwebview-does-not-run-javascriptxml-http-request-with-out-adding-a-parent-vie#answer-26575892
-    // Adding as subview earlier did not have any effect.
     public func webView(webView: WKWebView, didFinishNavigation navigation: WKNavigation!) {
         #if os(iOS)
             UIApplication.sharedApplication().keyWindow?.addSubview(wkWebView)
