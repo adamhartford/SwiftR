@@ -61,6 +61,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     var readyHandler: SignalR -> ()
     var hubs = [String: Hub]()
     
+    public var connectionID: String?
     public var received: (AnyObject? -> ())?
     public var connected: (() -> ())?
     public var disconnected: (() -> ())?
@@ -186,7 +187,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     }
     
     public func createHubProxy(name: String) -> Hub {
-        let hub = Hub(name: name, signalR: self)
+        let hub = Hub(name: name, connection: self)
         hubs[name.lowercaseString] = hub
         return hub
     }
@@ -228,6 +229,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
                 readyHandler(self)
                 runJavaScript("start()")
             case "connected":
+                self.connectionID = json["connectionId"] as? String
                 connected?()
             case "disconnected":
                 disconnected?()
@@ -314,11 +316,12 @@ public class SignalR: NSObject, SwiftRWebDelegate {
 public class Hub {
     let name: String
     var handlers: [String: AnyObject? -> ()] = [:]
-    let signalR: SignalR!
     
-    init(name: String, signalR: SignalR) {
+    public let connection: SignalR!
+    
+    init(name: String, connection: SignalR) {
         self.name = name
-        self.signalR = signalR
+        self.connection = connection
     }
     
     public func on(method: String, parameters: [String]? = nil, callback: AnyObject? -> ()) {
@@ -329,7 +332,7 @@ public class Hub {
             p = "['" + "','".join(params) + "']"
         }
         
-        signalR.runJavaScript("addHandler('\(name)', '\(method)', \(p))")
+        connection.runJavaScript("addHandler('\(name)', '\(method)', \(p))")
     }
     
     public func invoke(method: String, arguments: [AnyObject]?) {
@@ -348,7 +351,7 @@ public class Hub {
         let args = ",".join(jsonArguments)
         let js = "swiftR.hubs.\(name).invoke('\(method)', \(args))"
         
-        signalR.runJavaScript(js)
+        connection.runJavaScript(js)
     }
     
 }
