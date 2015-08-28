@@ -48,7 +48,7 @@ class ViewController: UIViewController {
             }
             
             // SignalR events
-            connection.connected = { println("connected") }
+            connection.connected = { println("connection ID: \(connection.connectionID!)") }
             connection.connectionSlow = { println("connectionSlow") }
             connection.reconnecting = { println("reconnecting") }
             connection.reconnected = { println("reconnected") }
@@ -72,6 +72,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func sendSimpleMessage(sender: AnyObject?) {
+        // println("\(simpleHub.connection.connectionID!)")
         simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
     }
     

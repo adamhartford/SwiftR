@@ -42,7 +42,7 @@ function initialize(baseUrl, isHub) {
     postMessage({ message: 'disconnected' });
     setTimeout(function() { start(); }, 5000);
   });
-  
+
   connection.error(function(error) {
     postMessage({ message: 'error', error: error });
   });
@@ -50,7 +50,7 @@ function initialize(baseUrl, isHub) {
 
 function start() {
   swiftR.connection.start({ transport: swiftR.transport }).done(function() {
-    postMessage({ message: 'connected' });
+    postMessage({ message: 'connected', connectionId: swiftR.connection.id });
   }).fail(function() {
     postMessage({ message: 'connectionFailed' });
   });
