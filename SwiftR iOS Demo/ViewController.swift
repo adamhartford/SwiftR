@@ -39,21 +39,21 @@ class ViewController: UIViewController {
             self?.simpleHub.on("notifySimple", parameters: ["message", "details"]) { args in
                 let message = args!["message"] as! String
                 let detail = args!["details"] as! String
-                println("Message: \(message)\nDetail: \(detail)\n")
+                print("Message: \(message)\nDetail: \(detail)\n")
             }
             
             self?.complexHub.on("notifyComplex") { args in
                 let m: AnyObject = args!["0"] as AnyObject!
-                println(m)
+                print(m)
             }
             
             // SignalR events
-            connection.connected = { println("connection ID: \(connection.connectionID!)") }
-            connection.connectionSlow = { println("connectionSlow") }
-            connection.reconnecting = { println("reconnecting") }
-            connection.reconnected = { println("reconnected") }
-            connection.disconnected = { println("disconnected") }
-            connection.error = { error in println(error!) }
+            connection.connected = { print("connection ID: \(connection.connectionID!)") }
+            connection.connectionSlow = { print("connectionSlow") }
+            connection.reconnecting = { print("reconnecting") }
+            connection.reconnected = { print("reconnected") }
+            connection.disconnected = { print("disconnected") }
+            connection.error = { error in print(error!) }
         }
         
         // Persistent connection...

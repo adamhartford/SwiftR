@@ -74,7 +74,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     public var queryString: AnyObject? {
         didSet {
             if let qs: AnyObject = queryString {
-                if let jsonData = NSJSONSerialization.dataWithJSONObject(qs, options: NSJSONWritingOptions.allZeros, error: nil) {
+                if let jsonData = try? NSJSONSerialization.dataWithJSONObject(qs, options: NSJSONWritingOptions()) {
                     let json = NSString(data: jsonData, encoding: NSUTF8StringEncoding) as! String
                     runJavaScript("swiftR.connection.qs = \(json)")
                 }
@@ -87,7 +87,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     public var headers: [String: String]? {
         didSet {
             if let h = headers {
-                if let jsonData = NSJSONSerialization.dataWithJSONObject(h, options: NSJSONWritingOptions.allZeros, error: nil) {
+                if let jsonData = try? NSJSONSerialization.dataWithJSONObject(h, options: NSJSONWritingOptions()) {
                     let json = NSString(data: jsonData, encoding: NSUTF8StringEncoding) as! String
                     runJavaScript("swiftR.headers = \(json)")
                 }
@@ -119,23 +119,24 @@ public class SignalR: NSObject, SwiftRWebDelegate {
             // Loading file:// URLs from NSTemporaryDirectory() works on iOS, not OS X.
             // Workaround on OS X is to include the script directly.
             #if os(iOS)
-                let temp = NSURL(fileURLWithPath: NSTemporaryDirectory())!
+                let temp = NSURL(fileURLWithPath: NSTemporaryDirectory())
                 let jqueryTempURL = temp.URLByAppendingPathComponent("jquery-2.1.3.min.js")
                 let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalR-2.2.0.min")
                 let jsTempURL = temp.URLByAppendingPathComponent("SwiftR.js")
                 
                 let fileManager = NSFileManager.defaultManager()
-                fileManager.removeItemAtURL(jqueryTempURL, error: nil)
-                fileManager.removeItemAtURL(signalRTempURL, error: nil)
-                fileManager.removeItemAtURL(jsTempURL, error: nil)
+
+                try! fileManager.removeItemAtURL(jqueryTempURL)
+                try! fileManager.removeItemAtURL(signalRTempURL)
+                try! fileManager.removeItemAtURL(jsTempURL)
                 
-                fileManager.copyItemAtURL(jqueryURL, toURL: jqueryTempURL, error: nil)
-                fileManager.copyItemAtURL(signalRURL, toURL: signalRTempURL, error: nil)
-                fileManager.copyItemAtURL(jsURL, toURL: jsTempURL, error: nil)
+                try! fileManager.copyItemAtURL(jqueryURL, toURL: jqueryTempURL)
+                try! fileManager.copyItemAtURL(signalRURL, toURL: signalRTempURL)
+                try! fileManager.copyItemAtURL(jsURL, toURL: jsTempURL)
                 
-                let jqueryInclude = "<script src='\(jqueryTempURL.absoluteString!)'></script>"
-                let signalRInclude = "<script src='\(signalRTempURL.absoluteString!)'></script>"
-                let jsInclude = "<script src='\(jsTempURL.absoluteString!)'></script>"
+                let jqueryInclude = "<script src='\(jqueryTempURL.absoluteString)'></script>"
+                let signalRInclude = "<script src='\(signalRTempURL.absoluteString)'></script>"
+                let jsInclude = "<script src='\(jsTempURL.absoluteString)'></script>"
             #else
                 let jqueryString = NSString(contentsOfURL: jqueryURL, encoding: NSUTF8StringEncoding, error: nil)!
                 let signalRString = NSString(contentsOfURL: signalRURL, encoding: NSUTF8StringEncoding, error: nil)!
@@ -161,9 +162,9 @@ public class SignalR: NSObject, SwiftRWebDelegate {
             wkWebView.loadHTMLString(html, baseURL: bundle.bundleURL)
             return
         } else {
-            let jqueryInclude = "<script src='\(jqueryURL.absoluteString!)'></script>"
-            let signalRInclude = "<script src='\(signalRURL.absoluteString!)'></script>"
-            let jsInclude = "<script src='\(jsURL.absoluteString!)'></script>"
+            let jqueryInclude = "<script src='\(jqueryURL.absoluteString)'></script>"
+            let signalRInclude = "<script src='\(signalRURL.absoluteString)'></script>"
+            let jsInclude = "<script src='\(jsURL.absoluteString)'></script>"
             
             let html = "<!doctype html><html><head></head><body>"
                 + "\(jqueryInclude)\(signalRInclude)\(jsInclude))"
@@ -197,7 +198,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
         if let d: AnyObject = data {
             if d is String {
                 json = "'\(d)'"
-            } else if let jsonData = NSJSONSerialization.dataWithJSONObject(d, options: NSJSONWritingOptions.allZeros, error: nil) {
+            } else if let jsonData = try? NSJSONSerialization.dataWithJSONObject(d, options: NSJSONWritingOptions()) {
                 json = NSString(data: jsonData, encoding: NSUTF8StringEncoding) as! String
             }
         }
@@ -205,11 +206,11 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     }
     
     func shouldHandleRequest(request: NSURLRequest) -> Bool {
-        if request.URL!.absoluteString!.hasPrefix("swiftr://") {
-            let id = (request.URL!.absoluteString! as NSString).substringFromIndex(9)
+        if request.URL!.absoluteString.hasPrefix("swiftr://") {
+            let id = (request.URL!.absoluteString as NSString).substringFromIndex(9)
             let msg = webView.stringByEvaluatingJavaScriptFromString("readMessage(\(id))")!
             let data = msg.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
-            let json: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: .allZeros, error: nil)!
+            let json: AnyObject = try! NSJSONSerialization.JSONObjectWithData(data, options: [])
             
             processMessage(json)
 
@@ -285,8 +286,8 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     public func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
         let id = message.body as! String
         wkWebView.evaluateJavaScript("readMessage(\(id))", completionHandler: { [weak self] (msg, _) in
-            let data = msg.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
-            let json: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: .allZeros, error: nil)!
+            let data = msg!.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+            let json: AnyObject = try! NSJSONSerialization.JSONObjectWithData(data, options: [])
             self?.processMessage(json)
         })
     }
@@ -329,7 +330,7 @@ public class Hub {
         
         var p = "null"
         if let params = parameters {
-            p = "['" + "','".join(params) + "']"
+            p = "['" + params.joinWithSeparator("','") + "']"
         }
         
         connection.runJavaScript("addHandler('\(name)', '\(method)', \(p))")
@@ -342,13 +343,13 @@ public class Hub {
             for arg in args {
                 if arg is String {
                     jsonArguments.append("'\(arg)'")
-                } else if let data = NSJSONSerialization.dataWithJSONObject(arg, options: NSJSONWritingOptions.allZeros, error: nil) {
+                } else if let data = try? NSJSONSerialization.dataWithJSONObject(arg, options: NSJSONWritingOptions()) {
                     jsonArguments.append(NSString(data: data, encoding: NSUTF8StringEncoding) as! String)
                 }
             }
         }
         
-        let args = ",".join(jsonArguments)
+        let args = jsonArguments.joinWithSeparator(",")
         let js = "swiftR.hubs.\(name).invoke('\(method)', \(args))"
         
         connection.runJavaScript(js)
