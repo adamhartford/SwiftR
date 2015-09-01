@@ -197,6 +197,8 @@ public class SignalR: NSObject, SwiftRWebDelegate {
         if let d: AnyObject = data {
             if d is String {
                 json = "'\(d)'"
+            } else if d is NSNumber {
+                json = "\(d)"
             } else if let jsonData = NSJSONSerialization.dataWithJSONObject(d, options: NSJSONWritingOptions.allZeros, error: nil) {
                 json = NSString(data: jsonData, encoding: NSUTF8StringEncoding) as! String
             }
