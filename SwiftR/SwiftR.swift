@@ -342,6 +342,8 @@ public class Hub {
             for arg in args {
                 if arg is String {
                     jsonArguments.append("'\(arg)'")
+                } else if arg is NSNumber {
+                    jsonArguments.append("\(arg)")
                 } else if let data = NSJSONSerialization.dataWithJSONObject(arg, options: NSJSONWritingOptions.allZeros, error: nil) {
                     jsonArguments.append(NSString(data: data, encoding: NSUTF8StringEncoding) as! String)
                 }
