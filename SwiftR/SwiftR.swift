@@ -130,7 +130,6 @@ public class SignalR: NSObject, SwiftRWebDelegate {
         self.baseUrl = baseUrl
         self.readyHandler = readyHandler
         self.connectionType = connectionType
-        self.state = .Disconnected
         super.init()
         
         #if COCOAPODS
@@ -289,8 +288,8 @@ public class SignalR: NSObject, SwiftRWebDelegate {
             case "connectionFailed":
                 connectionFailed?()
             case "reconnecting":
-                reconnecting?()
                 state = .Connecting
+                reconnecting?()
             case "reconnected":
                 state = .Connected
                 reconnected?()
