@@ -33,22 +33,16 @@ class ViewController: UIViewController {
         
         // Hubs...
         hubConnection = SwiftR.connect("http://myserver.com:8080") { [weak self] connection in
-            // Default is true. Will auto-reconnect after 5 seconds.
-            // Setting to false to demonstrate manual start/stop.
-            // Set to true and tap 'Stop' to see auto-reconnect in action.
-            connection.autoReconnect = false
-            
             connection.queryString = ["foo": "bar"]
             connection.headers = ["X-MyHeader1": "Value1", "X-MyHeader2": "Value2"]
             
             self?.simpleHub = connection.createHubProxy("simpleHub")
             self?.complexHub = connection.createHubProxy("complexHub")
             
-            self?.simpleHub.on("notifySimple", parameters: ["message", "details", "num"]) { args in
+            self?.simpleHub.on("notifySimple", parameters: ["message", "details"]) { args in
                 let message = args!["message"] as! String
                 let detail = args!["details"] as! String
-                let num = args!["num"] as! Int
-                println("Message: \(message)\nDetail: \(detail)\nNum: \(num)")
+                println("Message: \(message)\nDetail: \(detail)")
             }
             
             self?.complexHub.on("notifyComplex") { args in
@@ -86,17 +80,9 @@ class ViewController: UIViewController {
                 println("Disconnected.")
                 self?.startButton.enabled = true
                 self?.startButton.setTitle("Start", forState: .Normal)
-                
-                // If you set autoReconnect = false, you should consider
-                // trying to reconnect manually here after a few seconds, e.g.:
-                
-                /*let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(5 * Double(NSEC_PER_SEC)))
-                dispatch_after(delayTime, dispatch_get_main_queue()) {
-                   connection.start()
-                }*/
             }
             
-            connection.connectionSlow = { println("connectionSlow") }
+            connection.connectionSlow = { println("Connection slow...") }
             connection.error = { error in println(error!) }
         }
         
@@ -116,7 +102,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func sendSimpleMessage(sender: AnyObject?) {
-        simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message", 5])
+        simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
     }
     
     @IBAction func sendComplexMessage(sender: AnyObject?) {

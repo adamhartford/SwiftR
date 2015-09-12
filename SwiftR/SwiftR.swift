@@ -87,7 +87,6 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     var readyHandler: SignalR -> ()
     var hubs = [String: Hub]()
 
-    public var autoReconnect = true
     public var state: State = .Disconnected
     public var connectionID: String?
     public var received: (AnyObject? -> ())?
@@ -276,12 +275,6 @@ public class SignalR: NSObject, SwiftRWebDelegate {
                 connected?()
             case "disconnected":
                 state = .Disconnected
-                if autoReconnect {
-                    let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(5 * Double(NSEC_PER_SEC)))
-                    dispatch_after(delayTime, dispatch_get_main_queue()) { [weak self] in
-                        self?.start()
-                    }
-                }
                 disconnected?()
             case "connectionSlow":
                 connectionSlow?()

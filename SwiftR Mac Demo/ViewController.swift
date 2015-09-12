@@ -36,11 +36,10 @@ class ViewController: NSViewController {
             self?.simpleHub = connection.createHubProxy("simpleHub")
             self?.complexHub = connection.createHubProxy("complexHub")
             
-            self?.simpleHub.on("notifySimple", parameters: ["message", "details", "num"]) { args in
+            self?.simpleHub.on("notifySimple", parameters: ["message", "details"]) { args in
                 let message = args!["message"] as! String
                 let detail = args!["details"] as! String
-                let num = args!["num"] as! Int
-                println("Message: \(message)\nDetail: \(detail)\nNum: \(num)")
+                println("Message: \(message)\nDetail: \(detail)")
             }
             
             self?.complexHub.on("notifyComplex") { (response) in
@@ -49,11 +48,12 @@ class ViewController: NSViewController {
             }
             
             // SignalR events
-            connection.connected = { println("connection ID: \(connection.connectionID!)") }
-            connection.connectionSlow = { println("connectionSlow") }
-            connection.reconnecting = { println("reconnecting") }
-            connection.reconnected = { println("reconnected") }
-            connection.disconnected = { println("disconnected") }
+            connection.starting = { println("Starting...") }
+            connection.connected = { println("Connected. Connection ID: \(connection.connectionID!)") }
+            connection.connectionSlow = { println("Connection Slow...") }
+            connection.reconnecting = { println("Reconnecting...") }
+            connection.reconnected = { println("Reconnected.") }
+            connection.disconnected = { println("Disconnected.") }
             connection.error = { error in println(error!) }
         }
         
@@ -74,8 +74,8 @@ class ViewController: NSViewController {
     }
     
     @IBAction func sendSimpleMessage(sender: AnyObject?) {
-        // println("\(simpleHub.connection.connectionID!)")
-        simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message", 5])
+        
+        simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
     }
     
     @IBAction func sendComplexMessage(sender: AnyObject?) {
