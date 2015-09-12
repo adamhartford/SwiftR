@@ -36,10 +36,11 @@ class ViewController: NSViewController {
             self?.simpleHub = connection.createHubProxy("simpleHub")
             self?.complexHub = connection.createHubProxy("complexHub")
             
-            self?.simpleHub.on("notifySimple", parameters: ["message", "details"]) { response in
-                let message = response!["message"] as! String
-                let detail = response!["details"] as! String
-                println("Message: \(message)\nDetail: \(detail)\n")
+            self?.simpleHub.on("notifySimple", parameters: ["message", "details", "num"]) { args in
+                let message = args!["message"] as! String
+                let detail = args!["details"] as! String
+                let num = args!["num"] as! Int
+                println("Message: \(message)\nDetail: \(detail)\nNum: \(num)")
             }
             
             self?.complexHub.on("notifyComplex") { (response) in
@@ -74,7 +75,7 @@ class ViewController: NSViewController {
     
     @IBAction func sendSimpleMessage(sender: AnyObject?) {
         // println("\(simpleHub.connection.connectionID!)")
-        simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
+        simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message", 5])
     }
     
     @IBAction func sendComplexMessage(sender: AnyObject?) {

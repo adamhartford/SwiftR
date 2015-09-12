@@ -11,9 +11,12 @@ import SwiftR
 
 class ViewController: UIViewController {
     
+    @IBOutlet weak var startButton: UIButton!
+    
     var simpleHub: Hub!
     var complexHub: Hub!
     
+    var hubConnection: SignalR!
     var persistentConnection: SignalR!
     
     override func viewDidLoad() {
@@ -29,17 +32,23 @@ class ViewController: UIViewController {
         SwiftR.transport = .ServerSentEvents
         
         // Hubs...
-        SwiftR.connect("http://myserver.com:8080") { [weak self] connection in
+        hubConnection = SwiftR.connect("http://myserver.com:8080") { [weak self] connection in
+            // Default is true. Will auto-reconnect after 5 seconds.
+            // Setting to false to demonstrate manual start/stop.
+            // Set to true and tap 'Stop' to see auto-reconnect in action.
+            connection.autoReconnect = false
+            
             connection.queryString = ["foo": "bar"]
             connection.headers = ["X-MyHeader1": "Value1", "X-MyHeader2": "Value2"]
             
             self?.simpleHub = connection.createHubProxy("simpleHub")
             self?.complexHub = connection.createHubProxy("complexHub")
             
-            self?.simpleHub.on("notifySimple", parameters: ["message", "details"]) { args in
+            self?.simpleHub.on("notifySimple", parameters: ["message", "details", "num"]) { args in
                 let message = args!["message"] as! String
                 let detail = args!["details"] as! String
-                println("Message: \(message)\nDetail: \(detail)\n")
+                let num = args!["num"] as! Int
+                println("Message: \(message)\nDetail: \(detail)\nNum: \(num)")
             }
             
             self?.complexHub.on("notifyComplex") { args in
@@ -48,11 +57,46 @@ class ViewController: UIViewController {
             }
             
             // SignalR events
-            connection.connected = { println("connection ID: \(connection.connectionID!)") }
+            
+            connection.starting = { [weak self] in
+                println("Starting...")
+                self?.startButton.enabled = false
+                self?.startButton.setTitle("Connecting...", forState: .Normal)
+            }
+            
+            connection.reconnecting = { [weak self] in
+                println("Reconnecting...")
+                self?.startButton.enabled = false
+                self?.startButton.setTitle("Reconnecting...", forState: .Normal)
+            }
+            
+            connection.connected = { [weak self] in
+                println("Connected. Connection ID: \(connection.connectionID!)")
+                self?.startButton.enabled = true
+                self?.startButton.setTitle("Stop", forState: .Normal)
+            }
+            
+            connection.reconnected = { [weak self] in
+                println("Reconnected. Connection ID: \(connection.connectionID!)")
+                self?.startButton.enabled = true
+                self?.startButton.setTitle("Stop", forState: .Normal)
+            }
+            
+            connection.disconnected = { [weak self] in
+                println("Disconnected.")
+                self?.startButton.enabled = true
+                self?.startButton.setTitle("Start", forState: .Normal)
+                
+                // If you set autoReconnect = false, you should consider
+                // trying to reconnect manually here after a few seconds, e.g.:
+                
+                /*let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(5 * Double(NSEC_PER_SEC)))
+                dispatch_after(delayTime, dispatch_get_main_queue()) {
+                   connection.start()
+                }*/
+            }
+            
             connection.connectionSlow = { println("connectionSlow") }
-            connection.reconnecting = { println("reconnecting") }
-            connection.reconnected = { println("reconnected") }
-            connection.disconnected = { println("disconnected") }
             connection.error = { error in println(error!) }
         }
         
@@ -72,8 +116,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func sendSimpleMessage(sender: AnyObject?) {
-        // println("\(simpleHub.connection.connectionID!)")
-        simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
+        simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message", 5])
     }
     
     @IBAction func sendComplexMessage(sender: AnyObject?) {
@@ -89,6 +132,17 @@ class ViewController: UIViewController {
     
     @IBAction func sendData(sender: AnyObject?) {
         persistentConnection.send("Persistent Connection Test")
+    }
+    
+    @IBAction func startStop(sender: AnyObject?) {
+        switch hubConnection.state {
+        case .Disconnected:
+            hubConnection.start() // or... SwiftR.startAll()
+        case .Connected:
+            hubConnection.stop() // or... SwiftR.stopAll()
+        default:
+            break
+        }
     }
 }
 
