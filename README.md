@@ -188,9 +188,6 @@ Use the `stop()` and `start()` methods to manage connections manually.
 var myConnection: SignalR!
 
 myConnection = SwiftR.connect("http://localhost:8080") { connection in
-    // To avoid automatically reconnecting after stop().
-    connection.autoReconnect = false
-    
     let simpleHub = connection.createHubProxy("simpleHub")
   
     // Event handler
@@ -209,10 +206,6 @@ if myConnection.state == .Connected {
     myConnection.start()
 }
 ```
-
-### Auto-Reconnect
-
-By default, SwiftR will try to reconnect every every 5 seconds once disconnected. If you want to start/stop the connection yourself, set `myConnection.autoReconnect = false`. If you do this, you should use the `disconnected` event to attempt a `start()` every few seconds to handle server interruptions.
 
 ### Connection State
 
