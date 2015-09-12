@@ -205,6 +205,11 @@ if myConnection.state == .Connected {
 } else if myConnection.state == .Disonnected {
     myConnection.start()
 }
+
+... // Or...
+
+SwiftR.stopAll()
+SwiftR.startAll()
 ```
 
 ### Connection State
