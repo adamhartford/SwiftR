@@ -26,6 +26,10 @@ function initialize(baseUrl, isHub) {
     postMessage({ data: data });
   });
 
+  connection.starting(function() {
+    postMessage({ message: 'starting' });
+  });
+
   connection.connectionSlow(function() {
     postMessage({ message: 'connectionSlow' });
   });
@@ -40,7 +44,6 @@ function initialize(baseUrl, isHub) {
 
   connection.disconnected(function () {
     postMessage({ message: 'disconnected' });
-    setTimeout(function() { start(); }, 5000);
   });
 
   connection.error(function(error) {

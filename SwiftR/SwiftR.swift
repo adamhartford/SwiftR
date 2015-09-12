@@ -14,6 +14,12 @@ public enum ConnectionType {
     case Persistent
 }
 
+public enum State {
+    case Connecting
+    case Connected
+    case Disconnected
+}
+
 public enum Transport {
     case Auto
     case WebSockets
@@ -49,6 +55,26 @@ public final class SwiftR: NSObject {
         connections.append(signalR)
         return signalR
     }
+    
+    public class func startAll() {
+        checkConnections()
+        for connection in connections {
+            connection.stop()
+        }
+    }
+    
+    public class func stopAll() {
+        checkConnections()
+        for connection in connections {
+            connection.stop()
+        }
+    }
+    
+    class func checkConnections() {
+        if connections.count == 0 {
+            print("No active SignalR connections. Use SwiftR.connect(...) first.")
+        }
+    }
 }
 
 public class SignalR: NSObject, SwiftRWebDelegate {
@@ -60,9 +86,11 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     
     var readyHandler: SignalR -> ()
     var hubs = [String: Hub]()
-    
+
+    public var state: State = .Disconnected
     public var connectionID: String?
     public var received: (AnyObject? -> ())?
+    public var starting: (() -> ())?
     public var connected: (() -> ())?
     public var disconnected: (() -> ())?
     public var connectionSlow: (() -> ())?
@@ -206,6 +234,14 @@ public class SignalR: NSObject, SwiftRWebDelegate {
         }
         runJavaScript("swiftR.connection.send(\(json))")
     }
+
+    public func start() {
+        runJavaScript("start()")
+    }
+    
+    public func stop() {
+        runJavaScript("swiftR.connection.stop()")
+    }
     
     func shouldHandleRequest(request: NSURLRequest) -> Bool {
         if request.URL!.absoluteString.hasPrefix("swiftr://") {
@@ -231,18 +267,25 @@ public class SignalR: NSObject, SwiftRWebDelegate {
                 runJavaScript("initialize('\(baseUrl)', \(isHub))")
                 readyHandler(self)
                 runJavaScript("start()")
+            case "starting":
+                state = .Connecting
+                starting?()
             case "connected":
-                self.connectionID = json["connectionId"] as? String
+                state = .Connected
+                connectionID = json["connectionId"] as? String
                 connected?()
             case "disconnected":
+                state = .Disconnected
                 disconnected?()
             case "connectionSlow":
                 connectionSlow?()
             case "connectionFailed":
                 connectionFailed?()
             case "reconnecting":
+                state = .Connecting
                 reconnecting?()
             case "reconnected":
+                state = .Connected
                 reconnected?()
             case "error":
                 if let err: AnyObject = json["error"] {

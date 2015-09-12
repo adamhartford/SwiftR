@@ -11,9 +11,12 @@ import SwiftR
 
 class ViewController: UIViewController {
     
+    @IBOutlet weak var startButton: UIButton!
+    
     var simpleHub: Hub!
     var complexHub: Hub!
     
+    var hubConnection: SignalR!
     var persistentConnection: SignalR!
     
     override func viewDidLoad() {
@@ -29,7 +32,7 @@ class ViewController: UIViewController {
         SwiftR.transport = .ServerSentEvents
         
         // Hubs...
-        SwiftR.connect("http://myserver.com:8080") { [weak self] connection in
+        hubConnection = SwiftR.connect("http://myserver.com:8080") { [weak self] connection in
             connection.queryString = ["foo": "bar"]
             connection.headers = ["X-MyHeader1": "Value1", "X-MyHeader2": "Value2"]
             
@@ -48,11 +51,38 @@ class ViewController: UIViewController {
             }
             
             // SignalR events
-            connection.connected = { print("connection ID: \(connection.connectionID!)") }
-            connection.connectionSlow = { print("connectionSlow") }
-            connection.reconnecting = { print("reconnecting") }
-            connection.reconnected = { print("reconnected") }
-            connection.disconnected = { print("disconnected") }
+            
+            connection.starting = { [weak self] in
+                print("Starting...")
+                self?.startButton.enabled = false
+                self?.startButton.setTitle("Connecting...", forState: .Normal)
+            }
+            
+            connection.reconnecting = { [weak self] in
+                print("Reconnecting...")
+                self?.startButton.enabled = false
+                self?.startButton.setTitle("Reconnecting...", forState: .Normal)
+            }
+            
+            connection.connected = { [weak self] in
+                print("Connected. Connection ID: \(connection.connectionID!)")
+                self?.startButton.enabled = true
+                self?.startButton.setTitle("Stop", forState: .Normal)
+            }
+            
+            connection.reconnected = { [weak self] in
+                print("Reconnected. Connection ID: \(connection.connectionID!)")
+                self?.startButton.enabled = true
+                self?.startButton.setTitle("Stop", forState: .Normal)
+            }
+            
+            connection.disconnected = { [weak self] in
+                print("Disconnected.")
+                self?.startButton.enabled = true
+                self?.startButton.setTitle("Start", forState: .Normal)
+            }
+            
+            connection.connectionSlow = { print("Connection slow...") }
             connection.error = { error in print(error!) }
         }
         
@@ -72,7 +102,6 @@ class ViewController: UIViewController {
     }
     
     @IBAction func sendSimpleMessage(sender: AnyObject?) {
-        // println("\(simpleHub.connection.connectionID!)")
         simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
     }
     
@@ -89,6 +118,17 @@ class ViewController: UIViewController {
     
     @IBAction func sendData(sender: AnyObject?) {
         persistentConnection.send("Persistent Connection Test")
+    }
+    
+    @IBAction func startStop(sender: AnyObject?) {
+        switch hubConnection.state {
+        case .Disconnected:
+            hubConnection.start() // or... SwiftR.startAll()
+        case .Connected:
+            hubConnection.stop() // or... SwiftR.stopAll()
+        default:
+            break
+        }
     }
 }
 
