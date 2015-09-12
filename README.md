@@ -31,6 +31,7 @@ github 'adamhartford/SwiftR'
 See https://github.com/adamhartford/SignalRDemo for a sample self-hosted SignalR application.
 
 ### Simple Example (Hub)
+
 ```c#
 // Server
 public class SimpleHub : Hub 
@@ -57,6 +58,7 @@ SwiftR.connect("http://localhost:8080") { connection in
 }
 ```
 Custom parameter names in callback response:
+
 ```swift
 // Client
 SwiftR.connect("http://localhost:8080") { connection in
@@ -72,6 +74,7 @@ SwiftR.connect("http://localhost:8080") { connection in
 ```
 
 ### Complex Example (Hub)
+
 ```c#
 // Server
 public class ComplexMessage
@@ -166,6 +169,7 @@ SwiftR exposes the following SignalR events:
 SwiftR.connect("http://localhost:8080") { connection in
     ...
     
+    connection.started = { println("started") }
     connection.connected = { println("connected") }
     connection.connectionSlow = { println("connectionSlow") }
     connection.reconnecting = { println("reconnecting") }
@@ -175,6 +179,57 @@ SwiftR.connect("http://localhost:8080") { connection in
 ```
 
 Upon a `disconnected` event, SwiftR automatically tries to reconnect after five seconds.
+
+### Stop/Start Connection
+
+Use the `stop()` and `start()` methods to manage connections manually.
+
+```swift
+var myConnection: SignalR!
+
+myConnection = SwiftR.connect("http://localhost:8080") { connection in
+    // To avoid automatically reconnecting after stop().
+    connection.autoReconnect = false
+    
+    let simpleHub = connection.createHubProxy("simpleHub")
+  
+    // Event handler
+    simpleHub.on("notifySimple") { args in
+        let message = args!["0"] as! String
+        let detail = args!["1"] as! String
+        println("Message: \(message)\nDetail: \(detail)")
+    }
+}
+
+...
+
+if myConnection.state == .Connected {
+    myConnection.stop()
+} else if myConnection.state == .Disonnected {
+    myConnection.start()
+}
+```
+
+### Auto-Reconnect
+
+By default, SwiftR will try to reconnect every every 5 seconds once disconnected. If you want to start/stop the connection yourself, set `myConnection.autoReconnect = false`. If you do this, you should use the `disconnected` event to attempt a `start()` every few seconds to handle server interruptions.
+
+### Connection State
+
+```swift
+public enum State {
+    case Connecting
+    case Connected
+    case Disconnected
+}
+
+...
+
+if myConnection.state == .Connecting {
+    // Do something...
+}
+
+```
 
 ### Sending information to SignalR
 
