@@ -170,7 +170,7 @@ SwiftR.connect("http://localhost:8080") { connection in
     ...
     
     connection.started = { println("started") }
-    connection.connected = { println("connected") }
+    connection.connected = { println("connected: \(connection.connectionID)") }
     connection.connectionSlow = { println("connectionSlow") }
     connection.reconnecting = { println("reconnecting") }
     connection.reconnected = { println("reconnected") }
