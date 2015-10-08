@@ -61,7 +61,7 @@ SwiftR.connect("http://localhost:8080") { connection in
     simpleHub.on("notifySimple") { args in
         let message = args!["0"] as! String
         let detail = args!["1"] as! String
-        println("Message: \(message)\nDetail: \(detail)")
+        print("Message: \(message)\nDetail: \(detail)")
     }
 }
 ```
@@ -76,7 +76,7 @@ SwiftR.connect("http://localhost:8080") { connection in
     simpleHub.on("notifySimple", parameters: ["message", "detail"]) { args in
         let message = args!["message"] as! String
         let detail = args!["detail"] as! String
-        println("Message: \(message)\nDetail: \(detail)")
+        print("Message: \(message)\nDetail: \(detail)")
     }
 }
 ```
@@ -112,7 +112,7 @@ SwiftR.connect("http://localhost:8080") { [weak self] connection in
     
     self?.complexHub.on("notifyComplex") { args in
         let m: AnyObject = args!["0"] as AnyObject!
-        println(m)
+        print(m)
     }
 }
 
@@ -149,7 +149,7 @@ var persistentConnection: SignalR!
 
 persistentConnection = SwiftR.connect("http://localhost:8080/echo", connectionType: .Persistent) { connection in
     connection.received = { data in
-        println(data!)
+        print(data!)
     }
 }
 
@@ -177,12 +177,12 @@ SwiftR exposes the following SignalR events:
 SwiftR.connect("http://localhost:8080") { connection in
     ...
     
-    connection.started = { println("started") }
-    connection.connected = { println("connected: \(connection.connectionID)") }
-    connection.connectionSlow = { println("connectionSlow") }
-    connection.reconnecting = { println("reconnecting") }
-    connection.reconnected = { println("reconnected") }
-    connection.disconnected = { println("disconnected") }
+    connection.started = { print("started") }
+    connection.connected = { print("connected: \(connection.connectionID)") }
+    connection.connectionSlow = { print("connectionSlow") }
+    connection.reconnecting = { print("reconnecting") }
+    connection.reconnected = { print("reconnected") }
+    connection.disconnected = { print("disconnected") }
 }
 ```
 
@@ -216,7 +216,7 @@ myConnection = SwiftR.connect("http://localhost:8080") { connection in
     simpleHub.on("notifySimple") { args in
         let message = args!["0"] as! String
         let detail = args!["1"] as! String
-        println("Message: \(message)\nDetail: \(detail)")
+        print("Message: \(message)\nDetail: \(detail)")
     }
 }
 
@@ -292,7 +292,7 @@ NSHTTPCookieStorage.sharedHTTPCookieStorage().setCookie(cookie!)
 SwiftR.connect("http://localhost:8080") { connection in
     ...
 
-    connection.error = { error in println(error!) }
+    connection.error = { error in print(error!) }
     
     /*
     {
