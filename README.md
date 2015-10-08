@@ -1,14 +1,6 @@
 # SwiftR
 A Swift client for SignalR. Supports hubs and persistent connections.
 
-### Swift 2
-
-The master branch is now Swift 2. If you need support for Swift 1.2, use the `swift12` branch. For CocoaPods users:
-
-```
-pod 'SwiftR', git: 'https://github.com/adamhartford/SwiftR.git', branch: 'swift12'
-```
-
 ### How does it work?
 
 It's a wrapper around the SignalR JavaScript client running in a hidden web view. As such, it's subject to the same limitations of that client -- namely, no support for custom headers when using WebSockets. This is because the browser's WebSocket client does not support custom headers.
@@ -32,6 +24,14 @@ pod 'SwiftR'
 [Carthage](https://github.com/Carthage/Carthage):
 ```
 github 'adamhartford/SwiftR'
+```
+
+### Swift 2
+
+The master branch is now Swift 2. If you need support for Swift 1.2, use the `swift12` branch. For CocoaPods users:
+
+```
+pod 'SwiftR', git: 'https://github.com/adamhartford/SwiftR.git', branch: 'swift12'
 ```
 
 ### Server Example
