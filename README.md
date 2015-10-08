@@ -1,6 +1,14 @@
 # SwiftR
 A Swift client for SignalR. Supports hubs and persistent connections.
 
+### Swift 2
+
+The master branch is now Swift 2. If you need support for Swift 1.2, use the `swift12` branch. For CocoaPods users:
+
+```
+pod 'SwiftR', git: 'https://github.com/adamhartford/SwiftR.git', branch: 'swift12'
+```
+
 ### How does it work?
 
 It's a wrapper around the SignalR JavaScript client running in a hidden web view. As such, it's subject to the same limitations of that client -- namely, no support for custom headers when using WebSockets. This is because the browser's WebSocket client does not support custom headers.
@@ -178,7 +186,21 @@ SwiftR.connect("http://localhost:8080") { connection in
 }
 ```
 
-Upon a `disconnected` event, SwiftR automatically tries to reconnect after five seconds.
+### Reconnecting
+
+You may find it necessary to try reconnecting manually once disconnected. Here's an example of how to do that:
+
+```swift
+connection.disconnected = {
+    print("Disconnected...")
+    
+    // Try again after 5 seconds
+    let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(5 * Double(NSEC_PER_SEC)))
+    dispatch_after(delayTime, dispatch_get_main_queue()) {
+        connection.start()
+    }
+}
+```
 
 ### Stop/Start Connection
 
