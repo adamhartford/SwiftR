@@ -154,9 +154,15 @@ public class SignalR: NSObject, SwiftRWebDelegate {
                 
                 let fileManager = NSFileManager.defaultManager()
 
-                try! fileManager.removeItemAtURL(jqueryTempURL)
-                try! fileManager.removeItemAtURL(signalRTempURL)
-                try! fileManager.removeItemAtURL(jsTempURL)
+                if fileManager.fileExistsAtPath(jqueryTempURL.path!) {
+                    try! fileManager.removeItemAtURL(jqueryTempURL)
+                }
+                if fileManager.fileExistsAtPath(signalRTempURL.path!) {
+                    try! fileManager.removeItemAtURL(signalRTempURL)
+                }
+                if fileManager.fileExistsAtPath(jsTempURL.path!) {
+                    try! fileManager.removeItemAtURL(jsTempURL)
+                }
                 
                 try! fileManager.copyItemAtURL(jqueryURL, toURL: jqueryTempURL)
                 try! fileManager.copyItemAtURL(signalRURL, toURL: signalRTempURL)
@@ -166,9 +172,9 @@ public class SignalR: NSObject, SwiftRWebDelegate {
                 let signalRInclude = "<script src='\(signalRTempURL.absoluteString)'></script>"
                 let jsInclude = "<script src='\(jsTempURL.absoluteString)'></script>"
             #else
-                let jqueryString = NSString(contentsOfURL: jqueryURL, encoding: NSUTF8StringEncoding, error: nil)!
-                let signalRString = NSString(contentsOfURL: signalRURL, encoding: NSUTF8StringEncoding, error: nil)!
-                let jsString = NSString(contentsOfURL: jsURL, encoding: NSUTF8StringEncoding, error: nil)!
+                let jqueryString = try! NSString(contentsOfURL: jqueryURL, encoding: NSUTF8StringEncoding)
+                let signalRString = try! NSString(contentsOfURL: signalRURL, encoding: NSUTF8StringEncoding)
+                let jsString = try! NSString(contentsOfURL: jsURL, encoding: NSUTF8StringEncoding)
                 
                 let jqueryInclude = "<script>\(jqueryString)</script>"
                 let signalRInclude = "<script>\(signalRString)</script>"
@@ -344,7 +350,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
         return shouldHandleRequest(request)
     }
 #else
-    public override func webView(webView: WebView!,
+    public func webView(webView: WebView!,
         decidePolicyForNavigationAction actionInformation: [NSObject : AnyObject]!,
         request: NSURLRequest!,
         frame: WebFrame!,
@@ -409,5 +415,5 @@ public class Hub {
     public protocol SwiftRWebDelegate: WKNavigationDelegate, WKScriptMessageHandler, UIWebViewDelegate {}
 #else
     typealias SwiftRWebView = WebView
-    public protocol SwiftRWebDelegate: WKNavigationDelegate, WKScriptMessageHandler {}
+    public protocol SwiftRWebDelegate: WKNavigationDelegate, WKScriptMessageHandler, WebPolicyDelegate {}
 #endif

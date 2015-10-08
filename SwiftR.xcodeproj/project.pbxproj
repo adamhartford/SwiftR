@@ -491,7 +491,6 @@
 					};
 					5B2F47CF1ADFFE8400416A1A = {
 						CreatedOnToolsVersion = 6.3;
-						DevelopmentTeam = 9QAVRMMZHB;
 					};
 					5B2F47F51ADFFE9200416A1A = {
 						CreatedOnToolsVersion = 6.3;

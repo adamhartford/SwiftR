@@ -8,6 +8,7 @@
 
 import Cocoa
 import SwiftR
+import WebKit
 
 class ViewController: NSViewController {
     
@@ -39,22 +40,22 @@ class ViewController: NSViewController {
             self?.simpleHub.on("notifySimple", parameters: ["message", "details"]) { args in
                 let message = args!["message"] as! String
                 let detail = args!["details"] as! String
-                println("Message: \(message)\nDetail: \(detail)")
+                print("Message: \(message)\nDetail: \(detail)")
             }
             
             self?.complexHub.on("notifyComplex") { (response) in
                 let m: AnyObject = response!["0"] as AnyObject!
-                println(m)
+                print(m)
             }
             
             // SignalR events
-            connection.starting = { println("Starting...") }
-            connection.connected = { println("Connected. Connection ID: \(connection.connectionID!)") }
-            connection.connectionSlow = { println("Connection Slow...") }
-            connection.reconnecting = { println("Reconnecting...") }
-            connection.reconnected = { println("Reconnected.") }
-            connection.disconnected = { println("Disconnected.") }
-            connection.error = { error in println(error!) }
+            connection.starting = { print("Starting...") }
+            connection.connected = { print("Connected. Connection ID: \(connection.connectionID!)") }
+            connection.connectionSlow = { print("Connection Slow...") }
+            connection.reconnecting = { print("Reconnecting...") }
+            connection.reconnected = { print("Reconnected.") }
+            connection.disconnected = { print("Disconnected.") }
+            connection.error = { error in print(error!) }
         }
         
         // Persistent connection...
