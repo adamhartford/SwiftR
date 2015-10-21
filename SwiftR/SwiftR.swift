@@ -293,6 +293,17 @@ public class SignalR: NSObject, SwiftRWebDelegate {
             case "reconnected":
                 state = .Connected
                 reconnected?()
+            case "invokeHandler":
+                let hubName = json["hub"] as! String
+                if let hub = hubs[hubName] {
+                    let uuid = json["id"] as! String
+                    let result = json["result"]
+                    let error = json["error"] as? String
+                    if let callback = hub.invokeHandlers[uuid] {
+                        callback(result, error)
+                        hub.invokeHandlers.removeValueForKey(uuid)
+                    }
+                }
             case "error":
                 if let err: AnyObject = json["error"] {
                     error?(err["context"])
@@ -368,6 +379,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
 public class Hub {
     let name: String
     var handlers: [String: AnyObject? -> ()] = [:]
+    var invokeHandlers: [String: (AnyObject?, String?) -> ()] = [:]
     
     public let connection: SignalR!
     
@@ -387,7 +399,7 @@ public class Hub {
         connection.runJavaScript("addHandler('\(name)', '\(method)', \(p))")
     }
     
-    public func invoke(method: String, arguments: [AnyObject]?) {
+    public func invoke(method: String, arguments: [AnyObject]?, callback: ((AnyObject?, String?) -> ())? = nil) {
         var jsonArguments = [String]()
         
         if let args = arguments {
@@ -402,8 +414,16 @@ public class Hub {
             }
         }
         
-        let args = jsonArguments.joinWithSeparator(",")
-        let js = "swiftR.hubs.\(name).invoke('\(method)', \(args))"
+        let args = jsonArguments.joinWithSeparator(", ")
+        
+        let uuid = NSUUID().UUIDString
+        if let handler = callback {
+            invokeHandlers[uuid] = handler
+        }
+        
+        let doneJS = "function() { postMessage({ message: 'invokeHandler', hub: '\(name.lowercaseString)', id: '\(uuid)', result: arguments[0] }); }"
+        let failJS = "function() { postMessage({ message: 'invokeHandler', hub: '\(name.lowercaseString)', id: '\(uuid)', error: arguments[0].message }); }"
+        let js = "swiftR.hubs.\(name).invoke('\(method)', \(args)).done(\(doneJS)).fail(\(failJS))"
         
         connection.runJavaScript(js)
     }
