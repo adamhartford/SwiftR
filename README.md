@@ -64,6 +64,23 @@ SwiftR.connect("http://localhost:8080") { connection in
         print("Message: \(message)\nDetail: \(detail)")
     }
 }
+
+...
+
+// Invoke server method
+simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
+
+// Invoke server method and handle response
+simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"]) { (result, error) in
+    if let e = error {
+        print("Error message: \(e)")
+    } else {
+        print("Success!")
+        if let r = result {
+            print("Result: \(r)")
+        }
+    }
+}
 ```
 Custom parameter names in callback response:
 
@@ -115,6 +132,8 @@ SwiftR.connect("http://localhost:8080") { [weak self] connection in
         print(m)
     }
 }
+
+...
 
 let message = [
     "messageId": 1,
