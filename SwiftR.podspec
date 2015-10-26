@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'SwiftR'
-  s.version = '0.8.0'
+  s.version = '0.8.1'
   s.license = { :type => 'MIT', :file => 'LICENSE' }
   s.summary = 'Swift client for SignalR'
   s.homepage = 'https://github.com/adamhartford/SwiftR'
