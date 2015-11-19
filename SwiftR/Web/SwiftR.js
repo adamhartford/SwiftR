@@ -47,7 +47,7 @@ function initialize(baseUrl, isHub) {
   });
 
   connection.error(function(error) {
-    postMessage({ message: 'error', error: error });
+    postMessage({ message: 'error', error: processError(error) });
   });
 }
 
@@ -88,16 +88,21 @@ function addHandler(hubName, method, parameters) {
 }
 
 function postMessage(msg) {
-  var id = Math.random();
+  var id = Math.random().toString(36).slice(2, 10);
   swiftR[id] = JSON.stringify(msg);
 
   if (window.webkit) {
-    webkit.messageHandlers.interOp.postMessage(id.toString());
+    webkit.messageHandlers.interOp.postMessage(id);
   } else {
     var frame = $('<iframe/>', { src: 'swiftr://' + id });
     $('body').append(frame);
     frame.remove();
   }
+}
+
+function processError(error) {
+  error.errorMessage = error.message;
+  return error;
 }
 
 function readMessage(id) {

@@ -83,7 +83,21 @@ class ViewController: UIViewController {
             }
             
             connection.connectionSlow = { print("Connection slow...") }
-            connection.error = { error in print(error!) }
+            
+            connection.error = {
+                error in print("Error: \(error)")
+                
+                // Here's an example of how to automatically reconnect after a timeout.
+                //
+                // For example, on the device, if the app is in the background long enough
+                // for the SignalR connection to time out, you'll get disconnected/error
+                // notifications when the app becomes active again.
+                
+                if let source = error?["source"] as? String where source == "TimeoutException" {
+                    print("Connection timed out. Restarting...")
+                    connection.start()
+                }
+            }
         }
         
         // Persistent connection...
@@ -103,6 +117,19 @@ class ViewController: UIViewController {
     
     @IBAction func sendSimpleMessage(sender: AnyObject?) {
         simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
+        
+        // Or...
+        
+//        simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"]) { (result, error) in
+//            if let e = error {
+//                print("Error: \(e)")
+//            } else {
+//                print("Done!")
+//                if let r = result {
+//                    print("Result: \(r)")
+//                }
+//            }
+//        }
     }
     
     @IBAction func sendComplexMessage(sender: AnyObject?) {
