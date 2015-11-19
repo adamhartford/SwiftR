@@ -308,18 +308,13 @@ NSHTTPCookieStorage.sharedHTTPCookieStorage().setCookie(cookie!)
 ### Error Handling
 
 ```swift
-SwiftR.connect("http://localhost:8080") { connection in
-    ...
-
-    connection.error = { error in print(error!) }
-    
-    /*
-    {
-        readyState = 0;
-        status = 0;
-        statusText = error;
-    }
-    */
+connection.error = { error in 
+  print("Error: \(error)")
+  
+  if let source = error?["source"] as? String where source == "TimeoutException" {
+      print("Connection timed out. Restarting...")
+      connection.start()
+  }
 }
 ```
 
