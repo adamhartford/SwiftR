@@ -10,7 +10,15 @@ It's a wrapper around the SignalR JavaScript client running in a hidden web view
 Either, your choice. Note that since WKWebView runs in a separate process, it does not have access to cookies in NSHTTPCookieStorage. If you need cookies, use UIWebView. SwiftR uses UIWebView by default, but you can choose WKWebView instead:
 
 ```swift
+// Client
 SwiftR.useWKWebView = true
+```
+
+Also when using WKWebView, make sure to enable CORS on your server:
+
+```csharp
+// Server
+app.UseCors (CorsOptions.AllowAll);
 ```
 
 ### Installation
