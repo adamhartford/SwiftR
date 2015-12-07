@@ -252,7 +252,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     func shouldHandleRequest(request: NSURLRequest) -> Bool {
         if request.URL!.absoluteString.hasPrefix("swiftr://") {
             let id = (request.URL!.absoluteString as NSString).substringFromIndex(9)
-            let msg = webView.stringByEvaluatingJavaScriptFromString("readMessage(\(id))")!
+            let msg = webView.stringByEvaluatingJavaScriptFromString("readMessage('\(id)')")!
             let data = msg.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             let json: AnyObject = try! NSJSONSerialization.JSONObjectWithData(data, options: [])
             
