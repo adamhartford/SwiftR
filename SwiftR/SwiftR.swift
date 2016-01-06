@@ -346,12 +346,19 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     // MARK: - WKScriptMessageHandler
     
     public func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
-        let id = message.body as! String
-        wkWebView.evaluateJavaScript("readMessage('\(id)')", completionHandler: { [weak self] (msg, _) in
-            let data = msg!.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
-            let json: AnyObject = try! NSJSONSerialization.JSONObjectWithData(data, options: [])
-            self?.processMessage(json)
-        })
+        if let id = message.body as? String {
+            wkWebView.evaluateJavaScript("readMessage('\(id)')", completionHandler: { [weak self] (msg, _) in
+                if let data = msg?.dataUsingEncoding(NSUTF8StringEncoding) {
+                    do {
+                        let json: AnyObject = try NSJSONSerialization.JSONObjectWithData(data, options: [])
+                        self?.processMessage(json)
+                    } catch {
+                        // TODO
+                        print("Failed to serialize JSON.")
+                    }
+                }
+            })
+        }
     }
     
     // MARK: - Web delegate methods
