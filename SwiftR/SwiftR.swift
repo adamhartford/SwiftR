@@ -190,7 +190,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
             wkWebView.navigationDelegate = self
             
             let html = "<!doctype html><html><head></head><body>"
-                + "\(jqueryInclude)\(signalRInclude)\(jsInclude))"
+                + "\(jqueryInclude)\(signalRInclude)\(jsInclude)"
                 + "</body></html>"
             
             wkWebView.loadHTMLString(html, baseURL: bundle.bundleURL)
@@ -201,7 +201,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
             let jsInclude = "<script src='\(jsURL.absoluteString)'></script>"
             
             let html = "<!doctype html><html><head></head><body>"
-                + "\(jqueryInclude)\(signalRInclude)\(jsInclude))"
+                + "\(jqueryInclude)\(signalRInclude)\(jsInclude)"
                 + "</body></html>"
             
             webView = SwiftRWebView()
