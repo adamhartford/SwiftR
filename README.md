@@ -34,14 +34,6 @@ pod 'SwiftR'
 github 'adamhartford/SwiftR'
 ```
 
-### Swift 2
-
-The master branch is now Swift 2. If you need support for Swift 1.2, use the `swift12` branch. For CocoaPods users:
-
-```
-pod 'SwiftR', git: 'https://github.com/adamhartford/SwiftR.git', branch: 'swift12'
-```
-
 ### Server Example
 
 See https://github.com/adamhartford/SignalRDemo for a sample self-hosted SignalR application.
