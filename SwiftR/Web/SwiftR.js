@@ -60,12 +60,7 @@ function start() {
 }
 
 function addHandler(hubName, method, parameters) {
-  var hub = swiftR.hubs[hubName];
-
-  if (!hub) {
-    hub = swiftR.connection.createHubProxy(hubName);
-    swiftR.hubs[hubName] = hub;
-  }
+  var hub = ensureHub(hubName);
 
   hub.on(method, function() {
     var args = arguments;
@@ -98,6 +93,17 @@ function postMessage(msg) {
     $('body').append(frame);
     frame.remove();
   }
+}
+
+function ensureHub(name) {
+  var hub = swiftR.hubs[name];
+
+  if (!hub) {
+    hub = swiftR.connection.createHubProxy(name);
+    swiftR.hubs[name] = hub;
+  }
+
+  return hub;
 }
 
 function processError(error) {

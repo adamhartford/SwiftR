@@ -431,8 +431,8 @@ public class Hub {
         let doneJS = "function() { postMessage({ message: 'invokeHandler', hub: '\(name.lowercaseString)', id: '\(uuid)', result: arguments[0] }); }"
         let failJS = "function() { postMessage({ message: 'invokeHandler', hub: '\(name.lowercaseString)', id: '\(uuid)', error: processError(arguments[0]) }); }"
         let js = args.isEmpty
-            ? "swiftR.hubs.\(name).invoke('\(method)').done(\(doneJS)).fail(\(failJS))"
-            : "swiftR.hubs.\(name).invoke('\(method)', \(args)).done(\(doneJS)).fail(\(failJS))"
+            ? "ensureHub('\(name)').invoke('\(method)').done(\(doneJS)).fail(\(failJS))"
+            : "ensureHub('\(name)').invoke('\(method)', \(args)).done(\(doneJS)).fail(\(failJS))"
         
         connection.runJavaScript(js)
     }
