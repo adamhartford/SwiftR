@@ -181,7 +181,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
                 if !NSProcessInfo().isOperatingSystemAtLeastVersion(NSOperatingSystemVersion(majorVersion: 9, minorVersion: 0, patchVersion: 0)) {
                     let temp = NSURL(fileURLWithPath: NSTemporaryDirectory())
                     let jqueryTempURL = temp.URLByAppendingPathComponent("jquery-2.1.3.min.js")
-                    let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalR-2.2.0.min")
+                    let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalR-\(SwiftR.signalRVersion).min")
                     let jsTempURL = temp.URLByAppendingPathComponent("SwiftR.js")
                     
                     let fileManager = NSFileManager.defaultManager()
