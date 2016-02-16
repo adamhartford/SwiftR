@@ -46,6 +46,8 @@ public enum Transport {
 public final class SwiftR: NSObject {
     static var connections = [SignalR]()
     
+    public static var signalRVersion: SignalRVersion = .v2_2_0
+    
     public static var useWKWebView = false
     
     public static var transport: Transport = .Auto
@@ -69,6 +71,31 @@ public final class SwiftR: NSObject {
             connection.stop()
         }
     }
+    
+    #if os(iOS)
+        public class func cleanup() {
+            let temp = NSURL(fileURLWithPath: NSTemporaryDirectory())
+            let jqueryTempURL = temp.URLByAppendingPathComponent("jquery-2.1.3.min.js")
+            let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalR-\(signalRVersion).min")
+            let jsTempURL = temp.URLByAppendingPathComponent("SwiftR.js")
+            
+            let fileManager = NSFileManager.defaultManager()
+            
+            do {
+                if let path = jqueryTempURL.path where fileManager.fileExistsAtPath(path) {
+                    try fileManager.removeItemAtURL(jqueryTempURL)
+                }
+                if let path = signalRTempURL.path where fileManager.fileExistsAtPath(path) {
+                    try fileManager.removeItemAtURL(signalRTempURL)
+                }
+                if let path = jsTempURL.path where fileManager.fileExistsAtPath(path) {
+                    try fileManager.removeItemAtURL(jsTempURL)
+                }
+            } catch {
+                print("Failed to remove temp JavaScript")
+            }
+        }
+    #endif
     
     class func checkConnections() {
         if connections.count == 0 {
@@ -140,45 +167,59 @@ public class SignalR: NSObject, SwiftRWebDelegate {
         #endif
         
         let jqueryURL = bundle.URLForResource("jquery-2.1.3.min", withExtension: "js")!
-        let signalRURL = bundle.URLForResource("jquery.signalR-2.2.0.min", withExtension: "js")!
+        let signalRURL = bundle.URLForResource("jquery.signalR-\(SwiftR.signalRVersion).min", withExtension: "js")!
         let jsURL = bundle.URLForResource("SwiftR", withExtension: "js")!
         
         if SwiftR.useWKWebView {
+            var jqueryInclude = "<script src='\(jqueryURL.absoluteString)'></script>"
+            var signalRInclude = "<script src='\(signalRURL.absoluteString)'></script>"
+            var jsInclude = "<script src='\(jsURL.absoluteString)'></script>"
+            
             // Loading file:// URLs from NSTemporaryDirectory() works on iOS, not OS X.
             // Workaround on OS X is to include the script directly.
             #if os(iOS)
-                let temp = NSURL(fileURLWithPath: NSTemporaryDirectory())
-                let jqueryTempURL = temp.URLByAppendingPathComponent("jquery-2.1.3.min.js")
-                let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalR-2.2.0.min")
-                let jsTempURL = temp.URLByAppendingPathComponent("SwiftR.js")
-                
-                let fileManager = NSFileManager.defaultManager()
-
-                if fileManager.fileExistsAtPath(jqueryTempURL.path!) {
-                    try! fileManager.removeItemAtURL(jqueryTempURL)
+                if !NSProcessInfo().isOperatingSystemAtLeastVersion(NSOperatingSystemVersion(majorVersion: 9, minorVersion: 0, patchVersion: 0)) {
+                    let temp = NSURL(fileURLWithPath: NSTemporaryDirectory())
+                    let jqueryTempURL = temp.URLByAppendingPathComponent("jquery-2.1.3.min.js")
+                    let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalR-2.2.0.min")
+                    let jsTempURL = temp.URLByAppendingPathComponent("SwiftR.js")
+                    
+                    let fileManager = NSFileManager.defaultManager()
+                    
+                    do {
+                        if fileManager.fileExistsAtPath(jqueryTempURL.path!) {
+                            try fileManager.removeItemAtURL(jqueryTempURL)
+                        }
+                        if fileManager.fileExistsAtPath(signalRTempURL.path!) {
+                            try fileManager.removeItemAtURL(signalRTempURL)
+                        }
+                        if fileManager.fileExistsAtPath(jsTempURL.path!) {
+                            try fileManager.removeItemAtURL(jsTempURL)
+                        }
+                    } catch {
+                        print("Failed to remove existing temp JavaScript")
+                    }
+                    
+                    do {
+                        try fileManager.copyItemAtURL(jqueryURL, toURL: jqueryTempURL)
+                        try fileManager.copyItemAtURL(signalRURL, toURL: signalRTempURL)
+                        try fileManager.copyItemAtURL(jsURL, toURL: jsTempURL)
+                    } catch {
+                        print("Failed to copy JavaScript to temp dir")
+                    }
+                    
+                    jqueryInclude = "<script src='\(jqueryTempURL.absoluteString)'></script>"
+                    signalRInclude = "<script src='\(signalRTempURL.absoluteString)'></script>"
+                    jsInclude = "<script src='\(jsTempURL.absoluteString)'></script>"
                 }
-                if fileManager.fileExistsAtPath(signalRTempURL.path!) {
-                    try! fileManager.removeItemAtURL(signalRTempURL)
-                }
-                if fileManager.fileExistsAtPath(jsTempURL.path!) {
-                    try! fileManager.removeItemAtURL(jsTempURL)
-                }
-                
-                try! fileManager.copyItemAtURL(jqueryURL, toURL: jqueryTempURL)
-                try! fileManager.copyItemAtURL(signalRURL, toURL: signalRTempURL)
-                try! fileManager.copyItemAtURL(jsURL, toURL: jsTempURL)
-                
-                let jqueryInclude = "<script src='\(jqueryTempURL.absoluteString)'></script>"
-                let signalRInclude = "<script src='\(signalRTempURL.absoluteString)'></script>"
-                let jsInclude = "<script src='\(jsTempURL.absoluteString)'></script>"
             #else
                 let jqueryString = try! NSString(contentsOfURL: jqueryURL, encoding: NSUTF8StringEncoding)
                 let signalRString = try! NSString(contentsOfURL: signalRURL, encoding: NSUTF8StringEncoding)
                 let jsString = try! NSString(contentsOfURL: jsURL, encoding: NSUTF8StringEncoding)
                 
-                let jqueryInclude = "<script>\(jqueryString)</script>"
-                let signalRInclude = "<script>\(signalRString)</script>"
-                let jsInclude = "<script>\(jsString)</script>"
+                jqueryInclude = "<script>\(jqueryString)</script>"
+                signalRInclude = "<script>\(signalRString)</script>"
+                jsInclude = "<script>\(jsString)</script>"
             #endif
             
             let config = WKWebViewConfiguration()
@@ -437,6 +478,30 @@ public class Hub {
         connection.runJavaScript(js)
     }
     
+}
+
+public enum SignalRVersion : CustomStringConvertible {
+    case v2_2_0
+    case v2_1_2
+    case v2_1_1
+    case v2_1_0
+    case v2_0_3
+    case v2_0_2
+    case v2_0_1
+    case v2_0_0
+    
+    public var description: String {
+        switch self {
+            case .v2_2_0: return "2.2.0"
+            case .v2_1_2: return "2.1.2"
+            case .v2_1_1: return "2.1.1"
+            case .v2_1_0: return "2.1.0"
+            case .v2_0_3: return "2.0.3"
+            case .v2_0_2: return "2.0.2"
+            case .v2_0_1: return "2.0.1"
+            case .v2_0_0: return "2.0.0"
+        }
+    }
 }
 
 #if os(iOS)
