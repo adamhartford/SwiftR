@@ -51,7 +51,7 @@ github 'adamhartford/SwiftR'
 
 ### Server Example
 
-See https://github.com/adamhartford/SignalRDemo for a sample self-hosted SignalR application.
+See https://github.com/adamhartford/SignalRDemo for a sample self-hosted SignalR application. Or, https://github.com/adamhartford/SignalRApplication for a .NET Core version.
 
 ### Simple Example (Hub)
 
