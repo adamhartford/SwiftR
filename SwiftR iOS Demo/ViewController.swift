@@ -102,7 +102,7 @@ class ViewController: UIViewController {
         
         // Persistent connection...
         // Uncomment when using persitent connections on your SignalR server
-//        persistentConnection = SwiftR.connect("http://myserver.com:8080/echo", connectionType: .Persistent) { connection in
+//        persistentConnection = SwiftR.connect("http://myserver.com:5000/echo", connectionType: .Persistent) { connection in
 //            connection.received = { data in
 //                println(data!)
 //            }

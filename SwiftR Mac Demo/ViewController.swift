@@ -43,6 +43,12 @@ class ViewController: NSViewController {
                 print("Message: \(message)\nDetail: \(detail)")
             }
             
+            self?.simpleHub.on("notifySimple") { args in
+                let message = args![0] as! String
+                let detail = args![1] as! String
+                print("Message2: \(message)\nDetail2: \(detail)")
+            }
+            
             self?.complexHub.on("notifyComplex") { args in
                 let m: AnyObject = args![0] as AnyObject!
                 print(m)
@@ -60,7 +66,7 @@ class ViewController: NSViewController {
         
         // Persistent connection...
         // Uncomment when using persitent connections on your SignalR server
-//        persistentConnection = SwiftR.connect("http://myserver.com:8080/echo", connectionType: .Persistent) { connection in
+//        persistentConnection = SwiftR.connect("http://myserver.com:5000/echo", connectionType: .Persistent) { connection in
 //            connection.received = { (data) in
 //                println(data!)
 //            }
