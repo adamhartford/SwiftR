@@ -359,7 +359,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
         } else if let hubName = json["hub"] as? String {
             let callbackID = json["id"] as? String
             let method = json["method"] as? String
-            let arguments: AnyObject? = json["arguments"]
+            let arguments = json["arguments"] as? [AnyObject]
             let hub = hubs[hubName]
             
             if let method = method, callbackID = callbackID, handlers = hub?.handlers[method], handler = handlers[callbackID] {
@@ -393,14 +393,8 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     public func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
         if let id = message.body as? String {
             wkWebView.evaluateJavaScript("readMessage('\(id)')", completionHandler: { [weak self] (msg, _) in
-                if let data = msg?.dataUsingEncoding(NSUTF8StringEncoding) {
-                    do {
-                        let json: AnyObject = try NSJSONSerialization.JSONObjectWithData(data, options: [])
-                        self?.processMessage(json)
-                    } catch {
-                        // TODO
-                        print("Failed to serialize JSON.")
-                    }
+                if let m = msg {
+                    self?.processMessage(m)
                 }
             })
         }
@@ -430,7 +424,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
 
 public class Hub {
     let name: String
-    var handlers: [String: [String: AnyObject? -> ()]] = [:]
+    var handlers: [String: [String: [AnyObject]? -> ()]] = [:]
     var invokeHandlers: [String: (result: AnyObject?, error: AnyObject?) -> ()] = [:]
     
     public let connection: SignalR!
@@ -440,7 +434,7 @@ public class Hub {
         self.connection = connection
     }
     
-    public func on(method: String, parameters: [String]? = nil, callback: AnyObject? -> ()) {
+    public func on(method: String, callback: [AnyObject]? -> ()) {
         let callbackID = NSUUID().UUIDString
         
         if handlers[method] == nil {
@@ -448,13 +442,7 @@ public class Hub {
         }
         
         handlers[method]?[callbackID] = callback
-        
-        var p = "null"
-        if let params = parameters {
-            p = "['" + params.joinWithSeparator("','") + "']"
-        }
-        
-        connection.runJavaScript("addHandler('\(callbackID)', '\(name)', '\(method)', \(p))")
+        connection.runJavaScript("addHandler('\(callbackID)', '\(name)', '\(method)')")
     }
     
     public func invoke(method: String, arguments: [AnyObject]?, callback: ((result: AnyObject?, error: AnyObject?) -> ())? = nil) {

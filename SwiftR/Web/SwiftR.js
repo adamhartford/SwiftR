@@ -22,10 +22,12 @@ function initialize(baseUrl, isHub) {
   var connection = swiftR.connection;
 
   connection.logging = true;
-
-  connection.received(function(data) {
-    postMessage({ data: data });
-  });
+  
+  if (!isHub) {
+    connection.received(function(data) {
+      postMessage({ data: data });
+    }); 
+  }
 
   connection.starting(function() {
     postMessage({ message: 'starting' });
@@ -60,33 +62,22 @@ function start() {
   });
 }
 
-function addHandler(id, hubName, method, parameters) {
+function addHandler(id, hubName, method) {
   var hub = ensureHub(hubName);
 
   hub.on(method, function() {
-    var args = arguments;
-    var o = {};
-    
-    if (parameters) {
-      for (var i in parameters) {
-        o[parameters[i]] = args[i];
-      }
-    } else {
-      o = JSON.parse(JSON.stringify(args));
-    }
-
     postMessage({
       id: id,
       hub: hub.hubName,
       method: method,
-      arguments: o
+      arguments: [].slice.call(arguments)
     });
   });
 }
 
 function postMessage(msg) {
   var id = Math.random().toString(36).slice(2, 10);
-  swiftR.messages[id] = JSON.stringify(msg);
+  swiftR.messages[id] = msg;
 
   if (window.webkit) {
     webkit.messageHandlers.interOp.postMessage(id);
@@ -116,5 +107,5 @@ function processError(error) {
 function readMessage(id) {
   var msg = swiftR.messages[id];
   delete swiftR.messages[id];
-  return msg;
+  return window.webkit ? msg : JSON.stringify(msg);
 }

@@ -30,21 +30,21 @@ class ViewController: NSViewController {
         SwiftR.transport = .ServerSentEvents
         
         // Hubs...
-        SwiftR.connect("http://myserver.com:8080") { [weak self] connection in
+        SwiftR.connect("http://myserver.com:5000") { [weak self] connection in
             connection.queryString = ["foo": "bar"]
             connection.headers = ["X-MyHeader1": "Value1", "X-MyHeader2": "Value2"]
             
             self?.simpleHub = connection.createHubProxy("simpleHub")
             self?.complexHub = connection.createHubProxy("complexHub")
             
-            self?.simpleHub.on("notifySimple", parameters: ["message", "details"]) { args in
-                let message = args!["message"] as! String
-                let detail = args!["details"] as! String
+            self?.simpleHub.on("notifySimple") { args in
+                let message = args![0] as! String
+                let detail = args![1] as! String
                 print("Message: \(message)\nDetail: \(detail)")
             }
             
-            self?.complexHub.on("notifyComplex") { (response) in
-                let m: AnyObject = response!["0"] as AnyObject!
+            self?.complexHub.on("notifyComplex") { args in
+                let m: AnyObject = args![0] as AnyObject!
                 print(m)
             }
             
