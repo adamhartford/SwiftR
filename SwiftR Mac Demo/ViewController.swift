@@ -43,12 +43,6 @@ class ViewController: NSViewController {
                 print("Message: \(message)\nDetail: \(detail)")
             }
             
-            self?.simpleHub.on("notifySimple") { args in
-                let message = args![0] as! String
-                let detail = args![1] as! String
-                print("Message2: \(message)\nDetail2: \(detail)")
-            }
-            
             self?.complexHub.on("notifyComplex") { args in
                 let m: AnyObject = args![0] as AnyObject!
                 print(m)
