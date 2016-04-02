@@ -19,6 +19,8 @@ Also when using WKWebView, make sure to enable CORS on your server:
 ```csharp
 // Server
 app.UseCors (CorsOptions.AllowAll);
+
+// See my SignalRApplication repo for a CORS example with ASP.NET Core.
 ```
 
 ### What versions of SignalR are supported?
