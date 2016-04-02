@@ -2,7 +2,8 @@ window.swiftR = {
   connection: null,
   hubs: {},
   transport: 'auto',
-  headers: {}
+  headers: {},
+  messages: {}
 };
 
 $(function() {
@@ -59,13 +60,13 @@ function start() {
   });
 }
 
-function addHandler(hubName, method, parameters) {
+function addHandler(id, hubName, method, parameters) {
   var hub = ensureHub(hubName);
 
   hub.on(method, function() {
     var args = arguments;
     var o = {};
-
+    
     if (parameters) {
       for (var i in parameters) {
         o[parameters[i]] = args[i];
@@ -75,6 +76,7 @@ function addHandler(hubName, method, parameters) {
     }
 
     postMessage({
+      id: id,
       hub: hub.hubName,
       method: method,
       arguments: o
@@ -84,7 +86,7 @@ function addHandler(hubName, method, parameters) {
 
 function postMessage(msg) {
   var id = Math.random().toString(36).slice(2, 10);
-  swiftR[id] = JSON.stringify(msg);
+  swiftR.messages[id] = JSON.stringify(msg);
 
   if (window.webkit) {
     webkit.messageHandlers.interOp.postMessage(id);
@@ -112,7 +114,7 @@ function processError(error) {
 }
 
 function readMessage(id) {
-  var msg = swiftR[id];
-  delete swiftR[id];
+  var msg = swiftR.messages[id];
+  delete swiftR.messages[id];
   return msg;
 }

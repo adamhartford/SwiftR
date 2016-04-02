@@ -357,10 +357,14 @@ public class SignalR: NSObject, SwiftRWebDelegate {
         } else if let data: AnyObject = json["data"] {
             received?(data)
         } else if let hubName = json["hub"] as? String {
-            let method = json["method"] as! String
+            let callbackID = json["id"] as? String
+            let method = json["method"] as? String
             let arguments: AnyObject? = json["arguments"]
             let hub = hubs[hubName]
-            hub?.handlers[method]?(arguments)
+            
+            if let method = method, callbackID = callbackID, handlers = hub?.handlers[method], handler = handlers[callbackID] {
+                handler(arguments)
+            }
         }
     }
     
@@ -426,7 +430,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
 
 public class Hub {
     let name: String
-    var handlers: [String: AnyObject? -> ()] = [:]
+    var handlers: [String: [String: AnyObject? -> ()]] = [:]
     var invokeHandlers: [String: (result: AnyObject?, error: AnyObject?) -> ()] = [:]
     
     public let connection: SignalR!
@@ -437,14 +441,20 @@ public class Hub {
     }
     
     public func on(method: String, parameters: [String]? = nil, callback: AnyObject? -> ()) {
-        handlers[method] = callback
+        let callbackID = NSUUID().UUIDString
+        
+        if handlers[method] == nil {
+            handlers[method] = [:]
+        }
+        
+        handlers[method]?[callbackID] = callback
         
         var p = "null"
         if let params = parameters {
             p = "['" + params.joinWithSeparator("','") + "']"
         }
         
-        connection.runJavaScript("addHandler('\(name)', '\(method)', \(p))")
+        connection.runJavaScript("addHandler('\(callbackID)', '\(name)', '\(method)', \(p))")
     }
     
     public func invoke(method: String, arguments: [AnyObject]?, callback: ((result: AnyObject?, error: AnyObject?) -> ())? = nil) {
