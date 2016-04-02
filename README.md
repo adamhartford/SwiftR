@@ -1,6 +1,18 @@
 # SwiftR
 A Swift client for SignalR. Supports hubs and persistent connections.
 
+### Important!
+
+Version 0.9.0 include a breaking change. Callbacks parameters are now passed as [AnyObject] instead of AnyObject. Named parameters in the callback are no longer supported.
+
+```swift
+myHub.on("someMessage") { args in
+    let foo = args!["0"] as! String // No longer works!
+    let foo = args!["bar"] as! String // No longer works!
+    let foo = args![0] as! String // Works!
+}
+```
+
 ### How does it work?
 
 It's a wrapper around the SignalR JavaScript client running in a hidden web view. As such, it's subject to the same limitations of that client -- namely, no support for custom headers when using WebSockets. This is because the browser's WebSocket client does not support custom headers.
