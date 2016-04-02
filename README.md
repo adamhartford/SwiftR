@@ -74,8 +74,8 @@ SwiftR.connect("http://localhost:8080") { connection in
   
     // Event handler
     simpleHub.on("notifySimple") { args in
-        let message = args!["0"] as! String
-        let detail = args!["1"] as! String
+        let message = args![0] as! String
+        let detail = args![1] as! String
         print("Message: \(message)\nDetail: \(detail)")
     }
 }
@@ -94,21 +94,6 @@ simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple mess
         if let r = result {
             print("Result: \(r)")
         }
-    }
-}
-```
-Custom parameter names in callback response:
-
-```swift
-// Client
-SwiftR.connect("http://localhost:8080") { connection in
-    let simpleHub = connection.createHubProxy("simpleHub")
-  
-    // Event handler
-    simpleHub.on("notifySimple", parameters: ["message", "detail"]) { args in
-        let message = args!["message"] as! String
-        let detail = args!["detail"] as! String
-        print("Message: \(message)\nDetail: \(detail)")
     }
 }
 ```
@@ -143,7 +128,7 @@ SwiftR.connect("http://localhost:8080") { [weak self] connection in
     self?.complexHub = connection.createHubProxy("complexHub")
     
     self?.complexHub.on("notifyComplex") { args in
-        let m: AnyObject = args!["0"] as AnyObject!
+        let m: AnyObject = args![0] as AnyObject!
         print(m)
     }
 }
@@ -248,8 +233,8 @@ myConnection = SwiftR.connect("http://localhost:8080") { connection in
   
     // Event handler
     simpleHub.on("notifySimple") { args in
-        let message = args!["0"] as! String
-        let detail = args!["1"] as! String
+        let message = args![0] as! String
+        let detail = args![1] as! String
         print("Message: \(message)\nDetail: \(detail)")
     }
 }
