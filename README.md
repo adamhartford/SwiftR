@@ -3,7 +3,7 @@ A Swift client for SignalR. Supports hubs and persistent connections.
 
 ### Important!
 
-Version 0.9.0 include a breaking change. Callbacks parameters are now passed as [AnyObject] instead of AnyObject. Named parameters in the callback are no longer supported.
+Version 0.10.0 include a breaking change. Callbacks parameters are now passed as [AnyObject] instead of AnyObject. Named parameters in the callback are no longer supported.
 
 ```swift
 myHub.on("someMessage") { args in
