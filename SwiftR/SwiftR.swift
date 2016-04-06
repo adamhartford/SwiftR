@@ -450,12 +450,14 @@ public class Hub {
         
         if let args = arguments {
             for arg in args {
-                if arg is String {
-                    jsonArguments.append("'\(arg)'")
-                } else if arg is NSNumber {
-                    jsonArguments.append("\(arg)")
-                } else if let data = try? NSJSONSerialization.dataWithJSONObject(arg, options: NSJSONWritingOptions()) {
-                    jsonArguments.append(NSString(data: data, encoding: NSUTF8StringEncoding) as! String)
+                // Using an array to start with a valid top level type for NSJSONSerialization
+                let arr = [arg]
+                if let data = try? NSJSONSerialization.dataWithJSONObject(arr, options: NSJSONWritingOptions()) {
+                    if let str = NSString(data: data, encoding: NSUTF8StringEncoding) as? String {
+                        // Strip the array brackets to be left with the desired value
+                        let range = str.startIndex.advancedBy(1) ..< str.endIndex.advancedBy(-1)
+                        jsonArguments.append(str.substringWithRange(range))
+                    }
                 }
             }
         }
