@@ -102,6 +102,19 @@ public final class SwiftR: NSObject {
             print("No active SignalR connections. Use SwiftR.connect(...) first.")
         }
     }
+    
+    class func stringify(obj: AnyObject) -> String? {
+        // Using an array to start with a valid top level type for NSJSONSerialization
+        let arr = [obj]
+        if let data = try? NSJSONSerialization.dataWithJSONObject(arr, options: NSJSONWritingOptions()) {
+            if let str = NSString(data: data, encoding: NSUTF8StringEncoding) as? String {
+                // Strip the array brackets to be left with the desired value
+                let range = str.startIndex.advancedBy(1) ..< str.endIndex.advancedBy(-1)
+                return str.substringWithRange(range)
+            }
+        }
+        return nil
+    }
 }
 
 public class SignalR: NSObject, SwiftRWebDelegate {
@@ -271,12 +284,8 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     public func send(data: AnyObject?) {
         var json = "null"
         if let d: AnyObject = data {
-            if d is String {
-                json = "'\(d)'"
-            } else if d is NSNumber {
-                json = "\(d)"
-            } else if let jsonData = try? NSJSONSerialization.dataWithJSONObject(d, options: NSJSONWritingOptions()) {
-                json = NSString(data: jsonData, encoding: NSUTF8StringEncoding) as! String
+            if let val = SwiftR.stringify(d) {
+                json = val
             }
         }
         runJavaScript("swiftR.connection.send(\(json))")
@@ -450,14 +459,10 @@ public class Hub {
         
         if let args = arguments {
             for arg in args {
-                // Using an array to start with a valid top level type for NSJSONSerialization
-                let arr = [arg]
-                if let data = try? NSJSONSerialization.dataWithJSONObject(arr, options: NSJSONWritingOptions()) {
-                    if let str = NSString(data: data, encoding: NSUTF8StringEncoding) as? String {
-                        // Strip the array brackets to be left with the desired value
-                        let range = str.startIndex.advancedBy(1) ..< str.endIndex.advancedBy(-1)
-                        jsonArguments.append(str.substringWithRange(range))
-                    }
+                if let val = SwiftR.stringify(arg) {
+                    jsonArguments.append(val)
+                } else {
+                    jsonArguments.append("null")
                 }
             }
         }
