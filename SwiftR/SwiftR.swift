@@ -454,7 +454,7 @@ public class Hub {
         connection.runJavaScript("addHandler('\(callbackID)', '\(name)', '\(method)')")
     }
     
-    public func invoke(method: String, arguments: [AnyObject]?, callback: ((result: AnyObject?, error: AnyObject?) -> ())? = nil) {
+    public func invoke(method: String, arguments: [AnyObject]? = nil, callback: ((result: AnyObject?, error: AnyObject?) -> ())? = nil) {
         var jsonArguments = [String]()
         
         if let args = arguments {
