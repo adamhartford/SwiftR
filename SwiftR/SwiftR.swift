@@ -182,10 +182,10 @@ public class SignalR: NSObject, SwiftRWebDelegate {
                     if #available(OSX 10.11, *) {
                         wkWebView.customUserAgent = customUserAgent
                     } else {
-                        print("Unable to set user agent for WKWebView on Mac OS X <= 10.10. Please register defaults via NSUserDefaults instead.")
+                        print("Unable to set user agent for WKWebView on OS X <= 10.10.")
                     }
                 } else {
-                    print("Unable to set user agent for WebView. Please register defaults via NSUserDefaults instead.")
+                    webView.customUserAgent = customUserAgent
                 }
             #endif
         }
