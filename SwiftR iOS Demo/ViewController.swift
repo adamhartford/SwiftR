@@ -36,6 +36,10 @@ class ViewController: UIViewController {
             connection.queryString = ["foo": "bar"]
             connection.headers = ["X-MyHeader1": "Value1", "X-MyHeader2": "Value2"]
             
+            // This only works with WKWebView on iOS >= 9
+            // Otherwise, use NSUserDefaults.standardUserDefaults().registerDefaults(["UserAgent": "SwiftR iOS Demo App"])
+            connection.customUserAgent = "SwiftR iOS Demo App"
+            
             self?.simpleHub = connection.createHubProxy("simpleHub")
             self?.complexHub = connection.createHubProxy("complexHub")
             

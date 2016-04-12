@@ -165,6 +165,32 @@ public class SignalR: NSObject, SwiftRWebDelegate {
         }
     }
     
+    public var customUserAgent: String? {
+        didSet {
+            #if os(iOS)
+                if SwiftR.useWKWebView {
+                    if #available(iOS 9.0, *) {
+                        wkWebView.customUserAgent = customUserAgent
+                    } else {
+                        print("Unable to set user agent for WKWebView on iOS <= 8. Please register defaults via NSUserDefaults instead.")
+                    }
+                } else {
+                    print("Unable to set user agent for UIWebView. Please register defaults via NSUserDefaults instead.")
+                }
+            #else
+                if SwiftR.useWKWebView {
+                    if #available(OSX 10.11, *) {
+                        wkWebView.customUserAgent = customUserAgent
+                    } else {
+                        print("Unable to set user agent for WKWebView on Mac OS X <= 10.10. Please register defaults via NSUserDefaults instead.")
+                    }
+                } else {
+                    print("Unable to set user agent for WebView. Please register defaults via NSUserDefaults instead.")
+                }
+            #endif
+        }
+    }
+    
     init(baseUrl: String, connectionType: ConnectionType = .Hub, readyHandler: SignalR -> ()) {
         self.baseUrl = baseUrl
         self.readyHandler = readyHandler
@@ -191,7 +217,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
             // Loading file:// URLs from NSTemporaryDirectory() works on iOS, not OS X.
             // Workaround on OS X is to include the script directly.
             #if os(iOS)
-                if !NSProcessInfo().isOperatingSystemAtLeastVersion(NSOperatingSystemVersion(majorVersion: 9, minorVersion: 0, patchVersion: 0)) {
+                if #available(iOS 9.0, *) {
                     let temp = NSURL(fileURLWithPath: NSTemporaryDirectory())
                     let jqueryTempURL = temp.URLByAppendingPathComponent("jquery-2.1.3.min.js")
                     let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalR-\(SwiftR.signalRVersion).min")
