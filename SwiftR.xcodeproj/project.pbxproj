@@ -26,8 +26,8 @@
 		5BC8177A1AE7DACF00C284AD /* SwiftR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC817781AE7DACF00C284AD /* SwiftR.swift */; };
 		5BC8177E1AE7DAE100C284AD /* jquery-2.1.3.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 5BC8177B1AE7DAE100C284AD /* jquery-2.1.3.min.js */; };
 		5BC8177F1AE7DAE100C284AD /* jquery-2.1.3.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 5BC8177B1AE7DAE100C284AD /* jquery-2.1.3.min.js */; };
-		5BC817801AE7DAE100C284AD /* jquery.signalR-2.2.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 5BC8177C1AE7DAE100C284AD /* jquery.signalR-2.2.0.min.js */; };
-		5BC817811AE7DAE100C284AD /* jquery.signalR-2.2.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 5BC8177C1AE7DAE100C284AD /* jquery.signalR-2.2.0.min.js */; };
+		5BC817801AE7DAE100C284AD /* jquery.signalr-2.2.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 5BC8177C1AE7DAE100C284AD /* jquery.signalr-2.2.0.min.js */; };
+		5BC817811AE7DAE100C284AD /* jquery.signalr-2.2.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 5BC8177C1AE7DAE100C284AD /* jquery.signalr-2.2.0.min.js */; };
 		5BC817821AE7DAE100C284AD /* SwiftR.js in Resources */ = {isa = PBXBuildFile; fileRef = 5BC8177D1AE7DAE100C284AD /* SwiftR.js */; };
 		5BC817831AE7DAE100C284AD /* SwiftR.js in Resources */ = {isa = PBXBuildFile; fileRef = 5BC8177D1AE7DAE100C284AD /* SwiftR.js */; };
 		5BD4607D1B31E8850045256C /* SwiftR.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B2F47951ADFFE6800416A1A /* SwiftR.framework */; };
@@ -114,7 +114,7 @@
 		5B2F48011ADFFE9300416A1A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5BC817781AE7DACF00C284AD /* SwiftR.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftR.swift; path = SwiftR/SwiftR.swift; sourceTree = "<group>"; };
 		5BC8177B1AE7DAE100C284AD /* jquery-2.1.3.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery-2.1.3.min.js"; path = "SwiftR/Web/jquery-2.1.3.min.js"; sourceTree = "<group>"; };
-		5BC8177C1AE7DAE100C284AD /* jquery.signalR-2.2.0.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery.signalR-2.2.0.min.js"; path = "SwiftR/Web/jquery.signalR-2.2.0.min.js"; sourceTree = "<group>"; };
+		5BC8177C1AE7DAE100C284AD /* jquery.signalr-2.2.0.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery.signalr-2.2.0.min.js"; path = "SwiftR/Web/jquery.signalr-2.2.0.min.js"; sourceTree = "<group>"; };
 		5BC8177D1AE7DAE100C284AD /* SwiftR.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = SwiftR.js; path = SwiftR/Web/SwiftR.js; sourceTree = "<group>"; };
 		66BD9E311C73947700CA428C /* jquery.signalr-2.0.0.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery.signalr-2.0.0.min.js"; path = "SwiftR/Web/jquery.signalr-2.0.0.min.js"; sourceTree = "<group>"; };
 		66BD9E321C73947700CA428C /* jquery.signalr-2.0.1.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery.signalr-2.0.1.min.js"; path = "SwiftR/Web/jquery.signalr-2.0.1.min.js"; sourceTree = "<group>"; };
@@ -327,7 +327,7 @@
 				66BD9E351C73947700CA428C /* jquery.signalr-2.1.0.min.js */,
 				66BD9E361C73947700CA428C /* jquery.signalr-2.1.1.min.js */,
 				66BD9E371C73947700CA428C /* jquery.signalr-2.1.2.min.js */,
-				5BC8177C1AE7DAE100C284AD /* jquery.signalR-2.2.0.min.js */,
+				5BC8177C1AE7DAE100C284AD /* jquery.signalr-2.2.0.min.js */,
 				5BC8177B1AE7DAE100C284AD /* jquery-2.1.3.min.js */,
 				5BC8177D1AE7DAE100C284AD /* SwiftR.js */,
 			);
@@ -552,7 +552,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5BC817801AE7DAE100C284AD /* jquery.signalR-2.2.0.min.js in Resources */,
+				5BC817801AE7DAE100C284AD /* jquery.signalr-2.2.0.min.js in Resources */,
 				66BD9E3D1C73947700CA428C /* jquery.signalr-2.1.1.min.js in Resources */,
 				66BD9E391C73947700CA428C /* jquery.signalr-2.0.1.min.js in Resources */,
 				66BD9E3C1C73947700CA428C /* jquery.signalr-2.1.0.min.js in Resources */,
@@ -576,7 +576,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5BC817811AE7DAE100C284AD /* jquery.signalR-2.2.0.min.js in Resources */,
+				5BC817811AE7DAE100C284AD /* jquery.signalr-2.2.0.min.js in Resources */,
 				5BC8177F1AE7DAE100C284AD /* jquery-2.1.3.min.js in Resources */,
 				5BC817831AE7DAE100C284AD /* SwiftR.js in Resources */,
 			);

@@ -76,7 +76,7 @@ public final class SwiftR: NSObject {
         public class func cleanup() {
             let temp = NSURL(fileURLWithPath: NSTemporaryDirectory())
             let jqueryTempURL = temp.URLByAppendingPathComponent("jquery-2.1.3.min.js")
-            let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalR-\(signalRVersion).min")
+            let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalr-\(signalRVersion).min")
             let jsTempURL = temp.URLByAppendingPathComponent("SwiftR.js")
             
             let fileManager = NSFileManager.defaultManager()
@@ -206,7 +206,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
         #endif
         
         let jqueryURL = bundle.URLForResource("jquery-2.1.3.min", withExtension: "js")!
-        let signalRURL = bundle.URLForResource("jquery.signalR-\(SwiftR.signalRVersion).min", withExtension: "js")!
+        let signalRURL = bundle.URLForResource("jquery.signalr-\(SwiftR.signalRVersion).min", withExtension: "js")!
         let jsURL = bundle.URLForResource("SwiftR", withExtension: "js")!
         
         if SwiftR.useWKWebView {
@@ -220,7 +220,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
                 if #available(iOS 9.0, *) {
                     let temp = NSURL(fileURLWithPath: NSTemporaryDirectory())
                     let jqueryTempURL = temp.URLByAppendingPathComponent("jquery-2.1.3.min.js")
-                    let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalR-\(SwiftR.signalRVersion).min")
+                    let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalr-\(SwiftR.signalRVersion).min")
                     let jsTempURL = temp.URLByAppendingPathComponent("SwiftR.js")
                     
                     let fileManager = NSFileManager.defaultManager()
