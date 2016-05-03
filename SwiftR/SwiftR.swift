@@ -378,6 +378,8 @@ public class SignalR: NSObject, SwiftRWebDelegate {
                     if let callback = hub.invokeHandlers[uuid] {
                         callback(result: result, error: error)
                         hub.invokeHandlers.removeValueForKey(uuid)
+                    } else if let e = error {
+                        print("SwiftR invoke error: \(e)")
                     }
                 }
             case "error":
@@ -427,9 +429,13 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     
     public func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
         if let id = message.body as? String {
-            wkWebView.evaluateJavaScript("readMessage('\(id)')", completionHandler: { [weak self] (msg, _) in
+            wkWebView.evaluateJavaScript("readMessage('\(id)')", completionHandler: { [weak self] (msg, err) in
                 if let m = msg {
                     self?.processMessage(m)
+                } else if let e = err {
+                    print("SwiftR unable to process message \(id): \(e)")
+                } else {
+                    print("SwiftR unable to process message \(id)")
                 }
             })
         }

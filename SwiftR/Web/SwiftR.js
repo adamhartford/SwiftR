@@ -100,8 +100,10 @@ function ensureHub(name) {
 }
 
 function processError(error) {
-  error.errorMessage = error.message;
-  return error;
+  return {
+    source: error['source'],
+    message: error['message']
+  }
 }
 
 function readMessage(id) {
