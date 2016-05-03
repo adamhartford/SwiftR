@@ -102,7 +102,7 @@ simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple mess
 // Invoke server method and handle response
 simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"]) { (result, error) in
     if let e = error {
-        print("Error message: \(e)")
+        print("Error: \(e)")
     } else {
         print("Success!")
         if let r = result {
