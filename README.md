@@ -73,7 +73,7 @@ See https://github.com/adamhartford/SignalRDemo for a sample self-hosted SignalR
 // Server
 public class SimpleHub : Hub 
 {
-    public void SendSimple(string message, detail)
+    public void SendSimple(string message, string detail)
     {
         Clients.All.notifySimple (message, detail);
     }
