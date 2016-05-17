@@ -374,7 +374,7 @@ public class SignalR: NSObject, SwiftRWebDelegate {
                 if let hub = hubs[hubName] {
                     let uuid = json["id"] as! String
                     let result = json["result"]
-                    let error = json["error"]
+                    let error = json["error"] as AnyObject?
                     if let callback = hub.invokeHandlers[uuid] {
                         callback(result: result, error: error)
                         hub.invokeHandlers.removeValueForKey(uuid)
