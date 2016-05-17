@@ -378,7 +378,8 @@ public class SignalR: NSObject, SwiftRWebDelegate {
                     if let callback = hub.invokeHandlers[uuid] {
                         callback(result: result, error: error)
                         hub.invokeHandlers.removeValueForKey(uuid)
-                    } else if let e = error {
+                    } else if  (String(error) != "nil") {
+                        let e = error
                         print("SwiftR invoke error: \(e)")
                     }
                 }
