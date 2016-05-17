@@ -120,7 +120,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func sendSimpleMessage(sender: AnyObject?) {
-        simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message", "booga"])
+        simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
         
         // Or...
         
