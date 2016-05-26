@@ -50,7 +50,8 @@ class DemoViewController: UIViewController {
             }
             
             connection.connected = { [weak self] in
-                self?.statusLabel.text = "Connected. Connection ID: \(connection.connectionID!)"
+                print("Connection ID: \(connection.connectionID!)")
+                self?.statusLabel.text = "Connected"
                 self?.startButton.enabled = true
                 self?.startButton.title = "Stop"
                 self?.sendButton.enabled = true
@@ -117,6 +118,7 @@ class DemoViewController: UIViewController {
         if let hub = chatHub, message = messageTextField.text {
             hub.invoke("send", arguments: [name, message])
         }
+        messageTextField.resignFirstResponder()
     }
     
     @IBAction func startStop(sender: AnyObject?) {
