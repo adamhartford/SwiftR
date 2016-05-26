@@ -1,17 +1,11 @@
 # SwiftR
 A Swift client for SignalR. Supports hubs and persistent connections.
 
-### Important!
+### Demo
 
-Version 0.10.0 includes a breaking change. Callback parameters are now passed as `[AnyObject]` instead of `AnyObject`. Named parameters in callbacks are no longer supported.
+I have published a sample SignalR server at http://swiftr.azurewbsites.net. The iOS demo application now uses this server. See [SwiftRChat](https://github.com/adamhartford/SwiftRChat) for the souce code. It's based on this, with some minor changes:
 
-```swift
-myHub.on("someMessage") { args in
-    let foo = args!["0"] as! String // No longer works!
-    let foo = args!["bar"] as! String // No longer works!
-    let foo = args![0] as! String // Works!
-}
-```
+http://www.asp.net/signalr/overview/deployment/using-signalr-with-azure-web-sites
 
 ### How does it work?
 
