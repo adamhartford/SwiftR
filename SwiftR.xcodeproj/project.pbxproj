@@ -39,6 +39,7 @@
 		66BD9E3C1C73947700CA428C /* jquery.signalr-2.1.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E351C73947700CA428C /* jquery.signalr-2.1.0.min.js */; };
 		66BD9E3D1C73947700CA428C /* jquery.signalr-2.1.1.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E361C73947700CA428C /* jquery.signalr-2.1.1.min.js */; };
 		66BD9E3E1C73947700CA428C /* jquery.signalr-2.1.2.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E371C73947700CA428C /* jquery.signalr-2.1.2.min.js */; };
+		66BE23091CF7489900F45BB1 /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BE23071CF7422C00F45BB1 /* DemoViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -123,6 +124,7 @@
 		66BD9E351C73947700CA428C /* jquery.signalr-2.1.0.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery.signalr-2.1.0.min.js"; path = "SwiftR/Web/jquery.signalr-2.1.0.min.js"; sourceTree = "<group>"; };
 		66BD9E361C73947700CA428C /* jquery.signalr-2.1.1.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery.signalr-2.1.1.min.js"; path = "SwiftR/Web/jquery.signalr-2.1.1.min.js"; sourceTree = "<group>"; };
 		66BD9E371C73947700CA428C /* jquery.signalr-2.1.2.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery.signalr-2.1.2.min.js"; path = "SwiftR/Web/jquery.signalr-2.1.2.min.js"; sourceTree = "<group>"; };
+		66BE23071CF7422C00F45BB1 /* DemoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DemoViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -270,6 +272,7 @@
 		5B2F47D11ADFFE8400416A1A /* SwiftR iOS Demo */ = {
 			isa = PBXGroup;
 			children = (
+				66BE23071CF7422C00F45BB1 /* DemoViewController.swift */,
 				5B2F47D41ADFFE8400416A1A /* AppDelegate.swift */,
 				5B2F47D61ADFFE8400416A1A /* ViewController.swift */,
 				5B2F47D81ADFFE8400416A1A /* Main.storyboard */,
@@ -648,6 +651,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B2F47D71ADFFE8400416A1A /* ViewController.swift in Sources */,
+				66BE23091CF7489900F45BB1 /* DemoViewController.swift in Sources */,
 				5B2F47D51ADFFE8400416A1A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
