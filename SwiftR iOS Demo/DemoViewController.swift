@@ -23,6 +23,8 @@ class DemoViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        SwiftR.useWKWebView = true
 
         connection = SwiftR.connect("http://swiftr.azurewebsites.net") { [weak self] connection in
             self?.chatHub = connection.createHubProxy("chatHub")
