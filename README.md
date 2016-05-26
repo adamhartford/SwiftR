@@ -3,7 +3,7 @@ A Swift client for SignalR. Supports hubs and persistent connections.
 
 ### Demo
 
-I have published a sample SignalR server at http://swiftr.azurewbsites.net. The iOS demo application now uses this server. See [SwiftRChat](https://github.com/adamhartford/SwiftRChat) for the souce code. It's based on this, with some minor changes:
+I have published a sample SignalR server at http://swiftr.azurewebsites.net. The iOS demo application now uses this server. See [SwiftRChat](https://github.com/adamhartford/SwiftRChat) for the souce code. It's based on this, with some minor changes:
 
 http://www.asp.net/signalr/overview/deployment/using-signalr-with-azure-web-sites
 
