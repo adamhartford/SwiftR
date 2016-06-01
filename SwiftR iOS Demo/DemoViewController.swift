@@ -98,6 +98,8 @@ class DemoViewController: UIViewController {
             if let name = self?.name where name.isEmpty {
                 self?.name = "Anonymous"
             }
+            
+            alertController.textFields?.first?.resignFirstResponder()
         }
         
         alertController.addTextFieldWithConfigurationHandler { textField in
