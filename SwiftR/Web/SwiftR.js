@@ -100,10 +100,15 @@ function ensureHub(name) {
 }
 
 function processError(error) {
-  return {
-    source: error['source'],
-    message: error['message']
+  var err = {
+    message: error.message || 'An unknown error has occurred.'
   }
+    
+  if (typeof error.source === 'string') {
+    err.source = error.source;
+  }
+    
+  return err;
 }
 
 function readMessage(id) {
