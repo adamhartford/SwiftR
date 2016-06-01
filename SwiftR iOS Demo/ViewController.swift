@@ -88,8 +88,8 @@ class ViewController: UIViewController {
             
             connection.connectionSlow = { print("Connection slow...") }
             
-            connection.error = {
-                error in print("Error: \(error)")
+            connection.error = { error in
+                print("Error: \(error)")
                 
                 // Here's an example of how to automatically reconnect after a timeout.
                 //

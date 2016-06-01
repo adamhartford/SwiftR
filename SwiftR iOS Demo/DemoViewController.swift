@@ -30,8 +30,7 @@ class DemoViewController: UIViewController {
             self?.chatHub = connection.createHubProxy("chatHub")
             self?.chatHub?.on("broadcastMessage") { args in
                 if let name = args?[0] as? String, message = args?[1] as? String, text = self?.chatTextView.text {
-                    self?.chatTextView.text = "\(name): \(message)\n\n\(text)"
-                    self?.chatTextView.setContentOffset(CGPointZero, animated: true)
+                    self?.chatTextView.text = "\(text)\n\n\(name): \(message)"
                 }
             }
             
