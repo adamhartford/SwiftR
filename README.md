@@ -1,6 +1,7 @@
 # SwiftR
 
 [![Join the chat at https://gitter.im/adamhartford/SwiftR](https://badges.gitter.im/adamhartford/SwiftR.svg)](https://gitter.im/adamhartford/SwiftR?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A Swift client for SignalR. Supports hubs and persistent connections.
 
 ### Demo
