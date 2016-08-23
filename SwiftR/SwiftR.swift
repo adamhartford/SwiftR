@@ -46,7 +46,7 @@ public enum Transport {
 public final class SwiftR: NSObject {
     static var connections = [SignalR]()
     
-    public static var signalRVersion: SignalRVersion = .v2_2_0
+    public static var signalRVersion: SignalRVersion = .v2_2_1
     
     public static var useWKWebView = false
     
@@ -518,6 +518,7 @@ public class Hub {
 }
 
 public enum SignalRVersion : CustomStringConvertible {
+    case v2_2_1
     case v2_2_0
     case v2_1_2
     case v2_1_1
@@ -529,6 +530,7 @@ public enum SignalRVersion : CustomStringConvertible {
     
     public var description: String {
         switch self {
+            case .v2_2_1: return "2.2.1"
             case .v2_2_0: return "2.2.0"
             case .v2_1_2: return "2.1.2"
             case .v2_1_1: return "2.1.1"

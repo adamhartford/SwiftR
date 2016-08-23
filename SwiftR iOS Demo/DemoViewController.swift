@@ -25,6 +25,8 @@ class DemoViewController: UIViewController {
         super.viewDidLoad()
         
         SwiftR.useWKWebView = true
+        
+        SwiftR.signalRVersion = .v2_2_0
 
         connection = SwiftR.connect("http://swiftr.azurewebsites.net") { [weak self] connection in
             self?.chatHub = connection.createHubProxy("chatHub")
