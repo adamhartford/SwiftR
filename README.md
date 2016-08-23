@@ -34,10 +34,11 @@ app.UseCors (CorsOptions.AllowAll);
 
 ### What versions of SignalR are supported?
 
-SwiftR supports SignalR version 2.x. Version 2.2.0 is assumed by default. To change the SignalR version:
+SwiftR supports SignalR version 2.x. Version 2.2.1 is assumed by default. To change the SignalR version:
 
 ```swift
-SwiftR.signalRVersion = .v2_2_0
+SwiftR.signalRVersion = .v2_2_1
+//SwiftR.signalRVersion = .v2_2_0
 //SwiftR.signalRVersion = .v2_1_2
 //SwiftR.signalRVersion = .v2_1_1
 //SwiftR.signalRVersion = .v2_1_0
