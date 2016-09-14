@@ -178,7 +178,7 @@ public class MyConnection : PersistentConnection
 // Client
 var persistentConnection: SignalR!
 
-persistentConnection = SwiftR.connect("http://localhost:8080/echo", connectionType: .Persistent) { connection in
+persistentConnection = SwiftR.connect("http://localhost:8080/echo", connectionType: .persistent) { connection in
     connection.received = { data in
         print(data!)
     }
@@ -193,11 +193,11 @@ persistentConnection.send("Persistent Connection Test")
 By default, SignalR will choose the best transport available to you. You can also specify the transport method:
 
 ```swift
-SwiftR.transport = .Auto // This is the default
-SwiftR.transport = .WebSockets
-SwiftR.transport = .ServerSentEvents
-SwiftR.transport = .ForeverFrame
-SwiftR.transport = .LongPolling
+SwiftR.transport = .auto // This is the default
+SwiftR.transport = .webSockets
+SwiftR.transport = .serverSentEvents
+SwiftR.transport = .foreverFrame
+SwiftR.transport = .longPolling
 ```
 
 ### Connection Lifetime Events
@@ -253,9 +253,9 @@ myConnection = SwiftR.connect("http://localhost:8080") { connection in
 
 ...
 
-if myConnection.state == .Connected {
+if myConnection.state == .connected {
     myConnection.stop()
-} else if myConnection.state == .Disonnected {
+} else if myConnection.state == .disonnected {
     myConnection.start()
 }
 
@@ -276,7 +276,7 @@ public enum State {
 
 ...
 
-if myConnection.state == .Connecting {
+if myConnection.state == .connecting {
     // Do something...
 }
 
