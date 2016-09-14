@@ -29,7 +29,7 @@ class ViewController: UIViewController {
         SwiftR.useWKWebView = true
         
         // Default is .Auto
-        SwiftR.transport = .ServerSentEvents
+        SwiftR.transport = .serverSentEvents
         
         // Hubs...
         hubConnection = SwiftR.connect("http://myserver.com:5000") { [weak self] connection in
@@ -58,32 +58,32 @@ class ViewController: UIViewController {
             
             connection.starting = { [weak self] in
                 print("Starting...")
-                self?.startButton.enabled = false
-                self?.startButton.setTitle("Connecting...", forState: .Normal)
+                self?.startButton.isEnabled = false
+                self?.startButton.setTitle("Connecting...", for: UIControlState())
             }
             
             connection.reconnecting = { [weak self] in
                 print("Reconnecting...")
-                self?.startButton.enabled = false
-                self?.startButton.setTitle("Reconnecting...", forState: .Normal)
+                self?.startButton.isEnabled = false
+                self?.startButton.setTitle("Reconnecting...", for: UIControlState())
             }
             
             connection.connected = { [weak self] in
                 print("Connected. Connection ID: \(connection.connectionID!)")
-                self?.startButton.enabled = true
-                self?.startButton.setTitle("Stop", forState: .Normal)
+                self?.startButton.isEnabled = true
+                self?.startButton.setTitle("Stop", for: UIControlState())
             }
             
             connection.reconnected = { [weak self] in
                 print("Reconnected. Connection ID: \(connection.connectionID!)")
-                self?.startButton.enabled = true
-                self?.startButton.setTitle("Stop", forState: .Normal)
+                self?.startButton.isEnabled = true
+                self?.startButton.setTitle("Stop", for: UIControlState())
             }
             
             connection.disconnected = { [weak self] in
                 print("Disconnected.")
-                self?.startButton.enabled = true
-                self?.startButton.setTitle("Start", forState: .Normal)
+                self?.startButton.isEnabled = true
+                self?.startButton.setTitle("Start", for: UIControlState())
             }
             
             connection.connectionSlow = { print("Connection slow...") }
@@ -97,7 +97,7 @@ class ViewController: UIViewController {
                 // for the SignalR connection to time out, you'll get disconnected/error
                 // notifications when the app becomes active again.
                 
-                if let source = error?["source"] as? String where source == "TimeoutException" {
+                if let source = error?["source"] as? String , source == "TimeoutException" {
                     print("Connection timed out. Restarting...")
                     connection.start()
                 }
@@ -106,7 +106,7 @@ class ViewController: UIViewController {
         
         // Persistent connection...
         // Uncomment when using persitent connections on your SignalR server
-//        persistentConnection = SwiftR.connect("http://myserver.com:5000/echo", connectionType: .Persistent) { connection in
+//        persistentConnection = SwiftR.connect("http://myserver.com:5000/echo", connectionType: .persistent) { connection in
 //            connection.received = { data in
 //                print(data!)
 //            }
@@ -119,7 +119,7 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func sendSimpleMessage(sender: AnyObject?) {
+    @IBAction func sendSimpleMessage(_ sender: AnyObject?) {
         simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
         
         // Or...
@@ -136,26 +136,26 @@ class ViewController: UIViewController {
 //        }
     }
     
-    @IBAction func sendComplexMessage(sender: AnyObject?) {
+    @IBAction func sendComplexMessage(_ sender: AnyObject?) {
         let message = [
             "messageId": 1,
             "message": "Complex Test",
             "detail": "This is a complex message",
             "items": ["foo", "bar", "baz"]
-        ]
+        ] as [String : Any]
         
         complexHub.invoke("sendComplex", arguments: [message])
     }
     
-    @IBAction func sendData(sender: AnyObject?) {
+    @IBAction func sendData(_ sender: AnyObject?) {
         persistentConnection.send("Persistent Connection Test")
     }
     
-    @IBAction func startStop(sender: AnyObject?) {
+    @IBAction func startStop(_ sender: AnyObject?) {
         switch hubConnection.state {
-        case .Disconnected:
+        case .disconnected:
             hubConnection.start() // or... SwiftR.startAll()
-        case .Connected:
+        case .connected:
             hubConnection.stop() // or... SwiftR.stopAll()
         default:
             break

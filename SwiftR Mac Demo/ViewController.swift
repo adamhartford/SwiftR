@@ -27,7 +27,7 @@ class ViewController: NSViewController {
         SwiftR.useWKWebView = false
         
         // Default is .Auto
-        SwiftR.transport = .ServerSentEvents
+        SwiftR.transport = .serverSentEvents
         
         // Hubs...
         SwiftR.connect("http://myserver.com:5000") { [weak self] connection in
@@ -71,29 +71,29 @@ class ViewController: NSViewController {
         
     }
     
-    override var representedObject: AnyObject? {
+    override var representedObject: Any? {
         didSet {
             // Update the view, if already loaded.
         }
     }
     
-    @IBAction func sendSimpleMessage(sender: AnyObject?) {
+    @IBAction func sendSimpleMessage(_ sender: AnyObject?) {
         
         simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
     }
     
-    @IBAction func sendComplexMessage(sender: AnyObject?) {
+    @IBAction func sendComplexMessage(_ sender: AnyObject?) {
         let message = [
             "messageId": 1,
             "message": "Complex Test",
             "detail": "This is a complex message",
             "items": ["foo", "bar", "baz"]
-        ]
+        ] as [String : Any]
         
         complexHub.invoke("sendComplex", arguments: [message])
     }
 
-    @IBAction func sendData(sender: AnyObject?) {
+    @IBAction func sendData(_ sender: AnyObject?) {
         persistentConnection.send("Persistent Connection Test")
     }
     
