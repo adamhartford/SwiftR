@@ -52,6 +52,7 @@ public final class SwiftR: NSObject {
     
     public static var transport: Transport = .auto
     
+    @discardableResult
     public class func connect(_ url: String, connectionType: ConnectionType = .hub, readyHandler: @escaping (SignalR) -> ()) -> SignalR? {
         let signalR = SignalR(baseUrl: url, connectionType: connectionType, readyHandler: readyHandler)
         connections.append(signalR)
