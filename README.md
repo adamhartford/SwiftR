@@ -323,7 +323,7 @@ NSHTTPCookieStorage.sharedHTTPCookieStorage().setCookie(cookie!)
 connection.error = { error in 
   print("Error: \(error)")
   
-  if let source = error?["source"] as? String where source == "TimeoutException" {
+  if let source = error?["source"] as? String, source == "TimeoutException" {
       print("Connection timed out. Restarting...")
       connection.start()
   }
