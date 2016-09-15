@@ -83,7 +83,7 @@ class DemoViewController: UIViewController {
                 // for the SignalR connection to time out, you'll get disconnected/error
                 // notifications when the app becomes active again.
                 
-                if let source = error?["source"] as? String , source == "TimeoutException" {
+                if let source = error?["source"] as? String, source == "TimeoutException" {
                     print("Connection timed out. Restarting...")
                     connection.start()
                 }
