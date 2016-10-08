@@ -75,9 +75,9 @@ public final class SwiftR: NSObject {
     #if os(iOS)
         public class func cleanup() {
             let temp = NSURL(fileURLWithPath: NSTemporaryDirectory())
-            let jqueryTempURL = temp.URLByAppendingPathComponent("jquery-2.1.3.min.js")
-            let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalr-\(signalRVersion).min")
-            let jsTempURL = temp.URLByAppendingPathComponent("SwiftR.js")
+            let jqueryTempURL = temp.URLByAppendingPathComponent("jquery-2.1.3.min.js")!
+            let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalr-\(signalRVersion).min")!
+            let jsTempURL = temp.URLByAppendingPathComponent("SwiftR.js")!
             
             let fileManager = NSFileManager.defaultManager()
             
@@ -219,9 +219,9 @@ public class SignalR: NSObject, SwiftRWebDelegate {
             #if os(iOS)
                 if #available(iOS 9.0, *) {
                     let temp = NSURL(fileURLWithPath: NSTemporaryDirectory())
-                    let jqueryTempURL = temp.URLByAppendingPathComponent("jquery-2.1.3.min.js")
-                    let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalr-\(SwiftR.signalRVersion).min")
-                    let jsTempURL = temp.URLByAppendingPathComponent("SwiftR.js")
+                    let jqueryTempURL = temp.URLByAppendingPathComponent("jquery-2.1.3.min.js")!
+                    let signalRTempURL = temp.URLByAppendingPathComponent("jquery.signalr-\(SwiftR.signalRVersion).min")!
+                    let jsTempURL = temp.URLByAppendingPathComponent("SwiftR.js")!
                     
                     let fileManager = NSFileManager.defaultManager()
                     
@@ -247,9 +247,9 @@ public class SignalR: NSObject, SwiftRWebDelegate {
                         print("Failed to copy JavaScript to temp dir")
                     }
                     
-                    jqueryInclude = "<script src='\(jqueryTempURL.absoluteString)'></script>"
-                    signalRInclude = "<script src='\(signalRTempURL.absoluteString)'></script>"
-                    jsInclude = "<script src='\(jsTempURL.absoluteString)'></script>"
+                    jqueryInclude = "<script src='\(jqueryTempURL.absoluteString!)'></script>"
+                    signalRInclude = "<script src='\(signalRTempURL.absoluteString!)'></script>"
+                    jsInclude = "<script src='\(jsTempURL.absoluteString!)'></script>"
                 }
             #else
                 let jqueryString = try! NSString(contentsOfURL: jqueryURL, encoding: NSUTF8StringEncoding)
@@ -276,9 +276,9 @@ public class SignalR: NSObject, SwiftRWebDelegate {
             wkWebView.loadHTMLString(html, baseURL: bundle.bundleURL)
             return
         } else {
-            let jqueryInclude = "<script src='\(jqueryURL.absoluteString)'></script>"
-            let signalRInclude = "<script src='\(signalRURL.absoluteString)'></script>"
-            let jsInclude = "<script src='\(jsURL.absoluteString)'></script>"
+            let jqueryInclude = "<script src='\(jqueryURL.absoluteString!)'></script>"
+            let signalRInclude = "<script src='\(signalRURL.absoluteString!)'></script>"
+            let jsInclude = "<script src='\(jsURL.absoluteString!)'></script>"
             
             let html = "<!doctype html><html><head></head><body>"
                 + "\(jqueryInclude)\(signalRInclude)\(jsInclude)"
@@ -326,8 +326,8 @@ public class SignalR: NSObject, SwiftRWebDelegate {
     }
     
     func shouldHandleRequest(request: NSURLRequest) -> Bool {
-        if request.URL!.absoluteString.hasPrefix("swiftr://") {
-            let id = (request.URL!.absoluteString as NSString).substringFromIndex(9)
+        if request.URL!.absoluteString!.hasPrefix("swiftr://") {
+            let id = (request.URL!.absoluteString! as NSString).substringFromIndex(9)
             let msg = webView.stringByEvaluatingJavaScriptFromString("readMessage('\(id)')")!
             let data = msg.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             let json: AnyObject = try! NSJSONSerialization.JSONObjectWithData(data, options: [])
