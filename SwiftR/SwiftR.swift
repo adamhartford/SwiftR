@@ -9,12 +9,12 @@
 import Foundation
 import WebKit
 
-public enum ConnectionType {
+@objc public enum ConnectionType: Int {
     case hub
     case persistent
 }
 
-public enum State {
+@objc public enum State: Int {
     case connecting
     case connected
     case disconnected
@@ -462,7 +462,7 @@ open class SignalR: NSObject, SwiftRWebDelegate {
 
 // MARK: - Hub
 
-open class Hub {
+open class Hub: NSObject {
     let name: String
     var handlers: [String: [String: ([Any]?) -> ()]] = [:]
     var invokeHandlers: [String: (_ result: Any?, _ error: AnyObject?) -> ()] = [:]
