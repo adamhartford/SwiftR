@@ -43,89 +43,42 @@ public enum Transport {
     }
 }
 
-public final class SwiftR: NSObject {
+class SwiftR {
     static var connections = [SignalR]()
     
-    public static var signalRVersion: SignalRVersion = .v2_2_1
-    
-    public static var useWKWebView = false
-    
-    public static var transport: Transport = .auto
-    
-    @discardableResult
-    public class func connect(_ url: String, connectionType: ConnectionType = .hub, readyHandler: @escaping (SignalR) -> ()) -> SignalR? {
-        let signalR = SignalR(baseUrl: url, connectionType: connectionType, readyHandler: readyHandler)
-        connections.append(signalR)
-        return signalR
-    }
-    
-    public class func startAll() {
-        checkConnections()
-        for connection in connections {
-            connection.start()
-        }
-    }
-    
-    public class func stopAll() {
-        checkConnections()
-        for connection in connections {
-            connection.stop()
-        }
-    }
-    
-    #if os(iOS)
-        public class func cleanup() {
-            let temp = URL(fileURLWithPath: NSTemporaryDirectory())
-            let jqueryTempURL = temp.appendingPathComponent("jquery-2.1.3.min.js")
-            let signalRTempURL = temp.appendingPathComponent("jquery.signalr-\(signalRVersion).min")
-            let jsTempURL = temp.appendingPathComponent("SwiftR.js")
-            
-            let fileManager = FileManager.default
-            
-            do {
-                if fileManager.fileExists(atPath: jqueryTempURL.path) {
-                    try fileManager.removeItem(at: jqueryTempURL)
-                }
-                if fileManager.fileExists(atPath: signalRTempURL.path) {
-                    try fileManager.removeItem(at: signalRTempURL)
-                }
-                if fileManager.fileExists(atPath: jsTempURL.path) {
-                    try fileManager.removeItem(at: jsTempURL)
-                }
-            } catch {
-                print("Failed to remove temp JavaScript")
+#if os(iOS)
+    public class func cleanup() {
+        let temp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("SwiftR", isDirectory: true)
+        let fileManager = FileManager.default
+        
+        do {
+            if fileManager.fileExists(atPath: temp.path) {
+                try fileManager.removeItem(at: temp)
             }
-        }
-    #endif
-    
-    class func checkConnections() {
-        if connections.count == 0 {
-            print("No active SignalR connections. Use SwiftR.connect(...) first.")
+        } catch {
+            print("Failed to remove temp JavaScript: \(error)")
         }
     }
-    
-    class func stringify(_ obj: Any) -> String? {
-        // Using an array to start with a valid top level type for NSJSONSerialization
-        let arr = [obj]
-        if let data = try? JSONSerialization.data(withJSONObject: arr, options: JSONSerialization.WritingOptions()) {
-            if let str = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as? String {
-                // Strip the array brackets to be left with the desired value
-                let range = str.characters.index(str.startIndex, offsetBy: 1) ..< str.characters.index(str.endIndex, offsetBy: -1)
-                return str.substring(with: range)
-            }
-        }
-        return nil
-    }
+#endif
 }
 
 open class SignalR: NSObject, SwiftRWebDelegate {
+    static var connections = [SignalR]()
+    
+    var internalID: String!
+    var ready = false
+    
+    public var signalRVersion: SignalRVersion = .v2_2_1
+    public var useWKWebView = false
+    public var transport: Transport = .auto
+    
     var webView: SwiftRWebView!
     var wkWebView: WKWebView!
 
     var baseUrl: String
     var connectionType: ConnectionType
     
-    var readyHandler: (SignalR) -> ()
+    var readyHandler: ((SignalR) -> ())!
     var hubs = [String: Hub]()
 
     open var state: State = .disconnected
@@ -139,6 +92,10 @@ open class SignalR: NSObject, SwiftRWebDelegate {
     open var reconnecting: (() -> ())?
     open var reconnected: (() -> ())?
     open var error: (([String: Any]?) -> ())?
+    
+    var jsQueue: [(String, ((Any?) -> ())?)] = []
+    
+    open var customUserAgent: String?
     
     open var queryString: Any? {
         didSet {
@@ -166,38 +123,30 @@ open class SignalR: NSObject, SwiftRWebDelegate {
         }
     }
     
-    open var customUserAgent: String? {
-        didSet {
-            #if os(iOS)
-                if SwiftR.useWKWebView {
-                    if #available(iOS 9.0, *) {
-                        wkWebView.customUserAgent = customUserAgent
-                    } else {
-                        print("Unable to set user agent for WKWebView on iOS <= 8. Please register defaults via NSUserDefaults instead.")
-                    }
-                } else {
-                    print("Unable to set user agent for UIWebView. Please register defaults via NSUserDefaults instead.")
-                }
-            #else
-                if SwiftR.useWKWebView {
-                    if #available(OSX 10.11, *) {
-                        wkWebView.customUserAgent = customUserAgent
-                    } else {
-                        print("Unable to set user agent for WKWebView on OS X <= 10.10.")
-                    }
-                } else {
-                    webView.customUserAgent = customUserAgent
-                }
-            #endif
-        }
-    }
-    
-    init(baseUrl: String, connectionType: ConnectionType = .hub, readyHandler: @escaping (SignalR) -> ()) {
+    public init(_ baseUrl: String, connectionType: ConnectionType = .hub) {
+        internalID = NSUUID().uuidString
         self.baseUrl = baseUrl
-        self.readyHandler = readyHandler
         self.connectionType = connectionType
         super.init()
+    }
+    
+    public func connect(_ callback: (() -> ())? = nil) {
+        readyHandler = { [weak self] _ in
+            self?.jsQueue.forEach { self?.runJavaScript($0.0, callback: $0.1) }
+            self?.jsQueue.removeAll()
+            
+            if let hubs = self?.hubs {
+                hubs.forEach { $0.value.initialize() }
+            }
+            
+            self?.ready = true
+            callback?()
+        }
         
+        initialize()
+    }
+    
+    private func initialize() {
         #if COCOAPODS
             let bundle = Bundle(identifier: "org.cocoapods.SwiftR")!
         #elseif SWIFTR_FRAMEWORK
@@ -207,10 +156,10 @@ open class SignalR: NSObject, SwiftRWebDelegate {
         #endif
         
         let jqueryURL = bundle.url(forResource: "jquery-2.1.3.min", withExtension: "js")!
-        let signalRURL = bundle.url(forResource: "jquery.signalr-\(SwiftR.signalRVersion).min", withExtension: "js")!
+        let signalRURL = bundle.url(forResource: "jquery.signalr-\(signalRVersion).min", withExtension: "js")!
         let jsURL = bundle.url(forResource: "SwiftR", withExtension: "js")!
         
-        if SwiftR.useWKWebView {
+        if useWKWebView {
             var jqueryInclude = "<script src='\(jqueryURL.absoluteString)'></script>"
             var signalRInclude = "<script src='\(signalRURL.absoluteString)'></script>"
             var jsInclude = "<script src='\(jsURL.absoluteString)'></script>"
@@ -219,33 +168,30 @@ open class SignalR: NSObject, SwiftRWebDelegate {
             // Workaround on OS X is to include the script directly.
             #if os(iOS)
                 if #available(iOS 9.0, *) {
-                    let temp = URL(fileURLWithPath: NSTemporaryDirectory())
+                    let temp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("SwiftR", isDirectory: true)
                     let jqueryTempURL = temp.appendingPathComponent("jquery-2.1.3.min.js")
-                    let signalRTempURL = temp.appendingPathComponent("jquery.signalr-\(SwiftR.signalRVersion).min")
+                    let signalRTempURL = temp.appendingPathComponent("jquery.signalr-\(signalRVersion).min")
                     let jsTempURL = temp.appendingPathComponent("SwiftR.js")
                     
                     let fileManager = FileManager.default
                     
                     do {
-                        if fileManager.fileExists(atPath: jqueryTempURL.path) {
-                            try fileManager.removeItem(at: jqueryTempURL)
+                        if SwiftR.connections.isEmpty {
+                            SwiftR.cleanup()
+                            try fileManager.createDirectory(at: temp, withIntermediateDirectories: false)
                         }
-                        if fileManager.fileExists(atPath: signalRTempURL.path) {
-                            try fileManager.removeItem(at: signalRTempURL)
+                        
+                        if !fileManager.fileExists(atPath: jqueryTempURL.path) {
+                            try fileManager.copyItem(at: jqueryURL, to: jqueryTempURL)
                         }
-                        if fileManager.fileExists(atPath: jsTempURL.path) {
-                            try fileManager.removeItem(at: jsTempURL)
+                        if !fileManager.fileExists(atPath: signalRTempURL.path) {
+                            try fileManager.copyItem(at: signalRURL, to: signalRTempURL)
+                        }
+                        if !fileManager.fileExists(atPath: jsTempURL.path) {
+                            try fileManager.copyItem(at: jsURL, to: jsTempURL)
                         }
                     } catch {
-                        print("Failed to remove existing temp JavaScript")
-                    }
-                    
-                    do {
-                        try fileManager.copyItem(at: jqueryURL, to: jqueryTempURL)
-                        try fileManager.copyItem(at: signalRURL, to: signalRTempURL)
-                        try fileManager.copyItem(at: jsURL, to: jsTempURL)
-                    } catch {
-                        print("Failed to copy JavaScript to temp dir")
+                        print("Failed to copy JavaScript to temp dir: \(error)")
                     }
                     
                     jqueryInclude = "<script src='\(jqueryTempURL.absoluteString)'></script>"
@@ -275,7 +221,6 @@ open class SignalR: NSObject, SwiftRWebDelegate {
                 + "</body></html>"
             
             wkWebView.loadHTMLString(html, baseURL: bundle.bundleURL)
-            return
         } else {
             let jqueryInclude = "<script src='\(jqueryURL.absoluteString)'></script>"
             let signalRInclude = "<script src='\(signalRURL.absoluteString)'></script>"
@@ -294,6 +239,12 @@ open class SignalR: NSObject, SwiftRWebDelegate {
                 webView.mainFrame.loadHTMLString(html, baseURL: bundle.bundleURL)
             #endif
         }
+        
+        if let ua = customUserAgent {
+            applyUserAgent(ua)
+        }
+        
+        SwiftR.connections.append(self)
     }
     
     deinit {
@@ -308,10 +259,15 @@ open class SignalR: NSObject, SwiftRWebDelegate {
         return hub
     }
     
+    open func addHub(_ hub: Hub) {
+        hub.connection = self
+        hubs[hub.name.lowercased()] = hub
+    }
+    
     open func send(_ data: Any?) {
         var json = "null"
         if let d = data {
-            if let val = SwiftR.stringify(d) {
+            if let val = SignalR.stringify(d) {
                 json = val
             }
         }
@@ -319,7 +275,11 @@ open class SignalR: NSObject, SwiftRWebDelegate {
     }
 
     open func start() {
-        runJavaScript("start()")
+        if ready {
+            runJavaScript("start()")
+        } else {
+            connect()
+        }
     }
     
     open func stop() {
@@ -348,7 +308,7 @@ open class SignalR: NSObject, SwiftRWebDelegate {
             switch message {
             case "ready":
                 let isHub = connectionType == .hub ? "true" : "false"
-                runJavaScript("swiftR.transport = '\(SwiftR.transport.stringValue)'")
+                runJavaScript("swiftR.transport = '\(transport.stringValue)'")
                 runJavaScript("initialize('\(baseUrl)', \(isHub))")
                 readyHandler(self)
                 runJavaScript("start()")
@@ -409,7 +369,12 @@ open class SignalR: NSObject, SwiftRWebDelegate {
     }
     
     func runJavaScript(_ script: String, callback: ((Any?) -> ())? = nil) {
-        if SwiftR.useWKWebView {
+        guard wkWebView != nil || webView != nil else {
+            jsQueue.append((script, callback))
+            return
+        }
+        
+        if useWKWebView {
             wkWebView.evaluateJavaScript(script, completionHandler: { (result, _)  in
                 callback?(result)
             })
@@ -417,6 +382,30 @@ open class SignalR: NSObject, SwiftRWebDelegate {
             let result = webView.stringByEvaluatingJavaScript(from: script)
             callback?(result as AnyObject!)
         }
+    }
+    
+    func applyUserAgent(_ userAgent: String) {
+        #if os(iOS)
+            if useWKWebView {
+                if #available(iOS 9.0, *) {
+                    wkWebView.customUserAgent = userAgent
+                } else {
+                    print("Unable to set user agent for WKWebView on iOS <= 8. Please register defaults via NSUserDefaults instead.")
+                }
+            } else {
+                print("Unable to set user agent for UIWebView. Please register defaults via NSUserDefaults instead.")
+            }
+        #else
+            if useWKWebView {
+                if #available(OSX 10.11, *) {
+                    wkWebView.customUserAgent = userAgent
+                } else {
+                    print("Unable to set user agent for WKWebView on OS X <= 10.10.")
+                }
+            } else {
+                webView.customUserAgent = userAgent
+            }
+        #endif
     }
     
     // MARK: - WKNavigationDelegate
@@ -458,6 +447,19 @@ open class SignalR: NSObject, SwiftRWebDelegate {
         }
     }
 #endif
+    
+    class func stringify(_ obj: Any) -> String? {
+        // Using an array to start with a valid top level type for NSJSONSerialization
+        let arr = [obj]
+        if let data = try? JSONSerialization.data(withJSONObject: arr, options: JSONSerialization.WritingOptions()) {
+            if let str = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as? String {
+                // Strip the array brackets to be left with the desired value
+                let range = str.characters.index(str.startIndex, offsetBy: 1) ..< str.characters.index(str.endIndex, offsetBy: -1)
+                return str.substring(with: range)
+            }
+        }
+        return nil
+    }
 }
 
 // MARK: - Hub
@@ -466,8 +468,12 @@ open class Hub {
     let name: String
     var handlers: [String: [String: ([Any]?) -> ()]] = [:]
     var invokeHandlers: [String: (_ result: Any?, _ error: AnyObject?) -> ()] = [:]
+    var connection: SignalR!
     
-    open let connection: SignalR!
+    public init(_ name: String) {
+        self.name = name
+        self.connection = nil
+    }
     
     init(name: String, connection: SignalR) {
         self.name = name
@@ -482,7 +488,12 @@ open class Hub {
         }
         
         handlers[method]?[callbackID] = callback
-        connection.runJavaScript("addHandler('\(callbackID)', '\(name)', '\(method)')")
+    }
+    
+    func initialize() {
+        for (method, callbacks) in handlers {
+            callbacks.forEach { connection.runJavaScript("addHandler('\($0.key)', '\(name)', '\(method)')") }
+        }
     }
     
     open func invoke(_ method: String, arguments: [Any]? = nil, callback: ((_ result: Any?, _ error: Any?) -> ())? = nil) {
@@ -490,7 +501,7 @@ open class Hub {
         
         if let args = arguments {
             for arg in args {
-                if let val = SwiftR.stringify(arg) {
+                if let val = SignalR.stringify(arg) {
                     jsonArguments.append(val)
                 } else {
                     jsonArguments.append("null")
