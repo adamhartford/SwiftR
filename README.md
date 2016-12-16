@@ -267,14 +267,14 @@ public enum State {
 #### Query String
 
 ```swift
-let connection = SignalR(https://swiftr.azurewebsites.net")
+let connection = SignalR("https://swiftr.azurewebsites.net")
 connection.queryString = ["foo": "bar"]
 ```
 
 #### Custom Headers (Non-WebSocket Only)
 
 ```swift
-let connection = SignalR(https://swiftr.azurewebsites.net")
+let connection = SignalR("https://swiftr.azurewebsites.net")
 connection.headers = ["X-MyHeader1": "Value1", "X-MyHeader2", "Value2"]
 ```
 
