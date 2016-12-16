@@ -94,6 +94,7 @@ simpleHub.on("notifySimple") { args in
 
 connection.addHub(simpleHub)
 connection.start()
+
 ...
 
 // Invoke server method
@@ -237,7 +238,7 @@ connection.disconnected = {
 Use the `stop()` and `start()` methods to manage connections manually.
 
 ```swift
-let connection  = SwiftR.connect("https://swiftr.azurewebsites.net") { connection in
+let connection  = SignalR("https://swiftr.azurewebsites.net")
 connection.start()
 connection.stop()
 
