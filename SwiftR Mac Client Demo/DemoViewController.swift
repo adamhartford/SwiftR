@@ -1,8 +1,8 @@
 //
 //  DemoViewController.swift
-//  SwiftR
+//  SwiftR Mac Client Demo
 //
-//  Created by Adam Hartford on 5/26/16.
+//  Created by Tadd on 12/20/16.
 //  Copyright © 2016 Adam Hartford. All rights reserved.
 //
 
@@ -93,8 +93,6 @@ class DemoViewController: NSViewController {
     }
     
     override func viewDidAppear() {
-        //let alertController = NSAlertController(title: "Name", message: "Please enter your name", preferredStyle: .alert)
-        
 		let popup = NSAlert()
 		popup.messageText = "Name"
 		popup.informativeText = "Please enter your name"
@@ -117,32 +115,8 @@ class DemoViewController: NSViewController {
 				inputTextField.resignFirstResponder()
 			}
 		})
-
-        /*let okAction = NSAlertAction(title: "OK", style: .default) { [weak self] _ in
-            self?.name = alertController.textFields?.first?.text
-            
-            if let name = self?.name , name.isEmpty {
-                self?.name = "Anonymous"
-            }
-            
-            alertController.textFields?.first?.resignFirstResponder()
-        }
-        
-        alertController.addTextField { textField in
-            textField.placeholder = "Your Name"
-        }
-        
-        alertController.addAction(okAction)
-        present(alertController, animated: true, completion: nil)
-		*/
     }
 
-	/*iOS-only
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }*/
-    
     @IBAction func send(_ sender: AnyObject?) {
 		guard name != nil else {
 			print("Cannot send, name is nil!")
@@ -168,15 +142,4 @@ class DemoViewController: NSViewController {
             connection.stop()
         }
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
