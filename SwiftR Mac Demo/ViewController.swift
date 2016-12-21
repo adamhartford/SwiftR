@@ -75,8 +75,17 @@ class ViewController: NSViewController {
     }
     
     @IBAction func sendSimpleMessage(_ sender: AnyObject?) {
-        
-        simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
+		
+		do {
+			try simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
+		}
+		catch {
+			var message = (error as! SwiftRError).message
+			if message.isEmpty {
+				message = error as! String
+			}
+			alertError(error as! SwiftRError)
+		}
     }
     
     @IBAction func sendComplexMessage(_ sender: AnyObject?) {
@@ -86,13 +95,26 @@ class ViewController: NSViewController {
             "detail": "This is a complex message",
             "items": ["foo", "bar", "baz"]
         ] as [String : Any]
-        
-        complexHub.invoke("sendComplex", arguments: [message])
+		
+		do {
+			try complexHub.invoke("sendComplex", arguments: [message])
+		}
+		catch {
+			alertError(error as! SwiftRError)
+		}
     }
 
     @IBAction func sendData(_ sender: AnyObject?) {
         persistentConnection.send("Persistent Connection Test")
     }
-    
+	
+	private func alertError(_ swiftErr: SwiftRError) {
+		
+		let msgBox = NSAlert()
+		msgBox.addButton(withTitle: "Continue")
+		msgBox.messageText = "\(swiftErr)"
+		msgBox.informativeText = swiftErr.message
+		msgBox.alertStyle = NSAlertStyle.warning
+		msgBox.runModal()
+	}
 }
-
