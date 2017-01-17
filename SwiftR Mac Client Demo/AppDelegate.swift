@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  SwiftR Mac Client Demo
+//  SwiftR Mac Demo
 //
 //  Created by Tadd on 12/20/16.
 //  Copyright © 2016 Adam Hartford. All rights reserved.

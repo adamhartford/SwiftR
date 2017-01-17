@@ -18,10 +18,6 @@
 		5B2F47DA1ADFFE8400416A1A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B2F47D81ADFFE8400416A1A /* Main.storyboard */; };
 		5B2F47DC1ADFFE8400416A1A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B2F47DB1ADFFE8400416A1A /* Images.xcassets */; };
 		5B2F47DF1ADFFE8400416A1A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5B2F47DD1ADFFE8400416A1A /* LaunchScreen.xib */; };
-		5B2F47FB1ADFFE9200416A1A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2F47FA1ADFFE9200416A1A /* AppDelegate.swift */; };
-		5B2F47FD1ADFFE9200416A1A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2F47FC1ADFFE9200416A1A /* ViewController.swift */; };
-		5B2F47FF1ADFFE9200416A1A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5B2F47FE1ADFFE9200416A1A /* Images.xcassets */; };
-		5B2F48021ADFFE9300416A1A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B2F48001ADFFE9300416A1A /* Main.storyboard */; };
 		5BC817791AE7DACF00C284AD /* SwiftR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC817781AE7DACF00C284AD /* SwiftR.swift */; };
 		5BC8177A1AE7DACF00C284AD /* SwiftR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC817781AE7DACF00C284AD /* SwiftR.swift */; };
 		5BC8177E1AE7DAE100C284AD /* jquery-2.1.3.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 5BC8177B1AE7DAE100C284AD /* jquery-2.1.3.min.js */; };
@@ -33,6 +29,9 @@
 		5BD4607D1B31E8850045256C /* SwiftR.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B2F47951ADFFE6800416A1A /* SwiftR.framework */; };
 		5BD4607E1B31E8850045256C /* SwiftR.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5B2F47951ADFFE6800416A1A /* SwiftR.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6622C1FC1D6BF04E005BDE4B /* jquery.signalr-2.2.1.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 6622C1FB1D6BF04E005BDE4B /* jquery.signalr-2.2.1.min.js */; };
+		668E50431E2E5D6A00B6F6E7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9E6619881E09BBC7008A409F /* Images.xcassets */; };
+		668E50441E2E5D6A00B6F6E7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9E5A08C21E09B5BD0009E6DC /* Main.storyboard */; };
+		668E50471E2E5D7400B6F6E7 /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BE23071CF7422C00F45BB1 /* DemoViewController.swift */; };
 		66BD9E381C73947700CA428C /* jquery.signalr-2.0.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E311C73947700CA428C /* jquery.signalr-2.0.0.min.js */; };
 		66BD9E391C73947700CA428C /* jquery.signalr-2.0.1.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E321C73947700CA428C /* jquery.signalr-2.0.1.min.js */; };
 		66BD9E3A1C73947700CA428C /* jquery.signalr-2.0.2.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E331C73947700CA428C /* jquery.signalr-2.0.2.min.js */; };
@@ -40,7 +39,6 @@
 		66BD9E3C1C73947700CA428C /* jquery.signalr-2.1.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E351C73947700CA428C /* jquery.signalr-2.1.0.min.js */; };
 		66BD9E3D1C73947700CA428C /* jquery.signalr-2.1.1.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E361C73947700CA428C /* jquery.signalr-2.1.1.min.js */; };
 		66BD9E3E1C73947700CA428C /* jquery.signalr-2.1.2.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E371C73947700CA428C /* jquery.signalr-2.1.2.min.js */; };
-		66BE23091CF7489900F45BB1 /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BE23071CF7422C00F45BB1 /* DemoViewController.swift */; };
 		66E3481B1D88CB3100F8081D /* jquery.signalr-2.0.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E311C73947700CA428C /* jquery.signalr-2.0.0.min.js */; };
 		66E3481C1D88CB3200F8081D /* jquery.signalr-2.0.1.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E321C73947700CA428C /* jquery.signalr-2.0.1.min.js */; };
 		66E3481D1D88CB3400F8081D /* jquery.signalr-2.0.2.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E331C73947700CA428C /* jquery.signalr-2.0.2.min.js */; };
@@ -49,15 +47,6 @@
 		66E348201D88CB3900F8081D /* jquery.signalr-2.1.1.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E361C73947700CA428C /* jquery.signalr-2.1.1.min.js */; };
 		66E348211D88CB3B00F8081D /* jquery.signalr-2.1.2.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E371C73947700CA428C /* jquery.signalr-2.1.2.min.js */; };
 		66E348221D88CB4200F8081D /* jquery.signalr-2.2.1.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 6622C1FB1D6BF04E005BDE4B /* jquery.signalr-2.2.1.min.js */; };
-		9E4B200E1E09D379008FCBBB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA4AB8E1E099AC50026FFC2 /* AppDelegate.swift */; };
-		9E4B200F1E09D384008FCBBB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9E6619881E09BBC7008A409F /* Images.xcassets */; };
-		9E5A08C41E09B5BD0009E6DC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9E5A08C21E09B5BD0009E6DC /* Main.storyboard */; };
-		9E5EEB851E09BE4D00444DEE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9E5A08C21E09B5BD0009E6DC /* Main.storyboard */; };
-		9E5EEB861E09BE7A00444DEE /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA4AB911E099AC50026FFC2 /* DemoViewController.swift */; };
-		9E6619891E09BBC7008A409F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9E6619881E09BBC7008A409F /* Images.xcassets */; };
-		9EA4AB931E099AC50026FFC2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA4AB8E1E099AC50026FFC2 /* AppDelegate.swift */; };
-		9EA4AB951E099AC50026FFC2 /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EA4AB911E099AC50026FFC2 /* DemoViewController.swift */; };
-		9EA4AB961E099AC50026FFC2 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9EA4AB921E099AC50026FFC2 /* Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,13 +58,6 @@
 			remoteInfo = "SwiftR iOS";
 		};
 		5B2F47BF1ADFFE7300416A1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B2F47631ADFFE4C00416A1A /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B2F47B21ADFFE7300416A1A;
-			remoteInfo = "SwiftR Mac";
-		};
-		5B7854361AE01D9B006F57A8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B2F47631ADFFE4C00416A1A /* Project object */;
 			proxyType = 1;
@@ -132,12 +114,6 @@
 		5B2F47D91ADFFE8400416A1A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5B2F47DB1ADFFE8400416A1A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		5B2F47DE1ADFFE8400416A1A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		5B2F47F61ADFFE9200416A1A /* SwiftR Mac Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SwiftR Mac Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B2F47F91ADFFE9200416A1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5B2F47FA1ADFFE9200416A1A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		5B2F47FC1ADFFE9200416A1A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		5B2F47FE1ADFFE9200416A1A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		5B2F48011ADFFE9300416A1A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5BC817781AE7DACF00C284AD /* SwiftR.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftR.swift; path = SwiftR/SwiftR.swift; sourceTree = "<group>"; };
 		5BC8177B1AE7DAE100C284AD /* jquery-2.1.3.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery-2.1.3.min.js"; path = "SwiftR/Web/jquery-2.1.3.min.js"; sourceTree = "<group>"; };
 		5BC8177C1AE7DAE100C284AD /* jquery.signalr-2.2.0.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery.signalr-2.2.0.min.js"; path = "SwiftR/Web/jquery.signalr-2.2.0.min.js"; sourceTree = "<group>"; };
@@ -156,7 +132,7 @@
 		9EA4AB8E1E099AC50026FFC2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = "SwiftR Mac Client Demo/AppDelegate.swift"; sourceTree = "<group>"; };
 		9EA4AB911E099AC50026FFC2 /* DemoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DemoViewController.swift; path = "SwiftR Mac Client Demo/DemoViewController.swift"; sourceTree = "<group>"; };
 		9EA4AB921E099AC50026FFC2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "SwiftR Mac Client Demo/Info.plist"; sourceTree = "<group>"; };
-		9EA4AB9C1E099BCE0026FFC2 /* SwiftR Mac Client Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SwiftR Mac Client Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9EA4AB9C1E099BCE0026FFC2 /* SwiftR Mac Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SwiftR Mac Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,13 +174,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5B2F47F31ADFFE9200416A1A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		9EA4AB991E099BCE0026FFC2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -233,8 +202,7 @@
 				5B2F47B31ADFFE7300416A1A /* SwiftR.framework */,
 				5B2F47BD1ADFFE7300416A1A /* SwiftR MacTests.xctest */,
 				5B2F47D01ADFFE8400416A1A /* SwiftR iOS Demo.app */,
-				5B2F47F61ADFFE9200416A1A /* SwiftR Mac Demo.app */,
-				9EA4AB9C1E099BCE0026FFC2 /* SwiftR Mac Client Demo.app */,
+				9EA4AB9C1E099BCE0026FFC2 /* SwiftR Mac Demo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -331,26 +299,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		5B2F47F71ADFFE9200416A1A /* SwiftR Mac Demo */ = {
-			isa = PBXGroup;
-			children = (
-				5B2F47FA1ADFFE9200416A1A /* AppDelegate.swift */,
-				5B2F47FC1ADFFE9200416A1A /* ViewController.swift */,
-				5B2F47FE1ADFFE9200416A1A /* Images.xcassets */,
-				5B2F48001ADFFE9300416A1A /* Main.storyboard */,
-				5B2F47F81ADFFE9200416A1A /* Supporting Files */,
-			);
-			path = "SwiftR Mac Demo";
-			sourceTree = "<group>";
-		};
-		5B2F47F81ADFFE9200416A1A /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				5B2F47F91ADFFE9200416A1A /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		5B2F48151ADFFEAB00416A1A /* SwiftR */ = {
 			isa = PBXGroup;
 			children = (
@@ -382,8 +330,7 @@
 			isa = PBXGroup;
 			children = (
 				5B2F47D11ADFFE8400416A1A /* SwiftR iOS Demo */,
-				5B2F47F71ADFFE9200416A1A /* SwiftR Mac Demo */,
-				9EA4AB8D1E099A700026FFC2 /* SwiftR Mac Client Demo */,
+				9EA4AB8D1E099A700026FFC2 /* SwiftR Mac Demo */,
 			);
 			name = Demo;
 			sourceTree = "<group>";
@@ -399,7 +346,7 @@
 			name = Targets;
 			sourceTree = "<group>";
 		};
-		9EA4AB8D1E099A700026FFC2 /* SwiftR Mac Client Demo */ = {
+		9EA4AB8D1E099A700026FFC2 /* SwiftR Mac Demo */ = {
 			isa = PBXGroup;
 			children = (
 				9EA4AB8E1E099AC50026FFC2 /* AppDelegate.swift */,
@@ -408,7 +355,7 @@
 				9E5A08C21E09B5BD0009E6DC /* Main.storyboard */,
 				9EA4AB971E099ACF0026FFC2 /* Supporting Files */,
 			);
-			name = "SwiftR Mac Client Demo";
+			name = "SwiftR Mac Demo";
 			sourceTree = "<group>";
 		};
 		9EA4AB971E099ACF0026FFC2 /* Supporting Files */ = {
@@ -532,27 +479,9 @@
 			productReference = 5B2F47D01ADFFE8400416A1A /* SwiftR iOS Demo.app */;
 			productType = "com.apple.product-type.application";
 		};
-		5B2F47F51ADFFE9200416A1A /* SwiftR Mac Demo */ = {
+		9EA4AB9B1E099BCE0026FFC2 /* SwiftR Mac Demo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5B2F480F1ADFFE9300416A1A /* Build configuration list for PBXNativeTarget "SwiftR Mac Demo" */;
-			buildPhases = (
-				5B2F47F21ADFFE9200416A1A /* Sources */,
-				5B2F47F31ADFFE9200416A1A /* Frameworks */,
-				5B2F47F41ADFFE9200416A1A /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				5B7854371AE01D9B006F57A8 /* PBXTargetDependency */,
-			);
-			name = "SwiftR Mac Demo";
-			productName = "SwiftR Mac Demo";
-			productReference = 5B2F47F61ADFFE9200416A1A /* SwiftR Mac Demo.app */;
-			productType = "com.apple.product-type.application";
-		};
-		9EA4AB9B1E099BCE0026FFC2 /* SwiftR Mac Client Demo */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 9EA4ABA61E099BCF0026FFC2 /* Build configuration list for PBXNativeTarget "SwiftR Mac Client Demo" */;
+			buildConfigurationList = 9EA4ABA61E099BCF0026FFC2 /* Build configuration list for PBXNativeTarget "SwiftR Mac Demo" */;
 			buildPhases = (
 				9EA4AB981E099BCE0026FFC2 /* Sources */,
 				9EA4AB991E099BCE0026FFC2 /* Frameworks */,
@@ -563,9 +492,9 @@
 			dependencies = (
 				9E5EEB881E09BE9200444DEE /* PBXTargetDependency */,
 			);
-			name = "SwiftR Mac Client Demo";
+			name = "SwiftR Mac Demo";
 			productName = "SwiftR Mac Client Demo";
-			productReference = 9EA4AB9C1E099BCE0026FFC2 /* SwiftR Mac Client Demo.app */;
+			productReference = 9EA4AB9C1E099BCE0026FFC2 /* SwiftR Mac Demo.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -601,16 +530,6 @@
 						CreatedOnToolsVersion = 6.3;
 						LastSwiftMigration = 0800;
 					};
-					5B2F47F51ADFFE9200416A1A = {
-						CreatedOnToolsVersion = 6.3;
-						DevelopmentTeam = 9QAVRMMZHB;
-						LastSwiftMigration = 0800;
-						SystemCapabilities = {
-							com.apple.Sandbox = {
-								enabled = 0;
-							};
-						};
-					};
 					9EA4AB9B1E099BCE0026FFC2 = {
 						CreatedOnToolsVersion = 8.2;
 						DevelopmentTeam = 9QAVRMMZHB;
@@ -636,8 +555,7 @@
 				5B2F47B21ADFFE7300416A1A /* SwiftR Mac */,
 				5B2F47BC1ADFFE7300416A1A /* SwiftR MacTests */,
 				5B2F47CF1ADFFE8400416A1A /* SwiftR iOS Demo */,
-				5B2F47F51ADFFE9200416A1A /* SwiftR Mac Demo */,
-				9EA4AB9B1E099BCE0026FFC2 /* SwiftR Mac Client Demo */,
+				9EA4AB9B1E099BCE0026FFC2 /* SwiftR Mac Demo */,
 			);
 		};
 /* End PBXProject section */
@@ -654,13 +572,10 @@
 				6622C1FC1D6BF04E005BDE4B /* jquery.signalr-2.2.1.min.js in Resources */,
 				66BD9E381C73947700CA428C /* jquery.signalr-2.0.0.min.js in Resources */,
 				66BD9E3A1C73947700CA428C /* jquery.signalr-2.0.2.min.js in Resources */,
-				9E5A08C41E09B5BD0009E6DC /* Main.storyboard in Resources */,
 				66BD9E3E1C73947700CA428C /* jquery.signalr-2.1.2.min.js in Resources */,
-				9E6619891E09BBC7008A409F /* Images.xcassets in Resources */,
 				66BD9E3B1C73947700CA428C /* jquery.signalr-2.0.3.min.js in Resources */,
 				5BC8177E1AE7DAE100C284AD /* jquery-2.1.3.min.js in Resources */,
 				5BC817821AE7DAE100C284AD /* SwiftR.js in Resources */,
-				9EA4AB961E099AC50026FFC2 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -706,21 +621,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5B2F47F41ADFFE9200416A1A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5B2F47FF1ADFFE9200416A1A /* Images.xcassets in Resources */,
-				5B2F48021ADFFE9300416A1A /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		9EA4AB9A1E099BCE0026FFC2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9E5EEB851E09BE4D00444DEE /* Main.storyboard in Resources */,
-				9E4B200F1E09D384008FCBBB /* Images.xcassets in Resources */,
+				668E50431E2E5D6A00B6F6E7 /* Images.xcassets in Resources */,
+				668E50441E2E5D6A00B6F6E7 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -731,8 +637,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9EA4AB951E099AC50026FFC2 /* DemoViewController.swift in Sources */,
-				9EA4AB931E099AC50026FFC2 /* AppDelegate.swift in Sources */,
 				5BC817791AE7DACF00C284AD /* SwiftR.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -766,17 +670,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B2F47D71ADFFE8400416A1A /* ViewController.swift in Sources */,
-				66BE23091CF7489900F45BB1 /* DemoViewController.swift in Sources */,
 				5B2F47D51ADFFE8400416A1A /* AppDelegate.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5B2F47F21ADFFE9200416A1A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5B2F47FD1ADFFE9200416A1A /* ViewController.swift in Sources */,
-				5B2F47FB1ADFFE9200416A1A /* AppDelegate.swift in Sources */,
+				668E50471E2E5D7400B6F6E7 /* DemoViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -784,8 +679,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9E4B200E1E09D379008FCBBB /* AppDelegate.swift in Sources */,
-				9E5EEB861E09BE7A00444DEE /* DemoViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -801,11 +694,6 @@
 			isa = PBXTargetDependency;
 			target = 5B2F47B21ADFFE7300416A1A /* SwiftR Mac */;
 			targetProxy = 5B2F47BF1ADFFE7300416A1A /* PBXContainerItemProxy */;
-		};
-		5B7854371AE01D9B006F57A8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B2F47B21ADFFE7300416A1A /* SwiftR Mac */;
-			targetProxy = 5B7854361AE01D9B006F57A8 /* PBXContainerItemProxy */;
 		};
 		5BD460801B31E8850045256C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -834,14 +722,6 @@
 				5B2F47DE1ADFFE8400416A1A /* Base */,
 			);
 			name = LaunchScreen.xib;
-			sourceTree = "<group>";
-		};
-		5B2F48001ADFFE9300416A1A /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5B2F48011ADFFE9300416A1A /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 		9E5A08C21E09B5BD0009E6DC /* Main.storyboard */ = {
@@ -1170,41 +1050,6 @@
 			};
 			name = Release;
 		};
-		5B2F48101ADFFE9300416A1A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "SwiftR Mac Demo/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.adamhartford.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 3.0;
-			};
-			name = Debug;
-		};
-		5B2F48111ADFFE9300416A1A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = "SwiftR Mac Demo/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.adamhartford.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 3.0;
-			};
-			name = Release;
-		};
 		9EA4ABA71E099BCF0026FFC2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1217,7 +1062,7 @@
 				INFOPLIST_FILE = "SwiftR Mac Client Demo/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.adamhartford.SwiftR-Mac-Client-Demo";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.adamhartford.SwiftR-Mac-Demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -1236,7 +1081,7 @@
 				INFOPLIST_FILE = "SwiftR Mac Client Demo/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.adamhartford.SwiftR-Mac-Client-Demo";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.adamhartford.SwiftR-Mac-Demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_VERSION = 3.0;
@@ -1300,16 +1145,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5B2F480F1ADFFE9300416A1A /* Build configuration list for PBXNativeTarget "SwiftR Mac Demo" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5B2F48101ADFFE9300416A1A /* Debug */,
-				5B2F48111ADFFE9300416A1A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		9EA4ABA61E099BCF0026FFC2 /* Build configuration list for PBXNativeTarget "SwiftR Mac Client Demo" */ = {
+		9EA4ABA61E099BCF0026FFC2 /* Build configuration list for PBXNativeTarget "SwiftR Mac Demo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9EA4ABA71E099BCF0026FFC2 /* Debug */,

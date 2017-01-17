@@ -1,12 +1,12 @@
 //
 //  DemoViewController.swift
-//  SwiftR Mac Client Demo
+//  SwiftR Mac Demo
 //
 //  Created by Tadd on 12/20/16.
 //  Copyright © 2016 Adam Hartford. All rights reserved.
 //
 
-import AppKit
+import Foundation
 import SwiftR
 
 class DemoViewController: NSViewController {
@@ -93,6 +93,8 @@ class DemoViewController: NSViewController {
     }
     
     override func viewDidAppear() {
+        super.viewDidAppear()
+        
 		let popup = NSAlert()
 		popup.messageText = "Name"
 		popup.informativeText = "Please enter your name"
@@ -103,9 +105,8 @@ class DemoViewController: NSViewController {
 		inputTextField.placeholderString = "Your Name"
 		popup.accessoryView = inputTextField
 		
-		let window = NSApplication.shared().mainWindow
 		
-		popup.beginSheetModal(for: window!, completionHandler: { (modalResponse) -> Void in
+		popup.beginSheetModal(for: view.window!, completionHandler: { (modalResponse) -> Void in
 			if modalResponse == NSAlertFirstButtonReturn {
 				self.name = inputTextField.stringValue
 				if let name = self.name , name.isEmpty {
@@ -129,7 +130,7 @@ class DemoViewController: NSViewController {
 				try hub.invoke("send", arguments: [name, message])
 			}
 			catch {
-				
+				print(error)
 			}
         }
         messageTextField.resignFirstResponder()

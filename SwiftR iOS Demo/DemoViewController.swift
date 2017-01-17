@@ -120,7 +120,11 @@ class DemoViewController: UIViewController {
     
     @IBAction func send(_ sender: AnyObject?) {
         if let hub = chatHub, let message = messageTextField.text {
-            hub.invoke("send", arguments: [name, message])
+            do {
+                try hub.invoke("send", arguments: [name, message])
+            } catch {
+                print(error)
+            }
         }
         messageTextField.resignFirstResponder()
     }

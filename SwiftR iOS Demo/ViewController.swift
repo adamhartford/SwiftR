@@ -120,7 +120,11 @@ class ViewController: UIViewController {
     }
     
     @IBAction func sendSimpleMessage(_ sender: AnyObject?) {
-        simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
+        do {
+            try simpleHub.invoke("sendSimple", arguments: ["Simple Test", "This is a simple message"])
+        } catch {
+            print(error)
+        }
         
         // Or...
         
@@ -144,7 +148,11 @@ class ViewController: UIViewController {
             "items": ["foo", "bar", "baz"]
         ] as [String : Any]
         
-        complexHub.invoke("sendComplex", arguments: [message])
+        do {
+            try complexHub.invoke("sendComplex", arguments: [message])
+        } catch {
+            print(error)
+        }
     }
     
     @IBAction func sendData(_ sender: AnyObject?) {
