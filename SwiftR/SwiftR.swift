@@ -43,6 +43,17 @@ public enum Transport {
     }
 }
 
+public enum SwiftRError: Error {
+	case notConnected
+	
+	public var message: String {
+		switch self {
+		case .notConnected:
+			return "Operation requires connection, but none available."
+		}
+	}
+}
+
 class SwiftR {
     static var connections = [SignalR]()
     
@@ -496,7 +507,11 @@ open class Hub: NSObject {
         }
     }
     
-    open func invoke(_ method: String, arguments: [Any]? = nil, callback: ((_ result: Any?, _ error: Any?) -> ())? = nil) {
+    open func invoke(_ method: String, arguments: [Any]? = nil, callback: ((_ result: Any?, _ error: Any?) -> ())? = nil) throws {
+		guard connection != nil else {
+			throw SwiftRError.notConnected
+		}
+		
         var jsonArguments = [String]()
         
         if let args = arguments {
