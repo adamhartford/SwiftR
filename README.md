@@ -226,9 +226,10 @@ connection.disconnected = {
     print("Disconnected...")
     
     // Try again after 5 seconds
-    let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(5 * Double(NSEC_PER_SEC)))
-    dispatch_after(delayTime, dispatch_get_main_queue()) {
-        connection.start()
+    let delayTime = DispatchTime.now() + .seconds(5)
+        DispatchQueue.main.asyncAfter(deadline: delayTime) { [weak self] in
+            connection.start()
+        }
     }
 }
 ```
