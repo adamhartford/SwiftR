@@ -227,9 +227,8 @@ connection.disconnected = {
     
     // Try again after 5 seconds
     let delayTime = DispatchTime.now() + .seconds(5)
-        DispatchQueue.main.asyncAfter(deadline: delayTime) { [weak self] in
-            connection.start()
-        }
+    DispatchQueue.main.asyncAfter(deadline: delayTime) { [weak self] in
+        connection.start()
     }
 }
 ```
