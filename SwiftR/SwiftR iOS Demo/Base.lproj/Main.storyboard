@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="SwiftR_iOS_Demo" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CXF-ek-ZT2">
+                                <rect key="frame" x="161" y="202" width="279" height="195"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TUw-k6-IBy">
+                                        <rect key="frame" x="51" y="8" width="176" height="30"/>
+                                        <state key="normal" title="Invoke Simple (Hub)">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="sendSimpleMessage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="dCJ-Kf-PX7"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tTx-Ja-F4O">
+                                        <rect key="frame" x="8" y="157" width="263" height="30"/>
+                                        <state key="normal" title="Send Data (Persistent Connection)">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="sendData:" destination="BYZ-38-t0r" eventType="touchUpInside" id="PtX-dM-Wpq"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ocp-mp-5mN">
+                                        <rect key="frame" x="51" y="83" width="176" height="30"/>
+                                        <state key="normal" title="Invoke Complex (Hub)">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="sendComplexMessage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="6dN-ZP-6K5"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="195" id="AsZ-zt-Gl3"/>
+                                    <constraint firstAttribute="width" constant="279" id="YPi-Jl-QUJ"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DZx-Rk-nwF">
+                                <rect key="frame" x="219" y="562" width="163" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="MnP-OJ-WRU"/>
+                                    <constraint firstAttribute="width" constant="163" id="XFX-yd-QFl"/>
+                                </constraints>
+                                <state key="normal" title="Starting...">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="startStop:" destination="BYZ-38-t0r" eventType="touchUpInside" id="qfE-EP-Sfp"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="centerY" secondItem="CXF-ek-ZT2" secondAttribute="centerY" id="6g1-Xo-fak"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="DZx-Rk-nwF" secondAttribute="bottom" constant="8" id="Dog-jl-Xcv"/>
+                            <constraint firstAttribute="centerX" secondItem="DZx-Rk-nwF" secondAttribute="centerX" id="Lj0-ng-AGB"/>
+                            <constraint firstAttribute="centerX" secondItem="CXF-ek-ZT2" secondAttribute="centerX" id="riR-we-Egw"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="startButton" destination="DZx-Rk-nwF" id="DkQ-7C-Vsb"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+    </scenes>
+</document>
