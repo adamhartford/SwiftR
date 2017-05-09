@@ -69,13 +69,13 @@ class ViewController: UIViewController {
         }
         
         hubConnection.connected = { [weak self] in
-            print("Connected. Connection ID: \(self?.hubConnection.connectionID!)")
+            print("Connected. Connection ID: \(String(describing: self!.hubConnection.connectionID))")
             self?.startButton.isEnabled = true
             self?.startButton.setTitle("Stop", for: UIControlState())
         }
         
         hubConnection.reconnected = { [weak self] in
-            print("Reconnected. Connection ID: \(self?.hubConnection.connectionID!)")
+            print("Reconnected. Connection ID: \(String(describing: self!.hubConnection.connectionID))")
             self?.startButton.isEnabled = true
             self?.startButton.setTitle("Stop", for: UIControlState())
         }
@@ -89,7 +89,7 @@ class ViewController: UIViewController {
         hubConnection.connectionSlow = { print("Connection slow...") }
         
         hubConnection.error = { [weak self] error in
-            print("Error: \(error)")
+            print("Error: \(String(describing: error))")
             
             // Here's an example of how to automatically reconnect after a timeout.
             //
