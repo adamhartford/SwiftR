@@ -33,6 +33,14 @@ app.UseCors (CorsOptions.AllowAll);
 // See my SignalRApplication repo for a CORS example with ASP.NET Core.
 ```
 
+#### How to set Origin
+
+In case allowing all origins (`*`) is not acceptable, you must configure the client via `originUrlString` property.
+
+```swift
+connection.originUrlString = "http://www.example.com"
+```
+
 ### What versions of SignalR are supported?
 
 SwiftR supports SignalR version 2.x. Version 2.2.1 is assumed by default. To change the SignalR version:
