@@ -82,7 +82,9 @@ open class SignalR: NSObject, SwiftRWebDelegate {
     public var signalRVersion: SignalRVersion = .v2_2_1
     public var useWKWebView = false
     public var transport: Transport = .auto
-    
+    /// load Web resource from the provided url, which will be used as Origin HTTP header
+    public var originUrlString: String?
+
     var webView: SwiftRWebView!
     var wkWebView: WKWebView!
 
@@ -169,16 +171,26 @@ open class SignalR: NSObject, SwiftRWebDelegate {
         let jqueryURL = bundle.url(forResource: "jquery-2.1.3.min", withExtension: "js")!
         let signalRURL = bundle.url(forResource: "jquery.signalr-\(signalRVersion).min", withExtension: "js")!
         let jsURL = bundle.url(forResource: "SwiftR", withExtension: "js")!
-        
+        // script HTML snippet helpers
+        let scriptAsSrc: (URL) -> String = { url in return "<script src='\(url.absoluteString)'></script>" }
+        let scriptAsContent: (URL) -> String = { url in
+            let scriptContent = try! String(contentsOf: url, encoding: .utf8)
+            return "<script>\(scriptContent)</script>"
+        }
+        let script: (URL) -> String = { url in return self.originUrlString != nil ? scriptAsContent(url) : scriptAsSrc(url) }
+        // build script sections
+        var jqueryInclude = script(jqueryURL)
+        var signalRInclude = script(signalRURL)
+        var jsInclude = script(jsURL)
+
+        /// use originUrlString if provided, otherwise fallback to bundle URL
+        let baseHTMLUrl = originUrlString.map { URL(string: $0) } ?? bundle.bundleURL
+
         if useWKWebView {
-            var jqueryInclude = "<script src='\(jqueryURL.absoluteString)'></script>"
-            var signalRInclude = "<script src='\(signalRURL.absoluteString)'></script>"
-            var jsInclude = "<script src='\(jsURL.absoluteString)'></script>"
-            
             // Loading file:// URLs from NSTemporaryDirectory() works on iOS, not OS X.
             // Workaround on OS X is to include the script directly.
             #if os(iOS)
-                if #available(iOS 9.0, *) {
+                if #available(iOS 9.0, *), originUrlString == nil {
                     let temp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("SwiftR", isDirectory: true)
                     let jqueryTempURL = temp.appendingPathComponent("jquery-2.1.3.min.js")
                     let signalRTempURL = temp.appendingPathComponent("jquery.signalr-\(signalRVersion).min")
@@ -205,18 +217,17 @@ open class SignalR: NSObject, SwiftRWebDelegate {
                         print("Failed to copy JavaScript to temp dir: \(error)")
                     }
                     
-                    jqueryInclude = "<script src='\(jqueryTempURL.absoluteString)'></script>"
-                    signalRInclude = "<script src='\(signalRTempURL.absoluteString)'></script>"
-                    jsInclude = "<script src='\(jsTempURL.absoluteString)'></script>"
+                    jqueryInclude = scriptAsSrc(jqueryTempURL)
+                    signalRInclude = scriptAsSrc(signalRTempURL)
+                    jsInclude = scriptAsSrc(jsTempURL)
                 }
             #else
-                let jqueryString = try! NSString(contentsOf: jqueryURL, encoding: String.Encoding.utf8.rawValue)
-                let signalRString = try! NSString(contentsOf: signalRURL, encoding: String.Encoding.utf8.rawValue)
-                let jsString = try! NSString(contentsOf: jsURL, encoding: String.Encoding.utf8.rawValue)
-                
-                jqueryInclude = "<script>\(jqueryString)</script>"
-                signalRInclude = "<script>\(signalRString)</script>"
-                jsInclude = "<script>\(jsString)</script>"
+                if originUrlString == nil {
+                    // force to content regardless Origin configuration for OS X
+                    jqueryInclude = scriptAsContent(jqueryURL)
+                    signalRInclude = scriptAsContent(signalRURL)
+                    jsInclude = scriptAsContent(jsURL)
+                }
             #endif
             
             let config = WKWebViewConfiguration()
@@ -231,12 +242,8 @@ open class SignalR: NSObject, SwiftRWebDelegate {
                 + "\(jqueryInclude)\(signalRInclude)\(jsInclude)"
                 + "</body></html>"
             
-            wkWebView.loadHTMLString(html, baseURL: bundle.bundleURL)
+            wkWebView.loadHTMLString(html, baseURL: baseHTMLUrl)
         } else {
-            let jqueryInclude = "<script src='\(jqueryURL.absoluteString)'></script>"
-            let signalRInclude = "<script src='\(signalRURL.absoluteString)'></script>"
-            let jsInclude = "<script src='\(jsURL.absoluteString)'></script>"
-            
             let html = "<!doctype html><html><head></head><body>"
                 + "\(jqueryInclude)\(signalRInclude)\(jsInclude)"
                 + "</body></html>"
@@ -244,10 +251,10 @@ open class SignalR: NSObject, SwiftRWebDelegate {
             webView = SwiftRWebView()
             #if os(iOS)
                 webView.delegate = self
-                webView.loadHTMLString(html, baseURL: bundle.bundleURL)
+                webView.loadHTMLString(html, baseURL: baseHTMLUrl)
             #else
                 webView.policyDelegate = self
-                webView.mainFrame.loadHTMLString(html, baseURL: bundle.bundleURL)
+                webView.mainFrame.loadHTMLString(html, baseURL: baseHTMLUrl)
             #endif
         }
         
@@ -313,7 +320,7 @@ open class SignalR: NSObject, SwiftRWebDelegate {
         
         return true
     }
-    
+
     func processMessage(_ json: [String: Any]) {
         if let message = json["message"] as? String {
             switch message {
