@@ -43,11 +43,12 @@ connection.originUrlString = "http://www.example.com"
 
 ### What versions of SignalR are supported?
 
-SwiftR supports SignalR version 2.x. Version 2.2.1 is assumed by default. To change the SignalR version:
+SwiftR supports SignalR version 2.x. Version 2.2.2 is assumed by default. To change the SignalR version:
 
 ```swift
 let connection = SignalR("https://swiftr.azurewebsites.net")
-connection.signalRVersion = .v2_2_1
+connection.signalRVersion = .v2_2_2
+//connection.signalRVersion = .v2_2_1
 //connection.signalRVersion = .v2_2_0
 //connection.signalRVersion = .v2_1_2
 //connection.signalRVersion = .v2_1_1
