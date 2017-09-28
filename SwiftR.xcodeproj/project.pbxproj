@@ -32,6 +32,8 @@
 		668E50431E2E5D6A00B6F6E7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9E6619881E09BBC7008A409F /* Images.xcassets */; };
 		668E50441E2E5D6A00B6F6E7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9E5A08C21E09B5BD0009E6DC /* Main.storyboard */; };
 		668E50471E2E5D7400B6F6E7 /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BE23071CF7422C00F45BB1 /* DemoViewController.swift */; };
+		66AF7F8D1F7D653200952341 /* jquery.signalr-2.2.2.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66AF7F8C1F7D653200952341 /* jquery.signalr-2.2.2.min.js */; };
+		66AF7F8E1F7D653200952341 /* jquery.signalr-2.2.2.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66AF7F8C1F7D653200952341 /* jquery.signalr-2.2.2.min.js */; };
 		66BD9E381C73947700CA428C /* jquery.signalr-2.0.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E311C73947700CA428C /* jquery.signalr-2.0.0.min.js */; };
 		66BD9E391C73947700CA428C /* jquery.signalr-2.0.1.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E321C73947700CA428C /* jquery.signalr-2.0.1.min.js */; };
 		66BD9E3A1C73947700CA428C /* jquery.signalr-2.0.2.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 66BD9E331C73947700CA428C /* jquery.signalr-2.0.2.min.js */; };
@@ -119,6 +121,7 @@
 		5BC8177C1AE7DAE100C284AD /* jquery.signalr-2.2.0.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery.signalr-2.2.0.min.js"; path = "SwiftR/Web/jquery.signalr-2.2.0.min.js"; sourceTree = "<group>"; };
 		5BC8177D1AE7DAE100C284AD /* SwiftR.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = SwiftR.js; path = SwiftR/Web/SwiftR.js; sourceTree = "<group>"; };
 		6622C1FB1D6BF04E005BDE4B /* jquery.signalr-2.2.1.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery.signalr-2.2.1.min.js"; path = "SwiftR/Web/jquery.signalr-2.2.1.min.js"; sourceTree = "<group>"; };
+		66AF7F8C1F7D653200952341 /* jquery.signalr-2.2.2.min.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "jquery.signalr-2.2.2.min.js"; path = "SwiftR/Web/jquery.signalr-2.2.2.min.js"; sourceTree = "<group>"; };
 		66BD9E311C73947700CA428C /* jquery.signalr-2.0.0.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery.signalr-2.0.0.min.js"; path = "SwiftR/Web/jquery.signalr-2.0.0.min.js"; sourceTree = "<group>"; };
 		66BD9E321C73947700CA428C /* jquery.signalr-2.0.1.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery.signalr-2.0.1.min.js"; path = "SwiftR/Web/jquery.signalr-2.0.1.min.js"; sourceTree = "<group>"; };
 		66BD9E331C73947700CA428C /* jquery.signalr-2.0.2.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery.signalr-2.0.2.min.js"; path = "SwiftR/Web/jquery.signalr-2.0.2.min.js"; sourceTree = "<group>"; };
@@ -320,6 +323,7 @@
 				66BD9E371C73947700CA428C /* jquery.signalr-2.1.2.min.js */,
 				5BC8177C1AE7DAE100C284AD /* jquery.signalr-2.2.0.min.js */,
 				6622C1FB1D6BF04E005BDE4B /* jquery.signalr-2.2.1.min.js */,
+				66AF7F8C1F7D653200952341 /* jquery.signalr-2.2.2.min.js */,
 				5BC8177B1AE7DAE100C284AD /* jquery-2.1.3.min.js */,
 				5BC8177D1AE7DAE100C284AD /* SwiftR.js */,
 			);
@@ -570,6 +574,7 @@
 				66BD9E391C73947700CA428C /* jquery.signalr-2.0.1.min.js in Resources */,
 				66BD9E3C1C73947700CA428C /* jquery.signalr-2.1.0.min.js in Resources */,
 				6622C1FC1D6BF04E005BDE4B /* jquery.signalr-2.2.1.min.js in Resources */,
+				66AF7F8D1F7D653200952341 /* jquery.signalr-2.2.2.min.js in Resources */,
 				66BD9E381C73947700CA428C /* jquery.signalr-2.0.0.min.js in Resources */,
 				66BD9E3A1C73947700CA428C /* jquery.signalr-2.0.2.min.js in Resources */,
 				66BD9E3E1C73947700CA428C /* jquery.signalr-2.1.2.min.js in Resources */,
@@ -595,6 +600,7 @@
 				66E3481E1D88CB3600F8081D /* jquery.signalr-2.0.3.min.js in Resources */,
 				66E348201D88CB3900F8081D /* jquery.signalr-2.1.1.min.js in Resources */,
 				66E348221D88CB4200F8081D /* jquery.signalr-2.2.1.min.js in Resources */,
+				66AF7F8E1F7D653200952341 /* jquery.signalr-2.2.2.min.js in Resources */,
 				66E3481F1D88CB3700F8081D /* jquery.signalr-2.1.0.min.js in Resources */,
 				66E348211D88CB3B00F8081D /* jquery.signalr-2.1.2.min.js in Resources */,
 				66E3481C1D88CB3200F8081D /* jquery.signalr-2.0.1.min.js in Resources */,
