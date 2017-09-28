@@ -35,7 +35,7 @@ app.UseCors (CorsOptions.AllowAll);
 
 #### How to set Origin
 
-In case allowing all origins (`*`) is not acceptable, you must configure the client via `originUrlString` property.
+If allowing all origins (`*`) is not acceptable, you can specify an allowed origin via the `originUrlString` property.
 
 ```swift
 connection.originUrlString = "http://www.example.com"
