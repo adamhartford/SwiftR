@@ -472,8 +472,8 @@ open class SignalR: NSObject, SwiftRWebDelegate {
         if let data = try? JSONSerialization.data(withJSONObject: arr, options: JSONSerialization.WritingOptions()) {
             if let str = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as String? {
                 // Strip the array brackets to be left with the desired value
-                let range = str.characters.index(str.startIndex, offsetBy: 1) ..< str.characters.index(str.endIndex, offsetBy: -1)
-                return str.substring(with: range)
+                let range = str.index(str.startIndex, offsetBy: 1) ..< str.index(str.endIndex, offsetBy: -1)
+                return String(str[range])
             }
         }
         return nil
