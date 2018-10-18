@@ -47,7 +47,7 @@ class ViewController: UIViewController {
         }
         
         complexHub.on("notifyComplex") { args in
-            let m: AnyObject = args![0] as AnyObject!
+            let m: AnyObject = args![0] as AnyObject
             print(m)
         }
         
@@ -59,31 +59,31 @@ class ViewController: UIViewController {
         hubConnection.starting = { [weak self] in
             print("Starting...")
             self?.startButton.isEnabled = false
-            self?.startButton.setTitle("Connecting...", for: UIControlState())
+            self?.startButton.setTitle("Connecting...", for: UIControl.State())
         }
         
         hubConnection.reconnecting = { [weak self] in
             print("Reconnecting...")
             self?.startButton.isEnabled = false
-            self?.startButton.setTitle("Reconnecting...", for: UIControlState())
+            self?.startButton.setTitle("Reconnecting...", for: UIControl.State())
         }
         
         hubConnection.connected = { [weak self] in
             print("Connected. Connection ID: \(String(describing: self!.hubConnection.connectionID))")
             self?.startButton.isEnabled = true
-            self?.startButton.setTitle("Stop", for: UIControlState())
+            self?.startButton.setTitle("Stop", for: UIControl.State())
         }
         
         hubConnection.reconnected = { [weak self] in
             print("Reconnected. Connection ID: \(String(describing: self!.hubConnection.connectionID))")
             self?.startButton.isEnabled = true
-            self?.startButton.setTitle("Stop", for: UIControlState())
+            self?.startButton.setTitle("Stop", for: UIControl.State())
         }
         
         hubConnection.disconnected = { [weak self] in
             print("Disconnected.")
             self?.startButton.isEnabled = true
-            self?.startButton.setTitle("Start", for: UIControlState())
+            self?.startButton.setTitle("Start", for: UIControl.State())
         }
         
         hubConnection.connectionSlow = { print("Connection slow...") }
