@@ -514,11 +514,12 @@
 				TargetAttributes = {
 					5B2F47941ADFFE6800416A1A = {
 						CreatedOnToolsVersion = 6.3;
-						DevelopmentTeam = 9QAVRMMZHB;
+						DevelopmentTeam = AM789EPRBN;
 						LastSwiftMigration = 0910;
 					};
 					5B2F479E1ADFFE6800416A1A = {
 						CreatedOnToolsVersion = 6.3;
+						DevelopmentTeam = AM789EPRBN;
 						LastSwiftMigration = 0800;
 					};
 					5B2F47B21ADFFE7300416A1A = {
@@ -850,6 +851,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = AM789EPRBN;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -903,6 +905,7 @@
 		5B2F47AC1ADFFE6900416A1A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = AM789EPRBN;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -922,6 +925,7 @@
 		5B2F47AD1ADFFE6900416A1A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = AM789EPRBN;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
