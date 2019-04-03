@@ -398,7 +398,7 @@ open class SignalR: NSObject, SwiftRWebDelegate {
             })
         } else {
             let result = webView.stringByEvaluatingJavaScript(from: script)
-            callback?(result as AnyObject!)
+            callback?(result as AnyObject)
         }
     }
     
