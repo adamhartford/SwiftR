@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		14B6540A234445A300E8D70C /* jquery.signalr-2.4.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 14B65409234445A300E8D70C /* jquery.signalr-2.4.0.min.js */; };
+		14B6540B234445A300E8D70C /* jquery.signalr-2.4.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 14B65409234445A300E8D70C /* jquery.signalr-2.4.0.min.js */; };
 		5B2F479A1ADFFE6800416A1A /* SwiftR iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B2F47991ADFFE6800416A1A /* SwiftR iOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B2F47A01ADFFE6800416A1A /* SwiftR.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B2F47951ADFFE6800416A1A /* SwiftR.framework */; };
 		5B2F47A71ADFFE6900416A1A /* SwiftR_iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2F47A61ADFFE6900416A1A /* SwiftR_iOSTests.swift */; };
@@ -97,6 +99,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		14B65409234445A300E8D70C /* jquery.signalr-2.4.0.min.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "jquery.signalr-2.4.0.min.js"; path = "SwiftR/Web/jquery.signalr-2.4.0.min.js"; sourceTree = "<group>"; };
 		5B2F47951ADFFE6800416A1A /* SwiftR.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwiftR.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B2F47981ADFFE6800416A1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5B2F47991ADFFE6800416A1A /* SwiftR iOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftR iOS.h"; sourceTree = "<group>"; };
@@ -324,6 +327,7 @@
 				5BC8177C1AE7DAE100C284AD /* jquery.signalr-2.2.0.min.js */,
 				6622C1FB1D6BF04E005BDE4B /* jquery.signalr-2.2.1.min.js */,
 				66AF7F8C1F7D653200952341 /* jquery.signalr-2.2.2.min.js */,
+				14B65409234445A300E8D70C /* jquery.signalr-2.4.0.min.js */,
 				5BC8177B1AE7DAE100C284AD /* jquery-2.1.3.min.js */,
 				5BC8177D1AE7DAE100C284AD /* SwiftR.js */,
 			);
@@ -546,6 +550,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -577,6 +582,7 @@
 				66AF7F8D1F7D653200952341 /* jquery.signalr-2.2.2.min.js in Resources */,
 				66BD9E381C73947700CA428C /* jquery.signalr-2.0.0.min.js in Resources */,
 				66BD9E3A1C73947700CA428C /* jquery.signalr-2.0.2.min.js in Resources */,
+				14B6540A234445A300E8D70C /* jquery.signalr-2.4.0.min.js in Resources */,
 				66BD9E3E1C73947700CA428C /* jquery.signalr-2.1.2.min.js in Resources */,
 				66BD9E3B1C73947700CA428C /* jquery.signalr-2.0.3.min.js in Resources */,
 				5BC8177E1AE7DAE100C284AD /* jquery-2.1.3.min.js in Resources */,
@@ -603,6 +609,7 @@
 				66AF7F8E1F7D653200952341 /* jquery.signalr-2.2.2.min.js in Resources */,
 				66E3481F1D88CB3700F8081D /* jquery.signalr-2.1.0.min.js in Resources */,
 				66E348211D88CB3B00F8081D /* jquery.signalr-2.1.2.min.js in Resources */,
+				14B6540B234445A300E8D70C /* jquery.signalr-2.4.0.min.js in Resources */,
 				66E3481C1D88CB3200F8081D /* jquery.signalr-2.0.1.min.js in Resources */,
 				5BC8177F1AE7DAE100C284AD /* jquery-2.1.3.min.js in Resources */,
 				66E3481D1D88CB3400F8081D /* jquery.signalr-2.0.2.min.js in Resources */,
