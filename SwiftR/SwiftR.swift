@@ -79,7 +79,7 @@ open class SignalR: NSObject, SwiftRWebDelegate {
     var internalID: String!
     var ready = false
     
-    public var signalRVersion: SignalRVersion = .v2_2_2
+    public var signalRVersion: SignalRVersion = .v2_4_1
     public var useWKWebView = false
     public var transport: Transport = .auto
     /// load Web resource from the provided url, which will be used as Origin HTTP header
@@ -398,7 +398,7 @@ open class SignalR: NSObject, SwiftRWebDelegate {
             })
         } else {
             let result = webView.stringByEvaluatingJavaScript(from: script)
-            callback?(result as AnyObject!)
+            callback?(result as AnyObject)
         }
     }
     
@@ -454,7 +454,7 @@ open class SignalR: NSObject, SwiftRWebDelegate {
     // MARK: - Web delegate methods
     
 #if os(iOS)
-    open func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
+    open func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebView.NavigationType) -> Bool {
         return shouldHandleRequest(request)
     }
 #else
@@ -550,6 +550,8 @@ open class Hub: NSObject {
 }
 
 public enum SignalRVersion : CustomStringConvertible {
+    case v2_4_1
+    case v2_4_0
     case v2_2_2
     case v2_2_1
     case v2_2_0
@@ -563,6 +565,8 @@ public enum SignalRVersion : CustomStringConvertible {
     
     public var description: String {
         switch self {
+            case .v2_4_1: return "2.4.1"
+            case .v2_4_0: return "2.4.0"
             case .v2_2_2: return "2.2.2"
             case .v2_2_1: return "2.2.1"
             case .v2_2_0: return "2.2.0"
