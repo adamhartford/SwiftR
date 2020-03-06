@@ -80,7 +80,6 @@ open class SignalR: NSObject, SwiftRWebDelegate {
     var ready = false
     
     public var signalRVersion: SignalRVersion = .v2_2_2
-    public var useWKWebView = false
     public var transport: Transport = .auto
     /// load Web resource from the provided url, which will be used as Origin HTTP header
     public var originUrlString: String?
@@ -186,7 +185,7 @@ open class SignalR: NSObject, SwiftRWebDelegate {
         /// use originUrlString if provided, otherwise fallback to bundle URL
         let baseHTMLUrl = originUrlString.map { URL(string: $0) } ?? bundle.bundleURL
 
-        if useWKWebView {
+    
             // Loading file:// URLs from NSTemporaryDirectory() works on iOS, not OS X.
             // Workaround on OS X is to include the script directly.
             #if os(iOS)
@@ -243,20 +242,7 @@ open class SignalR: NSObject, SwiftRWebDelegate {
                 + "</body></html>"
             
             wkWebView.loadHTMLString(html, baseURL: baseHTMLUrl)
-        } else {
-            let html = "<!doctype html><html><head></head><body>"
-                + "\(jqueryInclude)\(signalRInclude)\(jsInclude)"
-                + "</body></html>"
-            
-            webView = SwiftRWebView()
-            #if os(iOS)
-                webView.delegate = self
-                webView.loadHTMLString(html, baseURL: baseHTMLUrl)
-            #else
-                webView.policyDelegate = self
-                webView.mainFrame.loadHTMLString(html, baseURL: baseHTMLUrl)
-            #endif
-        }
+        
         
         if let ua = customUserAgent {
             applyUserAgent(ua)
@@ -392,37 +378,29 @@ open class SignalR: NSObject, SwiftRWebDelegate {
             return
         }
         
-        if useWKWebView {
-            wkWebView.evaluateJavaScript(script, completionHandler: { (result, _)  in
-                callback?(result)
-            })
-        } else {
-            let result = webView.stringByEvaluatingJavaScript(from: script)
-            callback?(result as AnyObject!)
-        }
+        wkWebView.evaluateJavaScript(script, completionHandler: { (result, _)  in
+            callback?(result)
+        })
+        
     }
     
     func applyUserAgent(_ userAgent: String) {
         #if os(iOS)
-            if useWKWebView {
-                if #available(iOS 9.0, *) {
-                    wkWebView.customUserAgent = userAgent
-                } else {
-                    print("Unable to set user agent for WKWebView on iOS <= 8. Please register defaults via NSUserDefaults instead.")
-                }
-            } else {
-                print("Unable to set user agent for UIWebView. Please register defaults via NSUserDefaults instead.")
-            }
+        
+        if #available(iOS 9.0, *) {
+            wkWebView.customUserAgent = userAgent
+        } else {
+            print("Unable to set user agent for WKWebView on iOS <= 8. Please register defaults via NSUserDefaults instead.")
+        }
+        
         #else
-            if useWKWebView {
-                if #available(OSX 10.11, *) {
-                    wkWebView.customUserAgent = userAgent
-                } else {
-                    print("Unable to set user agent for WKWebView on OS X <= 10.10.")
-                }
-            } else {
-                webView.customUserAgent = userAgent
-            }
+        
+        if #available(OSX 10.11, *) {
+            wkWebView.customUserAgent = userAgent
+        } else {
+            print("Unable to set user agent for WKWebView on OS X <= 10.10.")
+        }
+        
         #endif
     }
     
