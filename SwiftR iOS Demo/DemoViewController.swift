@@ -119,7 +119,7 @@ class DemoViewController: UIViewController {
     }
     
     @IBAction func send(_ sender: AnyObject?) {
-        if let hub = chatHub, let message = messageTextField.text {
+        if let hub = chatHub, let message = messageTextField.text, let name = name {
             do {
                 try hub.invoke("send", arguments: [name, message])
             } catch {
