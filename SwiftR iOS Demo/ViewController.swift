@@ -28,7 +28,6 @@ class ViewController: UIViewController {
         
         // Hubs...
         hubConnection = SignalR("http://myserver.com:5000")
-        hubConnection.useWKWebView = true
         hubConnection.transport = .serverSentEvents
         hubConnection.queryString = ["foo": "bar"]
         hubConnection.headers = ["X-MyHeader1": "Value1", "X-MyHeader2": "Value2"]

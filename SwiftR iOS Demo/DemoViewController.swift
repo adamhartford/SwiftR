@@ -25,7 +25,6 @@ class DemoViewController: UIViewController {
         super.viewDidLoad()
         
         connection = SignalR("http://swiftr.azurewebsites.net")
-        connection.useWKWebView = true
         connection.signalRVersion = .v2_2_0
         
         chatHub = Hub("chatHub")
