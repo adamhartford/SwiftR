@@ -560,7 +560,6 @@ public enum SignalRVersion : CustomStringConvertible {
 }
 
 #if os(iOS)
-//typealias SwiftRWebView = UIWebView
 public protocol SwiftRWebDelegate: WKNavigationDelegate, WKScriptMessageHandler{}
 #else
 typealias SwiftRWebView = WebView
