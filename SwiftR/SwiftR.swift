@@ -79,13 +79,11 @@ open class SignalR: NSObject, SwiftRWebDelegate {
     var internalID: String!
     var ready = false
     
-    public var signalRVersion: SignalRVersion = .v2_2_2
-    public var useWKWebView = false
+    public var signalRVersion: SignalRVersion = .v2_4_1
     public var transport: Transport = .auto
     /// load Web resource from the provided url, which will be used as Origin HTTP header
     public var originUrlString: String?
 
-    var webView: SwiftRWebView!
     var wkWebView: WKWebView!
 
     var baseUrl: String
@@ -186,77 +184,62 @@ open class SignalR: NSObject, SwiftRWebDelegate {
         /// use originUrlString if provided, otherwise fallback to bundle URL
         let baseHTMLUrl = originUrlString.map { URL(string: $0) } ?? bundle.bundleURL
 
-        if useWKWebView {
-            // Loading file:// URLs from NSTemporaryDirectory() works on iOS, not OS X.
-            // Workaround on OS X is to include the script directly.
-            #if os(iOS)
-                if #available(iOS 9.0, *), originUrlString == nil {
-                    let temp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("SwiftR", isDirectory: true)
-                    let jqueryTempURL = temp.appendingPathComponent("jquery-2.1.3.min.js")
-                    let signalRTempURL = temp.appendingPathComponent("jquery.signalr-\(signalRVersion).min")
-                    let jsTempURL = temp.appendingPathComponent("SwiftR.js")
-                    
-                    let fileManager = FileManager.default
-                    
-                    do {
-                        if SwiftR.connections.isEmpty {
-                            SwiftR.cleanup()
-                            try fileManager.createDirectory(at: temp, withIntermediateDirectories: false)
-                        }
-                        
-                        if !fileManager.fileExists(atPath: jqueryTempURL.path) {
-                            try fileManager.copyItem(at: jqueryURL, to: jqueryTempURL)
-                        }
-                        if !fileManager.fileExists(atPath: signalRTempURL.path) {
-                            try fileManager.copyItem(at: signalRURL, to: signalRTempURL)
-                        }
-                        if !fileManager.fileExists(atPath: jsTempURL.path) {
-                            try fileManager.copyItem(at: jsURL, to: jsTempURL)
-                        }
-                    } catch {
-                        print("Failed to copy JavaScript to temp dir: \(error)")
+        // Loading file:// URLs from NSTemporaryDirectory() works on iOS, not OS X.
+        // Workaround on OS X is to include the script directly.
+        #if os(iOS)
+            if #available(iOS 9.0, *), originUrlString == nil {
+                let temp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("SwiftR", isDirectory: true)
+                let jqueryTempURL = temp.appendingPathComponent("jquery-2.1.3.min.js")
+                let signalRTempURL = temp.appendingPathComponent("jquery.signalr-\(signalRVersion).min")
+                let jsTempURL = temp.appendingPathComponent("SwiftR.js")
+                
+                let fileManager = FileManager.default
+                
+                do {
+                    if SwiftR.connections.isEmpty {
+                        SwiftR.cleanup()
+                        try fileManager.createDirectory(at: temp, withIntermediateDirectories: false)
                     }
                     
-                    jqueryInclude = scriptAsSrc(jqueryTempURL)
-                    signalRInclude = scriptAsSrc(signalRTempURL)
-                    jsInclude = scriptAsSrc(jsTempURL)
+                    if !fileManager.fileExists(atPath: jqueryTempURL.path) {
+                        try fileManager.copyItem(at: jqueryURL, to: jqueryTempURL)
+                    }
+                    if !fileManager.fileExists(atPath: signalRTempURL.path) {
+                        try fileManager.copyItem(at: signalRURL, to: signalRTempURL)
+                    }
+                    if !fileManager.fileExists(atPath: jsTempURL.path) {
+                        try fileManager.copyItem(at: jsURL, to: jsTempURL)
+                    }
+                } catch {
+                    print("Failed to copy JavaScript to temp dir: \(error)")
                 }
-            #else
-                if originUrlString == nil {
-                    // force to content regardless Origin configuration for OS X
-                    jqueryInclude = scriptAsContent(jqueryURL)
-                    signalRInclude = scriptAsContent(signalRURL)
-                    jsInclude = scriptAsContent(jsURL)
-                }
-            #endif
-            
-            let config = WKWebViewConfiguration()
-            config.userContentController.add(self, name: "interOp")
-            #if !os(iOS)
-                //config.preferences.setValue(true, forKey: "developerExtrasEnabled")
-            #endif
-            wkWebView = WKWebView(frame: CGRect.zero, configuration: config)
-            wkWebView.navigationDelegate = self
-            
-            let html = "<!doctype html><html><head></head><body>"
-                + "\(jqueryInclude)\(signalRInclude)\(jsInclude)"
-                + "</body></html>"
-            
-            wkWebView.loadHTMLString(html, baseURL: baseHTMLUrl)
-        } else {
-            let html = "<!doctype html><html><head></head><body>"
-                + "\(jqueryInclude)\(signalRInclude)\(jsInclude)"
-                + "</body></html>"
-            
-            webView = SwiftRWebView()
-            #if os(iOS)
-                webView.delegate = self
-                webView.loadHTMLString(html, baseURL: baseHTMLUrl)
-            #else
-                webView.policyDelegate = self
-                webView.mainFrame.loadHTMLString(html, baseURL: baseHTMLUrl)
-            #endif
-        }
+                
+                jqueryInclude = scriptAsSrc(jqueryTempURL)
+                signalRInclude = scriptAsSrc(signalRTempURL)
+                jsInclude = scriptAsSrc(jsTempURL)
+            }
+        #else
+            if originUrlString == nil {
+                // force to content regardless Origin configuration for OS X
+                jqueryInclude = scriptAsContent(jqueryURL)
+                signalRInclude = scriptAsContent(signalRURL)
+                jsInclude = scriptAsContent(jsURL)
+            }
+        #endif
+        
+        let config = WKWebViewConfiguration()
+        config.userContentController.add(self, name: "interOp")
+        #if !os(iOS)
+            //config.preferences.setValue(true, forKey: "developerExtrasEnabled")
+        #endif
+        wkWebView = WKWebView(frame: CGRect.zero, configuration: config)
+        wkWebView.navigationDelegate = self
+        
+        let html = "<!doctype html><html><head></head><body>"
+            + "\(jqueryInclude)\(signalRInclude)\(jsInclude)"
+            + "</body></html>"
+        
+        wkWebView.loadHTMLString(html, baseURL: baseHTMLUrl)
         
         if let ua = customUserAgent {
             applyUserAgent(ua)
@@ -302,23 +285,6 @@ open class SignalR: NSObject, SwiftRWebDelegate {
     
     open func stop() {
         runJavaScript("swiftR.connection.stop()")
-    }
-    
-    func shouldHandleRequest(_ request: URLRequest) -> Bool {
-        if request.url!.absoluteString.hasPrefix("swiftr://") {
-            let id = (request.url!.absoluteString as NSString).substring(from: 9)
-            let msg = webView.stringByEvaluatingJavaScript(from: "readMessage('\(id)')")!
-            let data = msg.data(using: String.Encoding.utf8, allowLossyConversion: false)!
-            let json = try! JSONSerialization.jsonObject(with: data, options: [])
-            
-            if let m = json as? [String: Any] {
-                processMessage(m)
-            }
-
-            return false
-        }
-        
-        return true
     }
 
     func processMessage(_ json: [String: Any]) {
@@ -387,41 +353,28 @@ open class SignalR: NSObject, SwiftRWebDelegate {
     }
     
     func runJavaScript(_ script: String, callback: ((Any?) -> ())? = nil) {
-        guard wkWebView != nil || webView != nil else {
+        guard wkWebView != nil else {
             jsQueue.append((script, callback))
             return
         }
         
-        if useWKWebView {
-            wkWebView.evaluateJavaScript(script, completionHandler: { (result, _)  in
-                callback?(result)
-            })
-        } else {
-            let result = webView.stringByEvaluatingJavaScript(from: script)
-            callback?(result as AnyObject!)
-        }
+        wkWebView.evaluateJavaScript(script, completionHandler: { (result, _)  in
+            callback?(result)
+        })
     }
     
     func applyUserAgent(_ userAgent: String) {
         #if os(iOS)
-            if useWKWebView {
-                if #available(iOS 9.0, *) {
-                    wkWebView.customUserAgent = userAgent
-                } else {
-                    print("Unable to set user agent for WKWebView on iOS <= 8. Please register defaults via NSUserDefaults instead.")
-                }
+            if #available(iOS 9.0, *) {
+                wkWebView.customUserAgent = userAgent
             } else {
-                print("Unable to set user agent for UIWebView. Please register defaults via NSUserDefaults instead.")
+                print("Unable to set user agent for WKWebView on iOS <= 8. Please register defaults via NSUserDefaults instead.")
             }
         #else
-            if useWKWebView {
-                if #available(OSX 10.11, *) {
-                    wkWebView.customUserAgent = userAgent
-                } else {
-                    print("Unable to set user agent for WKWebView on OS X <= 10.10.")
-                }
+            if #available(OSX 10.11, *) {
+                wkWebView.customUserAgent = userAgent
             } else {
-                webView.customUserAgent = userAgent
+                print("Unable to set user agent for WKWebView on OS X <= 10.10.")
             }
         #endif
     }
@@ -450,21 +403,6 @@ open class SignalR: NSObject, SwiftRWebDelegate {
             })
         }
     }
-    
-    // MARK: - Web delegate methods
-    
-#if os(iOS)
-    open func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
-        return shouldHandleRequest(request)
-    }
-#else
-    public func webView(_ webView: WebView!, decidePolicyForNavigationAction actionInformation: [AnyHashable : Any]!, request: URLRequest!, frame: WebFrame!, decisionListener listener: WebPolicyDecisionListener!) {
-        
-        if shouldHandleRequest(request as URLRequest) {
-            listener.use()
-        }
-    }
-#endif
     
     class func stringify(_ obj: Any) -> String? {
         // Using an array to start with a valid top level type for NSJSONSerialization
@@ -550,6 +488,8 @@ open class Hub: NSObject {
 }
 
 public enum SignalRVersion : CustomStringConvertible {
+    case v2_4_1
+    case v2_4_0
     case v2_2_2
     case v2_2_1
     case v2_2_0
@@ -563,6 +503,8 @@ public enum SignalRVersion : CustomStringConvertible {
     
     public var description: String {
         switch self {
+            case .v2_4_1: return "2.4.1"
+            case .v2_4_0: return "2.4.0"
             case .v2_2_2: return "2.2.2"
             case .v2_2_1: return "2.2.1"
             case .v2_2_0: return "2.2.0"
@@ -577,10 +519,4 @@ public enum SignalRVersion : CustomStringConvertible {
     }
 }
 
-#if os(iOS)
-    typealias SwiftRWebView = UIWebView
-    public protocol SwiftRWebDelegate: WKNavigationDelegate, WKScriptMessageHandler, UIWebViewDelegate {}
-#else
-    typealias SwiftRWebView = WebView
-    public protocol SwiftRWebDelegate: WKNavigationDelegate, WKScriptMessageHandler, WebPolicyDelegate {}
-#endif
+public protocol SwiftRWebDelegate: WKNavigationDelegate, WKScriptMessageHandler {}
